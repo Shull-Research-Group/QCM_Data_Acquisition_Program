@@ -1,0 +1,4545 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass scrartcl
+\begin_preamble
+\usepackage{pdfsync}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family sfdefault
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format pdf2
+\output_sync 1
+\bibtex_command default
+\index_command default
+\float_placement H
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks true
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation 0bp
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sloppy
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Title
+QCM MATLAB Program Manual
+\end_layout
+
+\begin_layout Subtitle
+The Shull Research Group 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+
+\backslash
+
+\end_layout
+
+\end_inset
+
+Version 2.0b 
+\begin_inset Quotes eld
+\end_inset
+
+bigfoot
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Date
+06/17/2015
+\end_layout
+
+\begin_layout Author
+Chyi-Huey Joshua Yeh
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Part
+Quickstart Guide
+\end_layout
+
+\begin_layout Section
+Installation
+\end_layout
+
+\begin_layout Subsection
+Installing MyVNA program
+\end_layout
+
+\begin_layout Standard
+The MyVNA program is a software that was devloped by the original harware
+ designers of the N2PK Vector Network Analyzer (N2PK-VNA).
+ This program directly manipulates the N2PK-VNA.
+ For more information on the MyVNA program and the N2PK-VNA hardware setup,
+ visit http://g8kbb.co.uk/html/myvna.html.
+ Also, there is a small active community of radio-enthusiasts that constantly
+ improve the software and harware design and capabilites of the N2PK-VNA.
+ For more information on this community, visit https://groups.yahoo.com/neo/groups
+/N2PK-VNA/info.
+\end_layout
+
+\begin_layout Subsubsection
+Step-by-step myVNA installation
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Open up the folder name, 
+\begin_inset Quotes eld
+\end_inset
+
+myVNA setup files
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Run myVNA.msi and follow the directions.
+
+\series default
+ This installs the myVNA program that directly communicates and controls
+ the N2PK Vector Network Analyzer (imepdance analyzer).
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+After installing myVNA, double click on myVNA_setup.reg.
+
+\series default
+ This adds registry values associated with the myVNA program.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Go to the folder in which the myVNA program is installed.
+ 
+\series default
+The path usually looks something like this: C:
+\backslash
+Program Files (x86)
+\backslash
+G8KBB
+\backslash
+myVNA.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+In this folder, make sure that there is a file name, 
+\begin_inset Quotes eld
+\end_inset
+
+InitGenericUsb.dll
+\begin_inset Quotes erd
+\end_inset
+
+.
+ 
+\series default
+If not, go to the 
+\begin_inset Quotes eld
+\end_inset
+
+USB configure and Drivers
+\begin_inset Quotes erd
+\end_inset
+
+ folder, located in the same path directory asthe myVNA program and copy
+ the file, 
+\begin_inset Quotes eld
+\end_inset
+
+InitGenericUsb.dll
+\begin_inset Quotes erd
+\end_inset
+
+ into the myVNA path directory.
+ This file is reponsible for communicating with the N2PK Vector Network
+ Analyzer via a usb cord.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+In the myVNA program path directory, search for the file name, 
+\begin_inset Quotes eld
+\end_inset
+
+RegServers.exe
+\begin_inset Quotes erd
+\end_inset
+
+, right click on it, and click on 
+\begin_inset Quotes eld
+\end_inset
+
+Run as administrator
+\begin_inset Quotes erd
+\end_inset
+
+.
+ 
+\series default
+It is important that you run that execution file with administrator rights,
+ otherwise, the execution file will not run properly.
+ This file is responsible for registering the myVNA program with OLE capabilites.
+ In other words, this file allows the MyVNA program to be controlled remotely
+ with a 3rd-party program (in this case, AccessMyVNA).
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+When myVNA program has been successfully installed, connect the N2PK VNA
+ to the computer.
+
+\series default
+ The computer will automatically start scanning for the appropriate drivers
+ to download and install, in order to interface with the N2PK VNA.
+ It is not necessary for the computer to go through this process (canceling
+ this process will not affect the driver installation), since the associated
+ drived will be installed manually.
+ Go to Control Panel>View devices and printers.
+ Scroll down and right click 
+\begin_inset Quotes eld
+\end_inset
+
+Unknown device
+\begin_inset Quotes erd
+\end_inset
+
+.
+ From there, the driver can be manually installed by directing Windows to
+ look into the folder in which the myVNA program was installed.
+ Make sure 
+\begin_inset Quotes eld
+\end_inset
+
+Check subfolder
+\begin_inset Quotes erd
+\end_inset
+
+ option is checked.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+When running myVNA for the first time, a message will display, saying that
+ the 
+\begin_inset Quotes eld
+\end_inset
+
+Calibration
+\begin_inset Quotes erd
+\end_inset
+
+ file was not found.
+ 
+\series default
+Click 
+\begin_inset Quotes eld
+\end_inset
+
+OK
+\begin_inset Quotes erd
+\end_inset
+
+; the GUI will initialize.
+ The first thing to do is to calibrate the N2PK VNA.
+ Go to 
+\begin_inset Quotes eld
+\end_inset
+
+Calibration Options
+\begin_inset Quotes erd
+\end_inset
+
+ (left panel) and turn on the 
+\begin_inset Quotes eld
+\end_inset
+
+Unguided Calibration
+\begin_inset Quotes erd
+\end_inset
+
+ option.
+ On the top toolbar, set the start and end frequency to 4 MHz and 56 MHz.
+ Make sure the units are set to 
+\begin_inset Quotes eld
+\end_inset
+
+MHz
+\begin_inset Quotes erd
+\end_inset
+
+ and that the 
+\begin_inset Quotes eld
+\end_inset
+
+Start/Stop
+\begin_inset Quotes erd
+\end_inset
+
+ setting is selected.
+ Also, change the number of setps to 400 and the average to 3.
+ Click on the 
+\begin_inset Quotes eld
+\end_inset
+
+Calibrate
+\begin_inset Quotes erd
+\end_inset
+
+ button, located at the top toolbar.
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/Calibration01.png
+	lyxscale 50
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Set up te calibration process.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Make sure that the N2PK VNA is in an open-circuit state.
+ Click on the 
+\begin_inset Quotes eld
+\end_inset
+
+Open
+\begin_inset Quotes erd
+\end_inset
+
+ button.
+ The program will perform a scan from 4 MHz to 56 MHz with 4000 datapoints
+ in between.
+ Once this is finished, connect the 
+\begin_inset Quotes eld
+\end_inset
+
+short
+\begin_inset Quotes erd
+\end_inset
+
+ to the N2PK VNA, and click on the 
+\begin_inset Quotes eld
+\end_inset
+
+Short
+\begin_inset Quotes erd
+\end_inset
+
+ button.
+ Repeat this step with the 50 
+\begin_inset Formula $\Omega$
+\end_inset
+
+ resistor and click on the 
+\begin_inset Quotes eld
+\end_inset
+
+Load
+\begin_inset Quotes erd
+\end_inset
+
+ button.
+ Once the calibration is finished, click on the the 
+\begin_inset Quotes eld
+\end_inset
+
+Finished
+\begin_inset Quotes erd
+\end_inset
+
+ button and save the calibration file.
+ 
+\end_layout
+
+\begin_layout Enumerate
+The myVNA program should fully functioning.
+ To test it, simply click on the 
+\begin_inset Quotes eld
+\end_inset
+
+Single Scan
+\begin_inset Quotes erd
+\end_inset
+
+ button on the top toolbar.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+Autoscale
+\begin_inset Quotes erd
+\end_inset
+
+ button might need to be pressed in order to adjust the plot to show the
+ measurement.
+ Once everything has been tested and properly set-up, exit out of myVNA.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Note:
+\series default
+ It is good practice re-calibrate before an experiment.
+ This will reduce any unneccessay complication associated with the Lorentzian
+ fitting process QCM measurement.
+\end_layout
+
+\begin_layout Subsection
+Installing AccessMyVNAv0.7 program
+\end_layout
+
+\begin_layout Standard
+Setting up this program is easy.
+ All that is required is to ensure that the folder, 
+\begin_inset Quotes eld
+\end_inset
+
+AccessMyVNAv0.7
+\begin_inset Quotes erd
+\end_inset
+
+, is in the same directory as the QCM MATLAB Program.
+ For example, if the path directory to the QCM MATLAB Program is <C:
+\backslash
+Program Files (x86)
+\backslash
+QCM MATLAB Program>, make sure that <C:
+\backslash
+Program Files (x86)
+\backslash
+QCM MATLAB Program
+\backslash
+AccessMyVNAv0.7> exists.
+ This folder contains the program, AccessMyVNA, that is important for the
+ QCM MATLAB Program to (indirectly) manipulate the MyVNA program.
+ Currently, the QCM MATLAB Program automatically executes the AccessMyVNA
+ each time the QCM MATLAB Program initiates and creates the GUI figure.
+ However, to manually execute the AccessMyVNA program, the 
+\begin_inset Quotes eld
+\end_inset
+
+AccessMyVNA.exe
+\begin_inset Quotes erd
+\end_inset
+
+ file can be found in the 
+\begin_inset Quotes eld
+\end_inset
+
+release
+\begin_inset Quotes erd
+\end_inset
+
+ folder in the AccessMyVNAv0.7 folder.
+\end_layout
+
+\begin_layout Standard
+Make sure to install the necessary .dll files.
+
+\series bold
+ 
+\series default
+To do this, simply run execution file located in the 
+\begin_inset Quotes eld
+\end_inset
+
+Visual C++ redistributable packages for visual basic 2013
+\begin_inset Quotes erd
+\end_inset
+
+ folder.
+ If the installation is being performed on a 32-bit computer, run the 
+\begin_inset Quotes eld
+\end_inset
+
+vcredist_x86(1).exe
+\begin_inset Quotes erd
+\end_inset
+
+ file.
+ If the installation is being performed on a 64-bit computer, run the 
+\begin_inset Quotes eld
+\end_inset
+
+vcredist_x64(1).exe
+\begin_inset Quotes erd
+\end_inset
+
+ file.
+ If an error message appears, (when executing the AccessMyVNA.exe file) stating
+ that a .dll file is missing, try running both the 32-bit and 64-bit execution
+ files.
+\end_layout
+
+\begin_layout Standard
+For those running the 
+\begin_inset Quotes eld
+\end_inset
+
+AccessMyVNAv0.7
+\begin_inset Quotes erd
+\end_inset
+
+ on Windows 8 or higher, make sure to change the compatability mode of the
+ 
+\begin_inset Quotes eld
+\end_inset
+
+AccessMyVNAv0.7.exe
+\begin_inset Quotes erd
+\end_inset
+
+ to Windows 7.
+ Otherwise, the program will unexpectedly crash.
+\end_layout
+
+\begin_layout Subsubsection
+Note for code developers
+\end_layout
+
+\begin_layout Standard
+Within the AccessMyVNAv0.7 folder, there are many other folders and files.
+ These 
+\begin_inset Quotes eld
+\end_inset
+
+extra
+\begin_inset Quotes erd
+\end_inset
+
+ folders and files are needed if there is a need to edit the AccessMyVNAv0.7
+ program code.
+ To access this code, Visual Basic C++ (2013 or higher) must be installed.
+ The file, 
+\begin_inset Quotes eld
+\end_inset
+
+AccessMyVNA.sln
+\begin_inset Quotes erd
+\end_inset
+
+, can be opened with Visual Basic C++ and the file, AccessMyVNADlg.cpp, can
+ be accessed in the solution explorer panel.
+ It is within the AccessMyVNADlg.cpp in which most of the important features
+ and functions of the AccessMyVNAv0.7 is defined.
+ Ideally, this program should be rewritten.
+ However, rewriting this program requires advanced knowledge and experience
+ in working with Visual Basic C++.
+ In particular, this program relies on 
+\begin_inset Quotes eld
+\end_inset
+
+MFC
+\begin_inset Quotes erd
+\end_inset
+
+ (Microsoft Foundation Class) libraries, which are only supported in Visual
+ Basic Professional 2013 or higher (not the 
+\begin_inset Quotes eld
+\end_inset
+
+Express
+\begin_inset Quotes erd
+\end_inset
+
+ version!).
+ A free student license of Visual Basic Professional 2013 (or higher) can
+ be obtained from Microsoft's Dreamspark program.
+\end_layout
+
+\begin_layout Subsection
+Installing the QCM MATLAB Program
+\end_layout
+
+\begin_layout Standard
+The QCM MATLAB Program does not require any formal installation.
+ However, make sure the program is performed by MATLAB 2014b or higher.
+ Make sure that the following files:
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+QCM_v002b_bigfoot.m
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+QCM_v002b_bigfoot.fig
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+fg_values.mat
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+raw_spectras.mat
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+are in the <C:
+\backslash
+Program Files (x86)
+\backslash
+QCM MATLAB Program
+\backslash
+> path directory.
+ Also, make sure the following folders are located in the <C:
+\backslash
+Program Files (x86)
+\backslash
+QCM MATLAB Program
+\backslash
+> path directory:
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+QCM MATLAB manual
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+email files
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+AccessMyVNAv0.7
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+deleted data
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that the filenames and folder names are case sensitive.To run the QCM
+ MATLAB Program, double click on the 
+\begin_inset Quotes eld
+\end_inset
+
+QCM_v002b_bigfoot.m
+\begin_inset Quotes erd
+\end_inset
+
+ file and run the script.
+ As aforementioned, the AccessMyVNA program should also start with the creation
+ of the MATLAB GUI figure.
+ If it did not, an error should be reflected in the MATLAB command window.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+How to take measurements (Quickstart guide)
+\end_layout
+
+\begin_layout Subsection
+Starting up and closing down the programs
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+\emph on
+\bar under
+NOTE:
+\series default
+\emph default
+\bar default
+ The GUI window associated with the 
+\begin_inset Quotes eld
+\end_inset
+
+AccessMyVNA
+\begin_inset Quotes erd
+\end_inset
+
+ will no longer appear for versions 2.0c and higher.
+ Instead, this program runs in the background.
+ The execution process, 
+\begin_inset Quotes eld
+\end_inset
+
+AccessMyVNA.exe
+\begin_inset Quotes erd
+\end_inset
+
+, can be located in the windows task manager.
+ The native program, 
+\begin_inset Quotes eld
+\end_inset
+
+MyVNA
+\begin_inset Quotes erd
+\end_inset
+
+ will automatically run and be minimized on the desktop toolbar.
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To start up the QCM MATLAB program (and the other programs, a.k.a.
+ MyVNA and AccessMyVNA), run the 
+\begin_inset Quotes eld
+\end_inset
+
+QCM_v001a.m
+\begin_inset Quotes erd
+\end_inset
+
+ script.
+ An instance of the AccessMyVNA program should appear along with the creation
+ of the MATLAB GUI figure.
+ In the AccessMyVNA window, click on the button, 
+\begin_inset Quotes eld
+\end_inset
+
+Start Scan
+\begin_inset Quotes erd
+\end_inset
+
+ (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:AccessMyVNA Start Button"
+
+\end_inset
+
+).
+ This will automatically start up the MyVNA program and begin (continuous)
+ scans.
+ Note that when the AccessMyVNA program is continuously scanning, the program
+ cannnot be minimized and may seem unresponsive.
+ As long the AccessMyVNA program is telling the myVNA program to continue
+ scanning, the AccessMyVNA program is still running correctly.
+ 
+\end_layout
+
+\begin_layout Standard
+To have AccessMyVNA program to stop scanning, simply go to the radio dial
+ labelled, 
+\begin_inset Quotes eld
+\end_inset
+
+Maintain myVNA scan
+\begin_inset Quotes erd
+\end_inset
+
+, and uncheck the radio dial.
+ This will communicate to the AccessMyVNA program to stop scanning (this
+ process may take a few seconds to complete).
+ If the program does not stop scanning, then the AccessMyVNA program is
+ probably malfunctioning.
+ In that case, the AccessMyVNA program may have to be terminated in the
+ windows task manager.
+ 
+\series bold
+To begin the continous scanning again, make sure that the radiodial, 
+\begin_inset Quotes eld
+\end_inset
+
+Maintain myVNA scan
+\begin_inset Quotes erd
+\end_inset
+
+ is checked and click on the 
+\begin_inset Quotes eld
+\end_inset
+
+Start Scan
+\begin_inset Quotes erd
+\end_inset
+
+ button in the AccessMyVNA window.
+
+\series default
+ Also, note that when the MATLAB GUI figure is closed, the QCM MATLAB code
+ will communicate the AccessMyVNA to stop scanning.
+ However, the 
+\series bold
+AccessMyVNA program and the
+\series default
+ 
+\series bold
+MyVNA program needs to be manually closed
+\series default
+.
+ If the AccessMyVNA program is not manually closed, reinitiating the QCM
+ MATLAB GUI figure will create a new instance of AccessMyVNA; thus, there
+ will be multiple instances of AccessMyVNA running at the same time, which
+ can cause fatal errors.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/Start_scan_AccessMyVNA.png
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Click on the 
+\begin_inset Quotes eld
+\end_inset
+
+Start Scan
+\begin_inset Quotes erd
+\end_inset
+
+ button in the AccessMyVNA program to begin scanning.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:AccessMyVNA Start Button"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Setting up parameters and measurement options
+\end_layout
+
+\begin_layout Standard
+Parameters, settings, and options related to the collecting scans from the
+ N2PK-VNA impedance analyzer can be controlled from the settings panel (see
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:settings panel"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/settings panel.png
+	lyxscale 40
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The settings panel contains information on the parameters, settings, and
+ options related to the collection of the raw data.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:settings panel"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Choosing which harmonic to track
+\end_layout
+
+\begin_layout Standard
+The N2PK-VNA impedance analyzer is capable of tracking up to 6 harmonics
+ at the same time (1st, 3rd, 5th, 7th, 9th, 11th harmonics).
+ To choose which harmonics to track, check/uncheck the radio dials on the
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Harmonics
+\begin_inset Quotes erd
+\end_inset
+
+ column (see Figure).
+ The start and end frequencies of the scan for each of the harmonic can
+ be set manually by editing the numbers in the corresponding start/end frequenci
+es.
+ Also, the start and end frequencies can be set by initiating the 
+\begin_inset Quotes eld
+\end_inset
+
+Peak Centering Mode
+\begin_inset Quotes erd
+\end_inset
+
+.
+ For more details in regards to the Peak Centering Mode, refer to Part 1,
+ Section 3.1.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/choose harmonics.png
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Multiple harmonics can be tracked.
+ Choose which harmonics to track by checking/unchecking the radio dials
+ under the 
+\begin_inset Quotes eld
+\end_inset
+
+Harmonics
+\begin_inset Quotes erd
+\end_inset
+
+ column.
+ The start and end frequencies of the scan can be set for each harmonic.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Spectra refresh resolution
+\end_layout
+
+\begin_layout Standard
+This option in the 
+\begin_inset Quotes eld
+\end_inset
+
+Settings Panel
+\begin_inset Quotes erd
+\end_inset
+
+ controls how often the QCM MATLAB Program refreshes the raw conductance
+ and/or susceptance spectras.
+ Its default value is 1, which means that the MATLAB program will refresh
+ the spectras each time it reads in data from the datafile (see Part 2 for
+ a more thorough explanation on how the QCM MATLAB Program reads data from
+ the impedance analyzer).
+ Changing this number to a higher integer-value can potentially increase
+ the time resolution of the measurements significantly, since it takes a
+ finite amount of time for MATLAB to constantly refresh the spectral plots.
+ For example, a spectra refresh resolution of 10 means that the MATLAB prgram
+ will refresh the plots every 10th measurement it collects.
+\end_layout
+
+\begin_layout Subsubsection
+Reference time
+\end_layout
+
+\begin_layout Standard
+Since this programs collects frequency and dissipation shifts as a function
+ of time, having a reference time is important, especially if new data needs
+ to be appended onto another dataset from a previous experiment.
+ The default reference time is set to the time in which the QCM MATLAB GUI
+ figure was initiated.
+ The reference time can also be changed manually by editting the values
+ in the text box.
+ Make sure that the values are in the correct format, yy:mm:dd:HH:MM:SS:FFF,
+ where yy, mm, dd, MM, SS, and FFF, represent the last two digits of the
+ year, the month, the day, the hour (24-hour format), the minutes, the seconds,
+ and the milliseconds, respectively.
+ 
+\series bold
+Do not hit the 
+\begin_inset Quotes eld
+\end_inset
+
+Reset Reference Time
+\begin_inset Quotes erd
+\end_inset
+
+ button after editing the reference time.
+ Clicking on the 
+\begin_inset Quotes eld
+\end_inset
+
+Reset Reference Time
+\begin_inset Quotes erd
+\end_inset
+
+ will set the reference time to the current time! Simply hit the 
+\begin_inset Quotes eld
+\end_inset
+
+Enter
+\begin_inset Quotes erd
+\end_inset
+
+ key after inputting your desired reference time.
+\end_layout
+
+\begin_layout Subsubsection
+Time between harmonics
+\end_layout
+
+\begin_layout Standard
+This option controls the amount of time (in milliseconds) in between each
+ harmonic measurements.
+ In general, it is not neccesary to change this value.
+ 
+\series bold
+A short time can lead to synchronization and systematic errors.
+ 
+\series default
+If the resonance peaks in the spectra looks odd or abnormal, increasing
+ the amount of time in between each harmonic measurement might solve the
+ problem.
+ Otherwise, it might be due to other errors (see the Troubleshooting section).
+ An example of what a resonance peak looks like if there is not sufficient
+ amount of time in between harmonics is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:unsynchronized peak"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/not synchronized peak.png
+	scale 75
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+An abnormal resonance peak (5MHz) due to insufficient amount of time in
+ between harmonics.
+ Increase the time in between each harmonic measurement to solve this problem.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:unsynchronized peak"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Number of datapoints
+\end_layout
+
+\begin_layout Standard
+The number of datapoints in each frequency scan can be adjusted.
+ The default value is 200 datapoints.
+ Note that increasing the number of datapoints will require more time in
+ between harmonics.
+ Thus, the time in between haronics need to be adjusted accordingly.
+ 
+\series bold
+A good rule of thumb is to allow 4-6 ms for each datapoint.
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset Quotes eld
+\end_inset
+
+Record data every _ s
+\begin_inset Quotes erd
+\end_inset
+
+ option
+\end_layout
+
+\begin_layout Standard
+The time interval in which the QCM MATLAB Program records the spectra measure
+ can be set in this option.
+ For experiments that last for days to weeks, it is more practical to increase
+ the time interval in which the MATLAB program records the data.
+ Currently, the MATLAB program allows for 1 million timepoints to be recorded.
+ If more than one million datapoints are collected, an error will appear
+ and terminate the data collection process.
+ The maximum number of datapoints to keep can be adjusted in the MATLAB
+ code.
+ However, it should be noted that the MATLAB program will progressively
+ slow down as more data is being collected since it will take longer for
+ MATLAB to append new values and variables into the output 
+\begin_inset Quotes eld
+\end_inset
+
+.mat
+\begin_inset Quotes erd
+\end_inset
+
+ files.
+ For all practical purposes, this should not be an issue.
+ If it is an issue, the output files should be split up into multiple files
+ to mitigate this effect.
+\end_layout
+
+\begin_layout Standard
+For experiments that are on a short time scale, it is important to remember
+ that the number of datapoints and time in between harmonics need to be
+ adjusted accordingly before decreasing the recording time interval.
+ Otherwise, duplicates of the same spectra will be recorded.
+ 
+\series bold
+In other words, if the recording time interval is less than the time in
+ between harmonics, duplicates of the same spectra will be recorded.
+ 
+\series default
+An example of this systematic error is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:duplicate datapoint"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/duplicate datapoints.png
+	scale 75
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+If the recording time interval is less than the time in between harmonics,
+ duplicates of datapoints will occur.
+ This is evident if the freqeuncy shift plot is observed during the measurement
+ process.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:duplicate datapoint"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Fitting options
+\end_layout
+
+\begin_layout Standard
+There are five radio-dials in the 
+\begin_inset Quotes eld
+\end_inset
+
+Fitting Options
+\begin_inset Quotes erd
+\end_inset
+
+ panel (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:fitting options"
+
+\end_inset
+
+): 
+\begin_inset Quotes eld
+\end_inset
+
+Dynamic Fit
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+Fit Susceptance
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+Show Xsq parameter
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+Show susceptance
+\begin_inset Quotes erd
+\end_inset
+
+, and 
+\begin_inset Quotes eld
+\end_inset
+
+Show polar plot
+\begin_inset Quotes erd
+\end_inset
+
+.
+ If the 
+\begin_inset Quotes eld
+\end_inset
+
+Dynamic Fit
+\begin_inset Quotes erd
+\end_inset
+
+ radiodial is checked, a Lorentzian function curve fitting algorithm will
+ be used to fit the resonance conductance peaks each time a spectra is collected.
+ Unchecking this option significantly decreases the time required to record
+ a measured spectra, which may be of importance if recording fast scans
+ are required in an experiment.
+ If the 
+\begin_inset Quotes eld
+\end_inset
+
+Fit Susceptance
+\begin_inset Quotes erd
+\end_inset
+
+ radiodial is checked along with the 
+\begin_inset Quotes eld
+\end_inset
+
+Dynamic Fit
+\begin_inset Quotes erd
+\end_inset
+
+ radio dial, both the conductance and susceptance resonance curves will
+ be fitted.
+ Note that the additional step of fitting the susceptance curve will require
+ more time to record a measured spectra.
+ If the 
+\begin_inset Quotes eld
+\end_inset
+
+Show Xsq parameter
+\begin_inset Quotes erd
+\end_inset
+
+ radiodial is checked along with the 
+\begin_inset Quotes eld
+\end_inset
+
+Dynamic Fit
+\begin_inset Quotes erd
+\end_inset
+
+ radiodial, the 
+\begin_inset Formula $\chi^{2}$
+\end_inset
+
+ parameter for each fit will be calculated and recorded.
+ Details in regards to calculating goodness-of-fit for the curve fitting
+ process is discuseed in later sections.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/fitting options.png
+	lyxscale 60
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Options related to the fitting process during the measurements can be adjusted
+ in the 
+\begin_inset Quotes eld
+\end_inset
+
+Fitting Options
+\begin_inset Quotes erd
+\end_inset
+
+ section located in the 
+\begin_inset Quotes eld
+\end_inset
+
+Settings
+\begin_inset Quotes erd
+\end_inset
+
+ panel.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:fitting options"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Formatting output file
+\end_layout
+
+\begin_layout Standard
+In the 
+\begin_inset Quotes eld
+\end_inset
+
+Format Output File
+\begin_inset Quotes erd
+\end_inset
+
+ panel, there is a button called, 
+\begin_inset Quotes eld
+\end_inset
+
+Choose data filename
+\begin_inset Quotes erd
+\end_inset
+
+.
+ This button will open a file-output explorer dialogue box (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:File open dialoge box"
+
+\end_inset
+
+).
+ From this dialogue box, the name and location of the output data can be
+ chosen.
+ 
+\series bold
+If a pre-existing file is chosen, any absolute frequency/disspation and
+ frequency/dissipation shift data that is collected will be overwritten
+ 
+\bar under
+unless
+\bar default
+ the settings associated with the output datafile is also loaded.
+ 
+\series default
+If the frequency/dissipation data was not recorded (in other words, a Lorentzian
+ function was not fitted to the raw spectra data), the saved raw spectra
+ curves will be added into the .mat file containing the raw spectras.
+ 
+\series bold
+However, be sure to set the correct reference time associated with the original
+ output datafile.
+ Otherwise, the timestamp associated with the raw spectras will be incorrect.
+ 
+\series default
+Generally, choosing a pre-exisiting file is not recommended.
+ Appending new data to a pre-exisiting file can be better accomplished by
+ clicking on the 
+\begin_inset Quotes eld
+\end_inset
+
+Append exisiting data
+\begin_inset Quotes erd
+\end_inset
+
+ button.
+ This allows the user to load pre-existing data sets.
+ Data collection will added to the pre-exisiting datafiles.
+ For more information on how the data is stored in the output data file,
+ see the section on 
+\begin_inset Quotes eld
+\end_inset
+
+Loading and saving settings
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+the following figures and steps should be moved to the troubleshooting section
+ for clarity and simplicity of this quick start guide section
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/file explorer dialogue box.png
+	lyxscale 50
+	scale 35
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+File-output explorer dialogue box.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:File open dialoge box"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+If the 
+\begin_inset Quotes eld
+\end_inset
+
+settings
+\begin_inset Quotes erd
+\end_inset
+
+ file associated with the output datafile does not exist, the frequency/dissipat
+ion data can still be manually appended.
+ To do this, follow the steps listed below:
+\end_layout
+
+\begin_layout Enumerate
+Click on the 
+\begin_inset Quotes eld
+\end_inset
+
+Access handles structure
+\begin_inset Quotes erd
+\end_inset
+
+button.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+
+\backslash
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename Figures/access handles structure.png
+	lyxscale 80
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Go to the MATLAB Command Window and push Crtl+o buttons on the keyboard.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+
+\backslash
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename Figures/Command window with open dialogue.png
+	lyxscale 40
+	scale 35
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Open the output datafile that was chosen previously from thefile-output
+ explorer dialogue.
+ This will load the variables stored in the .mat file into the MATLAB Workspace.
+\end_layout
+
+\begin_layout Enumerate
+In the MATLAB Workspace, double-click on abs_freq or freq_shift
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+
+\backslash
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename Figures/workspace output file.png
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+This will open up the 
+\begin_inset Quotes eld
+\end_inset
+
+Variables
+\begin_inset Quotes erd
+\end_inset
+
+ dialogue box containing the data stored in the variable that was double-clicked.
+ Find the row number associated with the last datapoint that was stored.
+\end_layout
+
+\begin_layout Enumerate
+Go back to the Command Window and type in the following command:
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+
+\backslash
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Quotes eld
+\end_inset
+
+handles.din.n=<row number associated with the last datapoint that was stored>
+\begin_inset Quotes erd
+\end_inset
+
+.
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+
+\backslash
+
+\end_layout
+
+\end_inset
+
+This will tell Matlab where (based on the row number) to begin appending
+ the new frequency and dissipation data.
+\end_layout
+
+\begin_layout Enumerate
+Click into the Matlab Editor Window and click on the 
+\begin_inset Quotes eld
+\end_inset
+
+Quit Debugging
+\begin_inset Quotes erd
+\end_inset
+
+ button near the top of the window.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+
+\backslash
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename Figures/quit debugging.png
+	lyxscale 50
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Loading and saving settings
+\end_layout
+
+\begin_layout Standard
+The options and setting parameters can be saved.
+ By clicking the 
+\begin_inset Quotes eld
+\end_inset
+
+Save Settings
+\begin_inset Quotes erd
+\end_inset
+
+ button, a settings file will be saved in the same path location as the
+ output datafiles.
+ If no output datafile was selected to begin with, the the current setting
+ options and parameters will be saved in the same path directory as the
+ QCM MATLAB Program.
+\end_layout
+
+\begin_layout Standard
+Clicking on the 
+\begin_inset Quotes eld
+\end_inset
+
+Load Settings
+\begin_inset Quotes erd
+\end_inset
+
+ button will automatically load the settings file associated with output
+ datafile (which is programmed to be named as 
+\begin_inset Quotes eld
+\end_inset
+
+<Output Filename>_.settings.mat
+\begin_inset Quotes erd
+\end_inset
+
+).
+ If the automattically-loaded settings file was not the desired settings
+ to be loaded, the 
+\begin_inset Quotes eld
+\end_inset
+
+Load Settings
+\begin_inset Quotes erd
+\end_inset
+
+ button can be clicked again to manally load the desired settings file.
+ If the settings file cannot be found, an open file dialogue box will pop-up
+ and the desired settings file can be loaded.
+\end_layout
+
+\begin_layout Standard
+When the QCM MATLAB Program runs into any errors while loading or saving
+ the setting options and parameters, the program will go into 
+\begin_inset Quotes eld
+\end_inset
+
+Debugging mode
+\begin_inset Quotes erd
+\end_inset
+
+.
+ To exit out of the debugging mode, simply push the button that says, 
+\begin_inset Quotes eld
+\end_inset
+
+Quit debugging
+\begin_inset Quotes erd
+\end_inset
+
+, or type 
+\begin_inset Quotes eld
+\end_inset
+
+return
+\begin_inset Quotes erd
+\end_inset
+
+ in the MATLAB Command Window.
+\end_layout
+
+\begin_layout Subsection
+Record scan
+\end_layout
+
+\begin_layout Standard
+To begin recording the measurements, simply click on the 
+\begin_inset Quotes eld
+\end_inset
+
+Record scan
+\begin_inset Quotes erd
+\end_inset
+
+ button 
+\begin_inset Graphics
+	filename Figures/Record scan.png
+
+\end_inset
+
+.
+ Details on how the measurment is recorded can be seen in the QCM MATLAB
+ code.
+ That secion of the code is thoroughly commented.
+ Also, refer to later sections on the summary of how the MATLAB program
+ records and saves the measurement scans.
+\end_layout
+
+\begin_layout Subsection
+Output files
+\end_layout
+
+\begin_layout Subsubsection
+No designated output filename and file location
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:No-designated-output"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When no output file is designated in the 
+\begin_inset Quotes eld
+\end_inset
+
+Format Output File
+\begin_inset Quotes erd
+\end_inset
+
+ panel in the 
+\begin_inset Quotes eld
+\end_inset
+
+Settings
+\begin_inset Quotes erd
+\end_inset
+
+ section, the recorded data will be stored in the default output files:
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+fg_values.mat
+\begin_inset Quotes erd
+\end_inset
+
+: This MATLAB .mat file contains frequency and dissipation information that
+ was collected during the recording process.
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Variables
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\series bold
+\begin_inset Quotes eld
+\end_inset
+
+abs_freq
+\begin_inset Quotes erd
+\end_inset
+
+:
+\series default
+ (1e6)x13 double array containing the absolute frequency and dissipation
+ data.
+ The first column contains the timepoints.
+ Columns 2, 4, 6, 8, 10, and 12 contain the absolute frequency data.
+ Columns 3, 5, 7, 9, 11, and 13 contain the absolute dissipation data.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+\begin_inset Quotes eld
+\end_inset
+
+freq_shift
+\begin_inset Quotes erd
+\end_inset
+
+: 
+\series default
+(1e6)x13 double array containing the frequency and dissipation shift data.
+ The first column contains the timepoints.
+ Columns 2, 4, 6, 8, 10, and 12 contain the frequency shift data.
+ Columns 3, 5, 7, 9, 11, and 13 contain the dissipation shift data.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+\begin_inset Quotes eld
+\end_inset
+
+chi_values
+\begin_inset Quotes erd
+\end_inset
+
+: 
+\series default
+(1e6)x3 double array containing the 
+\begin_inset Formula $\chi^{2}$
+\end_inset
+
+curve fitting statistics.
+ The first column contains the timepoints.
+ Columns 2 and 3 contain the 
+\begin_inset Formula $\chi^{2}$
+\end_inset
+
+curve fitting statistics for the conductance and susceptance data.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+\begin_inset Quotes eld
+\end_inset
+
+freq_shift_ref
+\begin_inset Quotes erd
+\end_inset
+
+:
+\series default
+ contains the reference frequency (row 1) and dissipation (row 2) values
+ for the frequency and dissipation shift data.
+ Columns 1, 2, 3, 4, 5, and 6 contain reference values for harmonics 1,
+ 3, 5, 7, 9.
+ and 11.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+\begin_inset Quotes eld
+\end_inset
+
+reference
+\begin_inset Quotes erd
+\end_inset
+
+:
+\series default
+ 4x1 cell array containing (in order of row index) the reference timestamp
+ (yy:mm:dd:HH:MM:SS:FFF), the time in between harmonic measurements in ms,
+ the number of datapoints collected in the raw spectra data, and the time
+ interval in which the data was recorded in s.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+\begin_inset Quotes eld
+\end_inset
+
+version
+\begin_inset Quotes erd
+\end_inset
+
+:
+\series default
+ string variable containing information on which version of the QCM program
+ was used to record the data
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+raw_spectras.mat
+\begin_inset Quotes erd
+\end_inset
+
+: This MATLAB .mat file contains raw spectra information that was collected
+ during the scan.
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Variables
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\series bold
+\begin_inset Quotes eld
+\end_inset
+
+reference
+\begin_inset Quotes erd
+\end_inset
+
+:
+\series default
+ 4x1 cell array containing (in order of row index) the reference timestamp
+ (yy:mm:dd:HH:MM:SS:FFF), the time in between harmonic measurements in ms,
+ the number of datapoints collected in the raw spectra data, and the time
+ interval in which the data was recorded in s.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+filename_t_<min>dot<fractional min>_iq_1_ih_<harmonic order>:
+\series default
+ contains the frequency (first column), conductance (second column), and
+ susceptance data (third column) at time <min>.<fractional min>.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Standard
+Both files are located in the same path directory as the QCM MATLAB Program.
+ It is important to note that these two .mat files may or may not be cleared
+ before the data collection process.
+ Thus, any data stores may or may not be convoluted from previous stored
+ data in the .mat files.
+ These two files is just a safeguard from losing data that was collected.
+ If data is extracted from these two files, it is important to clear the
+ data that was stored, so that future data stored in the files will not
+ be convoluted with old data.
+ To do this, follow these steps:
+\end_layout
+
+\begin_layout Enumerate
+Go to the MATLAB Command Window and type, 
+\begin_inset Quotes eld
+\end_inset
+
+clear all
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Hit the 
+\begin_inset Quotes eld
+\end_inset
+
+Enter
+\begin_inset Quotes erd
+\end_inset
+
+ key.
+\end_layout
+
+\begin_layout Enumerate
+In the MATLAB Command Window, type 
+\begin_inset Quotes eld
+\end_inset
+
+dum=0
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Hit the 
+\begin_inset Quotes eld
+\end_inset
+
+Enter
+\begin_inset Quotes erd
+\end_inset
+
+ key.
+\end_layout
+
+\begin_layout Enumerate
+Click into the MATLAB Workspace and push 
+\begin_inset Quotes eld
+\end_inset
+
+Crtl+o
+\begin_inset Quotes erd
+\end_inset
+
+ buttons on the keyboard.
+\end_layout
+
+\begin_layout Enumerate
+This will create a save prompt window.
+ Save and replace both 
+\begin_inset Quotes eld
+\end_inset
+
+fg_values.mat
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+raw_spectras.mat
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+If the settings are saved with no designated output file , a 
+\begin_inset Quotes eld
+\end_inset
+
+default_settings.mat
+\begin_inset Quotes erd
+\end_inset
+
+ file will be saved in the same path directory as the QCM MATLAB Program.
+\end_layout
+
+\begin_layout Subsubsection
+Designated output filename and file location
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Designated-output-filename"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When an output filename and location are designated, the recorded data will
+ be stored in the following output files:
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+<user-designated filename>.mat
+\begin_inset Quotes erd
+\end_inset
+
+: This MATLAB .mat file contains frequency and dissipation information that
+ was collected during the recording process.
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Variables
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+abs_freq
+\begin_inset Quotes erd
+\end_inset
+
+: (1e6)x13 double array containing the absolute frequency and dissipation
+ data.
+ The first column contains the timepoints.
+ Columns 2, 4, 6, 8, 10, and 12 contain the absolute frequency data.
+ Columns 3, 5, 7, 9, 11, and 13 contain the absolute dissipation data.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+freq_shift
+\begin_inset Quotes erd
+\end_inset
+
+: (1e6)x13 double array containing the frequency and dissipation shift data.
+ The first column contains the timepoints.
+ Columns 2, 4, 6, 8, 10, and 12 contain the frequency shift data.
+ Columns 3, 5, 7, 9, 11, and 13 contain the dissipation shift data.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+chi_values
+\begin_inset Quotes erd
+\end_inset
+
+: (1e6)x3 double array containing the 
+\begin_inset Formula $\chi^{2}$
+\end_inset
+
+curve fitting statistics.
+ The first column contains the timepoints.
+ Columns 2 and 3 contain the 
+\begin_inset Formula $\chi^{2}$
+\end_inset
+
+curve fitting statistics for the conductance and susceptance data.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+freq_shift_ref
+\begin_inset Quotes erd
+\end_inset
+
+: contains the reference frequency (row 1) and dissipation (row 2) values
+ for the frequency and dissipation shift data.
+ Columns 1, 2, 3, 4, 5, and 6 contain reference values for harmonics 1,
+ 3, 5, 7, 9.
+ and 11.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+reference
+\begin_inset Quotes erd
+\end_inset
+
+: 4x1 cell array containing (in order of row index) the reference timestamp
+ (yy:mm:dd:HH:MM:SS:FFF), the time in between harmonic measurements in ms,
+ the number of datapoints collected in the raw spectra data, and the time
+ interval in which the data was recorded in s.
+\end_layout
+
+\end_deeper
+\end_deeper
+\end_deeper
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+<user_designated filename>_raw_spectras.mat
+\begin_inset Quotes erd
+\end_inset
+
+: This MATLAB .mat file contains raw spectra information that was collected
+ during the scan.
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Variables
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+reference
+\begin_inset Quotes erd
+\end_inset
+
+: 4x1 cell array containing (in order of row index) the reference timestamp
+ (yy:mm:dd:HH:MM:SS:FFF), the time in between harmonic measurements in ms,
+ the number of datapoints collected in the raw spectra data, and the time
+ interval in which the data was recorded in s.
+\end_layout
+
+\begin_layout Enumerate
+filename_t_<min>dot<fractional min>_iq_1_ih_<harmonic order>: contains the
+ frequency (first column), conductance (second column), and susceptance
+ data (third column) at time <min>.<fractional min>.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Enumerate
+If a settings file was saved, 
+\begin_inset Quotes eld
+\end_inset
+
+<user-designated filename>_settings.mat
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Troubleshooting
+\end_layout
+
+\begin_layout Standard
+The QCM MATLAB Program code is thoroughly commented and tested.
+ If errors occur, the code can be examined and debugged.
+ The easiest way to access the QCM MATLAB GUI handles structure is by pushing
+ the 
+\begin_inset Graphics
+	filename Figures/debug.png
+
+\end_inset
+
+ button.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Part
+Comprehensive guide to the QCM MATLAB Program
+\end_layout
+
+\begin_layout Section
+Features of the QCM MATLAB Program
+\end_layout
+
+\begin_layout Standard
+This section provides a more comprehensive overview of all the features
+ available in the MATLAB program.
+ The basic sections of the GUI are shown in 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Figure
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/Program overview.png
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+GUI Overview
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Figure toolbar
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/figure toolbar.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+A list of all of the button on the figure toolbar
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="17" columns="3">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="0pt">
+<row>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+#
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+zoom-in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+zoom-in into an axes plot
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+zoom-out
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+zoom-out from an axes plot
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pan tool
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pan axes tool
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+data cursor
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+select datapoints in an axes
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+delete datapoints mode
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+enable 
+\begin_inset Quotes eld
+\end_inset
+
+delete datapoints mode
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+load bare crystal data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+load reference frequencies
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+refit pre-existing raw spectras
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+this will enable the 
+\begin_inset Quotes eld
+\end_inset
+
+refit mode
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+multi-peak fitting options
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+set multi-peak functions
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+save frequency shift data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+save the frequency shift data
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+email notifications
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+set-up email notifications
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+plot options
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+plot options for primaryaxes1 and primaryaxes2
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+12
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+set preferences
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+set-up GUI preferences
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+13
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+home
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+revert GUI state back to the default state
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+14
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MyVNA
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+execute AccessMyVNA.exe
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+15
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+debugging mode
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+enter into debugging mode (for advanced users only!)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+16
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+help
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+opens the pdf manual
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Short description of each button on the figure toolbar
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Zoom in/out, pan, and data cursor tool 
+\begin_inset Graphics
+	filename Figures/zoom_pan_cursor.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+These tools have the same functionality as the default zoom in/out, pan,
+ and data cursor tools on a standard figure window.
+\end_layout
+
+\begin_layout Subsubsection
+Delete datapoints mode 
+\begin_inset Graphics
+	filename Figures/del_data.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Clicking on this toggle button will put the user in the 
+\begin_inset Quotes eld
+\end_inset
+
+Delete datapoints
+\begin_inset Quotes erd
+\end_inset
+
+ mode.
+ You will have the ability to select a datapoint graphically from the main
+ plots showing the frequency and dissipation shifts.
+ The selected datapoints can then be deleted by puching the 
+\begin_inset Quotes eld
+\end_inset
+
+delete
+\begin_inset Quotes erd
+\end_inset
+
+ button on the keyboard.
+ This will temporarily remove the datapoint from the plot.
+ Additional datapoints can be deleted from the plot.
+ Refreshing the plot by clicking on one of the hamonic radial dials in the
+ main plot panel (the radial dials that allow you to choose which harmonic
+ mode to plot) will undo all deletion of datapoints.
+\end_layout
+
+\begin_layout Standard
+When the 
+\begin_inset Quotes eld
+\end_inset
+
+Delete datapoints
+\begin_inset Quotes erd
+\end_inset
+
+ button is toggled on the 
+\begin_inset Quotes eld
+\end_inset
+
+on
+\begin_inset Quotes erd
+\end_inset
+
+ state, an additional button, 
+\begin_inset Graphics
+	filename Figures/trash_can.png
+
+\end_inset
+
+, will appear.
+ Clicking on this 
+\begin_inset Quotes eld
+\end_inset
+
+trash can
+\begin_inset Quotes erd
+\end_inset
+
+ icon will permanently remove any datapoints that were deleted from the
+ main plot panel.
+ However, the raw spectra data associated with the datapoints will not be
+ deleted.
+ If a datapoint was accidentally deleted, that datapoint can be recovered
+ by refitting the raw spectra, which is stored in the 
+\begin_inset Quotes eld
+\end_inset
+
+<filename>_raw_spectra.mat
+\begin_inset Quotes erd
+\end_inset
+
+ file.
+\end_layout
+
+\begin_layout Standard
+This functionality is particularly useful when an outlier (due to poor fitting,
+ etc.) causes the frequency and/or dissipation plots to zoom out, making
+ graphical interpretation of the measurement proccess difficult.
+ This function is NOT to be used for data manipulation!
+\end_layout
+
+\begin_layout Subsubsection
+Load bare crystal data 
+\begin_inset Graphics
+	filename Figures/bare.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Since frequency and dissipation shifts are relative to a reference value,
+ the reference values, which are typically values measured using a bare
+ crystal, can be loaded.
+ The default reference values correspond to theoretical resonance frequencies
+ (5, 15, 25, etc.
+ MHz) and an arbitrary dissipation value of 100 Hz.
+ Clicking on this button will bring up a windows file explorer dialogue,
+ asking to load the reference crystal data file, 
+\begin_inset Quotes eld
+\end_inset
+
+<reference filename>.mat
+\begin_inset Quotes erd
+\end_inset
+
+.
+ This data file has the same format and data structure as a typical QCM
+ file (see Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Designated-output-filename"
+
+\end_inset
+
+ for details).
+ The program reads in the reference crystal data file and computes the average
+ of the entire frequency and dissipation dataset for each harmonic.
+ The average values are then used to replace the default reference values.
+ The frequency and dissipation shifts measured will be adjusted accordingly.
+ The plots in the main plot panel might need to be refreshed in order to
+ see the changes made to the reference values.
+\end_layout
+
+\begin_layout Standard
+Note that clicking on the 
+\begin_inset Quotes eld
+\end_inset
+
+Home
+\begin_inset Quotes erd
+\end_inset
+
+ button (
+\begin_inset Graphics
+	filename Figures/home.png
+
+\end_inset
+
+, see Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Home"
+
+\end_inset
+
+) will reset the reference shift values back to the default values.
+\end_layout
+
+\begin_layout Subsubsection
+Refit pre-existing raw spectras 
+\begin_inset Graphics
+	filename Figures/refit.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This button will place the user in the 
+\begin_inset Quotes eld
+\end_inset
+
+Refitting
+\begin_inset Quotes erd
+\end_inset
+
+ mode.
+ This button allows the user to load raw spectra data files and refit the
+ data.
+ A window file explorer dialogue will appear asking for a raw spectra file,
+ 
+\begin_inset Quotes eld
+\end_inset
+
+<filename>_raw_spectra.mat
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The program effectively treats the raw spectras as measurements obtained
+ from the MyVNA program.
+ Thus, all fitting options related to multi-peak fitting and different guess
+ values will be avaialble.
+ This is useful when frequency and dissipation shifts are lost and need
+ to be recovered.
+ Also, for situations where the measurement process used a sub-optimal single-pe
+ak fitting algorithm to characterizing overlapping resonance peaks, this
+ functionality allows the user to post-fit the collected data in order to
+ obtain a more accurate and precise values for the frequency and dissipation
+ values.
+\end_layout
+
+\begin_layout Subsubsection
+Multi-peak fitting options 
+\begin_inset Graphics
+	filename Figures/multi_fit.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This button brings up a table containing parameters related to the options
+ for identifying peaks in the resonance spectra.
+ The first column contains the harmonic order the parameters are associated.
+ The second column contains the peak prominence sensitivity factor associated
+ with the peak identification prcoess (a lower number corresponds to higher
+ peak sensitivity); the values must be between 0 and 1.
+ The third column contains parameters associated with the minimum peak height
+ requirement relative to the datapoint with the highest y-value in the spectra
+ (a lower number corresponds to higher peak sensitivity); the values must
+ be between 0 and 1.
+ The fourth column contains the maximum number of peaks the program will
+ search in the resonance spectra; values must be between 1 and 3 (the maximum
+ number of peaks is set to 3).
+\end_layout
+
+\begin_layout Subsubsection
+Save frequency shift data 
+\begin_inset Graphics
+	filename Figures/save.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This button saves the current state of the frequency and dissipation shift
+ data stored in the handles structure.
+ If no filename has been designated, the data will be saved according to
+ the default filenames (see Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:No-designated-output"
+
+\end_inset
+
+ for details).
+\end_layout
+
+\begin_layout Subsubsection
+Email notifications 
+\begin_inset Graphics
+	filename Figures/email.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Clicking on this button will bring up a window asking the user to input
+ an email address and an option to turn on/off the email notifications.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/email_window.png
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Email notification window.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This function only stores the email information and the toggle state of
+ the email notifications in the handle structure.
+ When the notifications are turned on, an email will be sent (using the
+ 
+\begin_inset Quotes eld
+\end_inset
+
+email_send
+\begin_inset Quotes erd
+\end_inset
+
+ function) during the measurement process.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+email_send
+\begin_inset Quotes erd
+\end_inset
+
+ function utilizes undocumented Javascript code.
+ A screenshot of the GUI (.jpg) will be sent along with a Command Window
+ log text file, QCM_diary.txt (see 
+\begin_inset Quotes eld
+\end_inset
+
+Diary
+\begin_inset Quotes erd
+\end_inset
+
+ function in the MATLAB help document).
+ Note that the QCM_diary.txt file will continue to grow larger as more points
+ are being recorded (since there are more 
+\begin_inset Quotes eld
+\end_inset
+
+stuff
+\begin_inset Quotes erd
+\end_inset
+
+ in the command window).
+ Thus, it is advisable to clear out the QCM_diary.txt file ever once in awhile
+ during a long measurement process with short measurement intervals.
+ Also, if the 
+\begin_inset Quotes eld
+\end_inset
+
+email_send
+\begin_inset Quotes erd
+\end_inset
+
+ functions runs into an error, an error message will appear in the command
+ window, but the measurement will continue (the main code is written in
+ a try/catch-block).
+\end_layout
+
+\begin_layout Subsubsection
+Plot options 
+\begin_inset Graphics
+	filename Figures/plot_options.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This button allows the user to adjust the properties for 
+\begin_inset Quotes eld
+\end_inset
+
+primaryaxes1
+\begin_inset Quotes erd
+\end_inset
+
+ (top right axes) and for 
+\begin_inset Quotes eld
+\end_inset
+
+primaryaxes2
+\begin_inset Quotes erd
+\end_inset
+
+ (bottom right axes).
+ The callback function uses the 
+\begin_inset Quotes eld
+\end_inset
+
+inspect
+\begin_inset Quotes erd
+\end_inset
+
+ function to provide the user access to the axes properties.
+ For more information on what each axes property does, refer to the MATLAB
+ help document on the 
+\begin_inset Quotes eld
+\end_inset
+
+inspect
+\begin_inset Quotes erd
+\end_inset
+
+ function.
+\end_layout
+
+\begin_layout Subsubsection
+Set preferences 
+\begin_inset Graphics
+	filename Figures/set_pref.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Home 
+\begin_inset Graphics
+	filename Figures/home.png
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Home"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This button resets the entire GUI back into its default state.
+ All data that was collected will be deleted from the handle structure associate
+d with the figure window.
+\end_layout
+
+\begin_layout Subsubsection
+MyVNA 
+\begin_inset Graphics
+	filename Figures/myvna_button.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+\emph on
+\bar under
+NOTE: 
+\series default
+\emph default
+\bar default
+For versions 2.0c and higher, this button is a toggle button.
+ When the button is in the 
+\begin_inset Quotes eld
+\end_inset
+
+on
+\begin_inset Quotes erd
+\end_inset
+
+ state, both AccessMyVNA and MyVNA programs will execute.
+ However, only the MyVNA GUI will appear (minimized in the desktop toolbar).
+ The AccessMyVNA GUI will no longer appear.
+ Instead, the execution process (AccessMyVNA.exe) can be located in the Windows
+ Task Manager.
+ When the button is in the 
+\begin_inset Quotes eld
+\end_inset
+
+off
+\begin_inset Quotes erd
+\end_inset
+
+ state, both the AccessMyVNA and MyVNA program will be terminated (forced
+ termination using the cmd.exe commands).
+\end_layout
+
+\begin_layout Subsubsection
+Debugging mode 
+\begin_inset Graphics
+	filename Figures/debug.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This takes the user into debugging mode.
+ The callback function uses the 
+\begin_inset Quotes eld
+\end_inset
+
+keyboard
+\begin_inset Quotes erd
+\end_inset
+
+ function and also exports the handle structure of the GUI into the 
+\begin_inset Quotes eld
+\end_inset
+
+base
+\begin_inset Quotes erd
+\end_inset
+
+ workspace.
+ Note that any changes that are made will not necessarily be saved.
+ For example, changes to variables (not handle objects) will not be saved
+ in the handles structure unless the 
+\begin_inset Quotes eld
+\end_inset
+
+guidata
+\begin_inset Quotes erd
+\end_inset
+
+ function has been initiated in the command window.
+ However, direct changes to handle objects (using the 
+\begin_inset Quotes eld
+\end_inset
+
+set
+\begin_inset Quotes erd
+\end_inset
+
+ function), will be immediately applied and saved.
+ For more information on the details on how information is saved, see the
+ 
+\begin_inset Quotes eld
+\end_inset
+
+guidata
+\begin_inset Quotes erd
+\end_inset
+
+ in the MATLAB general help files.
+\end_layout
+
+\begin_layout Subsubsection
+Help 
+\begin_inset Graphics
+	filename Figures/help.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This button will direct the user to the pdf manual.
+ Also, feel free to contact me through email (CHJoshuaYeh@u.northwestern.edu).
+\end_layout
+
+\begin_layout Subsection
+GUI toolbar
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/GUI_toolbar.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+GUI toolbar
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="3">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+#
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Record Scan
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Start the measurement process
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Peak Centering Mode
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Allows for finding the appropriate harmonics
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clear Raw Spectras
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clear all of the spectral plots
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+View Raw Figure Mode
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+View each spectra in individual plots
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clear Datapoints
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Delete all frequency shift datapoints
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Short description of each button on the GUI toolbar
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Settings panel
+\end_layout
+
+\begin_layout Subsection
+Raw spectra panel
+\end_layout
+
+\begin_layout Subsection
+Main plot panel
+\end_layout
+
+\begin_layout Subsection
+Status toolbar
+\end_layout
+
+\begin_layout Section
+Troubleshooting
+\end_layout
+
+\begin_layout Part
+Design overview
+\end_layout
+
+\begin_layout Section
+Goal and purpose of the QCM MATLAB program
+\end_layout
+
+\begin_layout Standard
+The primary goal for the developement of this program is to provide a MATLAB
+ interface in obtaining QCM measurements.
+ Specifically, this program has the capability to measure the location and
+ half-max-half-width (HMHW) of the resonance conductance peaks.
+ Based on this information, analysis can be performed (in MATLAB) on these
+ measurements to extract out the viscoelastic properties of a film deposited
+ on the QCM crystal.
+ Currently, error bars are not explicitly calculated (only 
+\begin_inset Formula $\chi^{2}$
+\end_inset
+
+values for the peak fitting is calculated); however, one can easily calculate
+ error statistics since all of the raw conductance/susceptance spectra data
+ is saved in a 
+\begin_inset Quotes eld
+\end_inset
+
+.mat
+\begin_inset Quotes erd
+\end_inset
+
+ .
+\end_layout
+
+\begin_layout Section
+Hardware and software components
+\end_layout
+
+\begin_layout Subsection
+Hardware
+\end_layout
+
+\begin_layout Standard
+The hardware required to run the program is the N2PK Vector Network Analyzer
+ (N2PK-VNA, an impedance analyzer custom built by Ivan Markarov), a crystal
+ holder (Inficon, NY), and a QCM crystal (Inficon, NY).
+ Further information on the N2PK-VNA hardware details can be found in http://g8k
+bb.co.uk/html/myvna.html.
+ An image of the setup can be seen in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:QCM hardware"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+An image of the overall hardware setup.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:QCM hardware"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Software
+\end_layout
+
+\begin_layout Standard
+The N2PK-VNA came with a proprietary software called myVNA.
+ This software allows for remote access, which provides a means to control
+ the N2PK-VNA hardware with a custom program.
+ Currently, the program called AccessMyVNA (written in VB C++) is used to
+ remote-access the impedance analyzer.
+ AccessMyVNA is designed as a 
+\begin_inset Quotes eld
+\end_inset
+
+middleman
+\begin_inset Quotes erd
+\end_inset
+
+ or a 
+\begin_inset Quotes eld
+\end_inset
+
+gateway
+\begin_inset Quotes erd
+\end_inset
+
+ program for the QCM MATLAB program to communicate with the N2PK-VNA hardware.
+ Details on how the programs communicate with each other is discussed in
+ subsequent sections.
+ To summarize, in order to collect QCM measurements with the QCM MATLAB
+ program, three programs must be runnning simultaneously: 1) MyVNA, 2) AccessMyV
+NA, 3) QCM MATLAB program.
+ An image if each program is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:A-screen-shot of 3 programs"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+a) MyVNA
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/MyVNA screenshot.png
+	lyxscale 50
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+b) AccessMyVNA
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/AccessMyVNA screenshot.png
+	lyxscale 50
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+c) QCM MATLAB Program
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/QCM MATLAB Program screenshot.png
+	lyxscale 50
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+A screen shot of each program: a) MyVNA, b) AccessMyVNA, c) QCM MATLAB Program
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:A-screen-shot of 3 programs"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Design overview of how the programs work
+\end_layout
+
+\begin_layout Standard
+A general overview of how all the programs communicate with each is shown
+ in flow chart in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:three program flow chart"
+
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+
+\backslash
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/three program flow chart.png
+	lyxscale 50
+	scale 75
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+A flow chart of how the three programs communicate with each other.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:three program flow chart"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:three program flow chart"
+
+\end_inset
+
+, the QCM MATLAB Program does not directly communicate with the impedance
+ analyzer, instead the MATLAB program directly manipulates AccessMyVNA to
+ control the impedance analyzer.
+ A more detailed interaction between AccessMyVNA and the QCM MATLAB Program
+ is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:AccessMyVNA and MATLAB flowchart"
+
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+
+\backslash
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/AccessMyVNA and QCM MATLAB Program.png
+	lyxscale 50
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+A more detailed flowchart how the QCM MATLAB program communicates with AccessMyV
+NA.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:AccessMyVNA and MATLAB flowchart"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Part
+MATLAB code overview
+\end_layout
+
+\begin_layout Section
+Record scan algorithm explained
+\end_layout
+
+\begin_layout Standard
+Since the program heavily relies on the details on how the measurement process
+ is run, a section has been dedicated in explaining how the MATLAB script
+ was written.
+ When an unforseen error or bug occurs, this section is a good place in
+ finding the origin of the problem.
+\end_layout
+
+\begin_layout Section
+List of functions
+\end_layout
+
+\begin_layout Part
+Aknowledgements
+\end_layout
+
+\begin_layout Standard
+This program is heavily influenced by the many features in the QTZ.exe written
+ by Diethelm Johannsmann, Institute of Physical Chemistry, TU-Clausthal,
+ Germany.
+ The author of this MATLAB program is very thankful for his contribution
+ to the QCM community and theory.
+ Further, many thanks to the members of the Shull Research Group, Northwestern
+ University, and Professor Kenneth Shull for his guidance and design into
+ the developement of this QCM MATLAB program.
+ Any comments or suggestions are welcome! CHJoshuaYeh@u.northwestern.edu
+\end_layout
+
+\end_body
+\end_document

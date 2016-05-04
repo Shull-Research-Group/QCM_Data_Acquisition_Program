@@ -1,0 +1,29 @@
+﻿Build started 1/17/2014 2:07:38 PM.
+     1>Project "C:\Users\Josh\Desktop\vnadll\vnadll.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Ob1 /Oy- /D WIN32 /D NDEBUG /D _WINDOWS /D _VC80_UPGRADE=0x0600 /D _WINDLL /GF /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Release/" /Fd".\Release/vc120.pdb" /Gd /TP /analyze- /errorReport:prompt io32.cpp vnaio.cpp vnawrapper.cpp
+         io32.cpp
+         vnaio.cpp
+     1>vnaio.cpp(229): warning C4800: 'BOOL' : forcing value to bool 'true' or 'false' (performance warning)
+     1>vnaio.cpp(307): warning C4800: 'BOOL' : forcing value to bool 'true' or 'false' (performance warning)
+     1>vnaio.cpp(317): warning C4800: 'BOOL' : forcing value to bool 'true' or 'false' (performance warning)
+     1>vnaio.cpp(327): warning C4800: 'BOOL' : forcing value to bool 'true' or 'false' (performance warning)
+     1>vnaio.cpp(405): warning C4800: 'BOOL' : forcing value to bool 'true' or 'false' (performance warning)
+     1>vnaio.cpp(515): warning C4800: 'BOOL' : forcing value to bool 'true' or 'false' (performance warning)
+         vnawrapper.cpp
+         Generating Code...
+       ResourceCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe /D NDEBUG /D _VC80_UPGRADE=0x0600 /l"0x0809" /nologo /fo".\Release\vnadll.res" vnadll.rc 
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:".\Release/vnadll.dll" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /DEF:".\vnadll.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\Release/vnadll.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\Release/vnadll.lib" /MACHINE:X86 /SAFESEH /DLL CyAPI\lib\CyAPI.lib
+         .\Release\vnadll.res
+         .\Release/io32.obj
+         .\Release/vnaio.obj
+         .\Release/vnawrapper.obj
+            Creating library .\Release/vnadll.lib and object .\Release/vnadll.exp
+         vnadll.vcxproj -> C:\Users\Josh\Desktop\vnadll\.\Release\vnadll.dll
+     1>Done Building Project "C:\Users\Josh\Desktop\vnadll\vnadll.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.59

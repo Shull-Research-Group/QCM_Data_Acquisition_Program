@@ -1,0 +1,19 @@
+-Added new feature that allows the deletion of freq shift datapoints.
+	1) On the GUI figure toolbar, click on the crosshair icon.
+	2) Select the datapoints to delete from either the 2 axes on the right of the GUI.
+	3) Once selected, hit the delete key on the keyboard.
+	4) The datapoints will be removed. However, to permanently remove the datapoints, click on the trashcan icon (which appears next to the crosshair icon) on the toolbar to confrim the deletion.
+-Slightly modified the peak tracking algorithm, so that the peak in the raw spectras is sufficiently zoomed in.
+-For the email notification feature, a screenshot of the entire GUI figure will be included in the email.
+-Fixed a bug associated with loading the settings file and displaying the correct number of datapoints collected for each harmonic.
+-Added a feature to easily append the collected data to an existing datafile.
+-The GUI will remember the last opened file path location.
+-Changed the preallocated size of points to 30,000.
+-Changed the default number of points collected for the spectra file to 400.
+-Fixed several bugs associated with the raw figure mode.
+-Added Plot Properties for the 2 plots located on the right side of the GUI.
+-Added ability to easily access the GUI figure handle.
+-Simplified the legend entries.
+-Fixed a couple bugs associated with the email notification feature
+-Will send emails when an error is detected during the scanning process if email notifications are turned on.
+-Removed the email notification push button and replaced it with a toolbar icon (envelope icon)

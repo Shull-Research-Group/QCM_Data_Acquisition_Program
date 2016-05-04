@@ -1,0 +1,21 @@
+;LIBRARY    VNA
+;DESCRIPTION "Implements a VNA device."
+;EXPORTS   
+;	extern "C" VNADevice::VNADevice    @1   
+;	extern "C" VNADevice::~VNADevice   @2   
+;	extern "C" VNADevice::Init    @3   
+;	extern "C" VNADevice::get_State    @4
+;	extern "C" VNADevice::Start		@5
+;	extern "C" VNADevice::Stop		@6
+;	extern "C" VNADevice::get_BytesReturned @7
+;	extern "C" VNADevice::Read	@8
+;;	extern "C" VNADevice::Write	@9
+LIBRARY VNADLL
+
+EXPORTS
+
+Inp32		@1
+Out32		@2
+vnawrite	@3
+vnaread		@4
+;VNADevice::VNADevice @5

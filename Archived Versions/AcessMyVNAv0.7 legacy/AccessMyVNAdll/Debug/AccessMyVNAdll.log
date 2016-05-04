@@ -1,0 +1,21 @@
+﻿Build started 1/16/2014 5:57:47 PM.
+     1>Project "C:\Users\Josh\Desktop\AcessMyVNAv0.7\AccessMyVNAdll\AccessMyVNAdll.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D _USRDLL /D _WINDLL /D _UNICODE /D UNICODE /D _AFXDLL /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\AccessMyVNAdll.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D _USRDLL /D _WINDLL /D _UNICODE /D UNICODE /D _AFXDLL /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\AccessMyVNAdll.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt AccessMyVNAdll.cpp
+         AccessMyVNAdll.cpp
+       ResourceCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe /D _DEBUG /D _UNICODE /D UNICODE /D _AFXDLL /l"0x0409" /IDebug\ /nologo /fo"Debug\AccessMyVNAdll.res" AccessMyVNAdll.rc 
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Josh\Desktop\AcessMyVNAv0.7\Debug\AccessMyVNAdll.dll" /INCREMENTAL /NOLOGO /DEF:".\AccessMyVNAdll.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\Include\Manifest\dpiaware.manifest" /DEBUG /PDB:"C:\Users\Josh\Desktop\AcessMyVNAv0.7\Debug\AccessMyVNAdll.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Josh\Desktop\AcessMyVNAv0.7\Debug\AccessMyVNAdll.lib" /MACHINE:X86 /SAFESEH /DLL Debug\AccessMyVNAdll.res
+         Debug\AccessMyVNAdll.obj
+         Debug\stdafx.obj
+     1>AccessMyVNAdll.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
+            Creating library C:\Users\Josh\Desktop\AcessMyVNAv0.7\Debug\AccessMyVNAdll.lib and object C:\Users\Josh\Desktop\AcessMyVNAv0.7\Debug\AccessMyVNAdll.exp
+         AccessMyVNAdll.vcxproj -> C:\Users\Josh\Desktop\AcessMyVNAv0.7\Debug\AccessMyVNAdll.dll
+     1>Done Building Project "C:\Users\Josh\Desktop\AcessMyVNAv0.7\AccessMyVNAdll\AccessMyVNAdll.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:37.71
