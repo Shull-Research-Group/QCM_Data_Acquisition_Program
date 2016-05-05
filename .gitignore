@@ -59,10 +59,6 @@ AccessMyVNAv0.7/release/settings07.txt
 AccessMyVNAv0.7/release/settings09.txt
 AccessMyVNAv0.7/release/settings11.txt
 
-AccessMyVNAv0.7/release/state_matlab.txt
-AccessMyVNAv0.7/release/settings.txt
-AccessMyVNAv0.7/release/wait_time2.txt
-
 Default_settings.mat
 fg_values.mat
 raw_spectras.mat
