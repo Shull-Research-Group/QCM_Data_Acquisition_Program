@@ -3548,15 +3548,14 @@ uicontrol('style','text','string','Email recipient:','units','normalized',...
     'background',get(f,'color'),'horizontalalignment','right');
 set_button=uicontrol('style','pushbutton','units','normalized','string','Apply',...
     'position',[0.78 0.001 0.2 0.1],'backgroundcolor',[0.8 0.8 0.8],...
-    'callback',{@set_email_options,handles,outserver,host_email,host_email_pw,txt,toggle_email,email});
+    'callback',{@set_email_options,handles,outserver,host_email,host_email_pw,txt,toggle_email});
 set(f,'CloseRequestFcn',{@email_close,handles,f,email,toggle_email});
-function set_email_options(hObject,~,handles,outserver,host_email,host_email_pw,txt,toggle_email,email)
+function set_email_options(hObject,~,handles,outserver,host_email,host_email_pw,txt,toggle_email)
 %check to see if all of the fields have been fillied out
 if isempty(outserver.String)==0&&isempty(host_email.String)==0&&isempty(host_email_pw.String)==0&&...
     toggle_email.Value==1
-handles.prefs.email_recipient=email.String;
-handles.prefs.email_host=host_email.String;
-%NEED TO CONTINUE WORKING ON THIS
+handles.prefs.email_recipient=get(hObject,'string');
+handles.pres
 elseif toggle_email.Value==0
 else
     set(txt,'string','Error! Make sure to fill all req. fields','foregroundcolor','r');
