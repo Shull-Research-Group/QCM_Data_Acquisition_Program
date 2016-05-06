@@ -3602,8 +3602,6 @@ email_notification_Callback(hObject, eventdata, handles)
 guidata(hObject,handles);
 
 function email_send(handles,message)
-%this function sends the email to the designated email address
-%NOTE: this function relies on UNDOCUMENTED MATLAB functionality!
 try
     drawnow; pause(1);
     try
