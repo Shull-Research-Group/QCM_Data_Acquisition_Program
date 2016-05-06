@@ -131,7 +131,7 @@ handles.prefs.show_dfdg=0;%default state of whether or not to show the freq and 
 handles.prefs.email_recipient=[];%prealloate empty field that will be used to store a recipient email address for the email notfication functionality
 handles.prefs.email_host=[];%preallocate empty field that will be used to store the host email address for the email notification functionality
 handles.prefs.email_pw=[];%preallocate empty field that will be used to store the password of the host mail address for the email notification functionality
-handles.prefs.email_outgoing=[];%preallocate empty filed that will be used to store the outgoing email server for the email notification functionality
+handles.prefs.email_outgoing_server=[];%preallocate empty filed that will be used to store the outgoing email server for the email notification functionality
 handles.din.refit.counter=1;%this counter is associated with keeping track which variable to load onto the program duringthe refitting process
 handles.din.refit_filename=[];%the filename in which the refitting process will be enacted on
 handles.din.refit_finish1=0;%this is a flag that represent whether or not all of the spectras for the 1st harmonic is finished refitting (refitting mode)
@@ -479,7 +479,7 @@ if isempty(get(handles.email_push,'userdata'))~=1
         catch
             disp('Email notifications have been turned on');
         end%try
-        disp(['Notifications will be sent to ',get(handles.uipanel5,'userdata')]);
+        disp(['Notifications will be sent to ',get(handles.prefs.email_recipient,'userdata')]);
     end% if get(handles.email_push,'userdata')==1
 end%if isempty(get(handles.email_push,'userdata'))~=1
 if handles.prefs.output_diary==1
@@ -3527,7 +3527,7 @@ f=figure(900);
 pos=get(f,'position');
 set(f,'position',[pos(1) pos(2) pos(3)/1.7 pos(4)/2],'menubar','none','numbertitle','off','name','Email setup');
 txt=uicontrol('style','text','string','Be sure to click "Apply" to update settings!','units','normalized',...
-    'fontweight','bold','fontsize',8,'position',[0.005 0.03 0.999 0.2/2],'backgroundcolor',get(f,'color'),...
+    'fontweight','bold','fontsize',8,'position',[0.005 0.07 0.999 0.2/2],'backgroundcolor',get(f,'color'),...
     'horizontalalignment','left');
 toggle_email=uicontrol('style','radiobutton',...
     'string','','units','normalized','position',[0.01 0.73 0.7 0.2/2],...
@@ -3535,51 +3535,58 @@ toggle_email=uicontrol('style','radiobutton',...
     'callback',{@toggle_func,handles,txt},'string','Turn on email notifications',...
     'value',get(handles.email_push,'userdata'));
 email=uicontrol('style','edit',...
-    'string',get(handles.uipanel5,'userdata'),'units','normalized','position',[0.33 0.86 0.6 0.1],...
-    'fontweight','bold','fontsize',10,'backgroundcolor',[1 1 1],...
+    'string',handles.prefs.email_recipient,'units','normalized','position',[0.33 0.86 0.6 0.1],...
+    'fontsize',8,'backgroundcolor',[1 1 1],'horizontalalignment','left');
+outserver=uicontrol('style','edit','units','normalized','position',[0.33 0.62 0.6 0.1],...
+    'tooltipstring','(e.g. smtp.gmail.com)','string',handles.prefs.email_outgoing_server,...
     'horizontalalignment','left');
-outserver=uicontrol('style','edit','units','normalized','position',[0.33 0.62 0.6 0.1]);
 outserver_txt=uicontrol('style','text','string','Outgoing server:','units','normalized',...
     'position',[0.001 0.60 0.3 0.1],'fontweight','bold','fontsize',8,'horizontalalignment','right');
-host_email=uicontrol('style','edit','units','normalized','position',[0.33 0.5 0.6 0.1]);
+host_email=uicontrol('style','edit','units','normalized','position',[0.33 0.49 0.6 0.1],...
+    'string',handles.prefs.email_host,'horizontalalignment','left');
 host_email_txt=uicontrol('style','text','string','Host email: ','units','normalized',...
     'position',[0.001 0.47 0.3 0.1],'fontweight','bold','fontsize',8,'horizontalalignment','right');
-host_email_pw=uicontrol('style','edit','units','normalized','position',[0.33 0.38 0.6 0.1]);
+host_email_pw=uicontrol('style','edit','units','normalized','position',[0.33 0.36 0.6 0.1],...
+    'string',handles.prefs.email_pw,'horizontalalignment','left');
 host_email_pw_txt=uicontrol('style','text','string','Email pw:','units','normalized',...
     'position',[0.001 0.35 0.3 0.1],'fontweight','bold','fontsize',8,'horizontalalignment','right');
 uicontrol('style','text','string','Email recipient:','units','normalized',...
     'position',[0.001 0.85 0.3 0.1],'fontweight','bold','fontsize',8,...
     'background',get(f,'color'),'horizontalalignment','right');
-set_button=uicontrol('style','pushbutton','units','normalized','string','Apply',...
+apply_button=uicontrol('style','pushbutton','units','normalized','string','Apply',...
     'position',[0.78 0.001 0.2 0.1],'backgroundcolor',[0.8 0.8 0.8],...
     'callback',{@set_email_options,handles,outserver,host_email,host_email_pw,txt,toggle_email,email});
-set(f,'CloseRequestFcn',{@email_close,handles,f,email,toggle_email});
+test_email_notification=uicontrol('style','pushbutton','units','normalized',...
+    'string','Test connection','tooltipstring','The program will attempt to send an email to test if the settings have set correctly',...
+    'backgroundcolor',[0.8 0.8 0.8],'position',[0.45 0.001 0.3 0.1],'callback',{@test_email,handles});
+function test_email(hObject,~,handles)
+disp('Testing connection...');
+handles=guidata(handles.primary1);%update handles structure
+guidata(handles.primary1,handles);
+set(handles.status,'string','Status: Testing connection for email notification...','foregroundcolor','r','backgroundcolor','k');
+email_send(handles,['This is a test message sent using the QCM acquisition program.' 10 'Version: ',handles.text17.String]);
 function set_email_options(hObject,~,handles,outserver,host_email,host_email_pw,txt,toggle_email,email)
 %check to see if all of the fields have been fillied out
+handles.prefs.email_recipient=email.String;%the email the notifications will be sent to
+handles.prefs.email_host=host_email.String;%the email host
+handles.prefs.email_pw=host_email_pw.String;%password associated with the email host
+handles.prefs.email_outgoing_server=outserver.String;%the outgoing email server (e.g. smtp.gmail.com)
 if isempty(outserver.String)==0&&isempty(host_email.String)==0&&isempty(host_email_pw.String)==0&&...
-    toggle_email.Value==1
-    handles.prefs.email_recipient=email.String;%the email the notifications will be sent to
-    handles.prefs.email_host=host_email.String;%the email host
-    handles.prefs.email_pw=host_email_pw.String;%password associated with the email host
-    handles.prefs.email_outgoing_server=outserver.String;%the outgoing email server (e.g. smtp.gmail.com)
-    guidata(handles.primary1,handles);%update the handle structure
-elseif toggle_email.Value==0%if the radio dial for turning on email notifications is set to off state, do nothing    
+    toggle_email.Value==1    
+    handles.email_push.UserData=1;%save the toggle state of the email notification    
+elseif toggle_email.Value==0%if the radio dial for turning on email notifications is set to off state
+    handles.email_push.UserData=0;%save the toggle state of the email notification
 else
     set(txt,'string','Error! Make sure to fill all req. fields','foregroundcolor','r');
 end
-function email_func(hObject,~,handles,toggle_email,txt)
-set(handles.uipanel5,'userdata',get(hObject,'string'));%need to fix this
-handles.prefs.email_recipient=get(hObject,'string');
-guidata(handles.primary1,handles);
-disp(['Email notifications will be sent to: ',get(hObject,'string')]);
-set(txt,'string',['Email address saved! (',get(hObject,'string'),')']);
-set(handles.status,'string',['Status: Email notifications will be sent to: ',get(hObject,'string')],'backgroundcolor','k','foregroundcolor','r');
+guidata(handles.primary1,handles);%update the handle structure
 function toggle_func(hObject,~,handles,txt)
 set(handles.email_push,'userdata',get(hObject,'value'));
 if get(hObject,'value')==1
     disp('Email notifications are turned on');
-    set(handles.status,'string',['Status: Email notifications are turned on and will be sent to: ',get(handles.uipanel5,'userdata')],'backgroundcolor','k','foregroundcolor','r');
-    set(txt,'string',['Emails will be sent to: ',get(handles.uipanel5,'userdata')],'foregroundcolor','k');
+    set(handles.status,'string',['Status: Email notifications are turned on and will be sent to: ',get(handles.prefs.email_recipient,'userdata')],...
+        'backgroundcolor','k','foregroundcolor','r');
+    set(txt,'string',['Emails will be sent to: ',get(handles.prefs.email_recipient,'userdata')],'foregroundcolor','k');
     set(handles.email_push,'userdata',1);
     guidata(handles.primary1,handles);
 else
@@ -3589,13 +3596,6 @@ else
     set(handles.email_push,'userdata',0);
     guidata(handles.primary1,handles);
 end%if get(hObject,'value')==1
-function email_close(~,~,handles,f,email,toggle_email)
-if isempty(get(handles.uipanel5,'userdata'))&&get(toggle_email,'value')==1
-    disp('Please input an email address and hit the enter key.');
-    msgbox('Please input an email address and hit the enter key.')
-else
-    delete(f);
-end%if isempty(get(handles.uipanel5,'userdata'))
 
 function email_push_ClickedCallback(hObject, eventdata, handles)
 email_notification_Callback(hObject, eventdata, handles)
@@ -3609,22 +3609,24 @@ try
     try
         set(handles.GUI_hf,'paperpositionmode','auto');
         print(handles.GUI_hf,'-djpeg','email files/screenshot.jpg');%save a jpg of the entire GUI figure
-        email=get(handles.uipanel5,'userdata');
+        email=handles.prefs.email_recipient;
         disp(['Sending email to: ',email]);
-        mail='shull.qcm@gmail.com';
-        password='softy.poly';
-        smtpserver='smtp.gmail.com';
-        setpref('Internet','SMTP_Server',smtpserver);
-        setpref('Internet','E_mail',mail);
-        setpref('Internet','SMTP_Username',mail);
-        setpref('Internet','SMTP_Password',password);
+        setpref('Internet','SMTP_Server',handles.prefs.email_outgoing_server);
+        setpref('Internet','E_mail',handles.prefs.email_host);
+        setpref('Internet','SMTP_Username',handles.prefs.email_host);
+        setpref('Internet','SMTP_Password',handles.prefs.email_pw);
         props = java.lang.System.getProperties;%Java script
         props.setProperty('mail.smtp.auth','true');
         props.setProperty('mail.smtp.socketFactory.class', 'javax.net.ssl.SSLSocketFactory');
-        props.setProperty('mail.smtp.socketFactory.port','465');    
-        sendmail(email,['Email notification on the QCM exp ',handles.din.output_filename],message,{'qcm_diary.txt','email files/screenshot.jpg'});
+        props.setProperty('mail.smtp.socketFactory.port','465');
+        if handles.start.Value==1
+            sendmail(email,['Email notification on the QCM exp ',handles.din.output_filename],message,{'qcm_diary.txt','email files/screenshot.jpg'});
+        else
+            sendmail(email,'Email test notification',message);
+        end%if handles.start.Value==1
         disp('Email notification sent!');
-    catch
+    catch email_err
+        assignin('base','email_err',email_err);
         disp('Error in sending email!');
     end
 catch
