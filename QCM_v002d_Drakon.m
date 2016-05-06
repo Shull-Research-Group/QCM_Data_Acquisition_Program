@@ -123,11 +123,15 @@ handles.prefs.peak_min(3)=.2;%min. peak finding threshold for the 3rd harmonic
 handles.prefs.peak_min(5)=.2;%min. peak finding threshold for the 5th harmonic
 handles.prefs.peak_min(7)=.2;%min. peak finding threshold for the 7th harmonic
 handles.prefs.peak_min(9)=.2;%min. peak finding threshold for the 9th harmonic
-handles.prefs.peak_min(11)=.2;%min. peak finding threshold for the 1th harmonic
+handles.prefs.peak_min(11)=.2;%min. peak finding threshold for the 11th harmonic
 handles.prefs.measurement_schedule=[];%set the default measurement schedule
 handles.prefs.measurement_schedule_rnames={'Start','End'};%row names associated with the measurement scheduler
 handles.prefs.schedule_toggle=0;%toggle state of the measurement schedule
 handles.prefs.show_dfdg=0;%default state of whether or not to show the freq and bandwidth shifts
+handles.prefs.email_recipient=[];%prealloate empty field that will be used to store a recipient email address for the email notfication functionality
+handles.prefs.email_host=[];%preallocate empty field that will be used to store the host email address for the email notification functionality
+handles.prefs.email_pw=[];%preallocate empty field that will be used to store the password of the host mail address for the email notification functionality
+handles.prefs.email_outgoing=[];%preallocate empty filed that will be used to store the outgoing email server for the email notification functionality
 handles.din.refit.counter=1;%this counter is associated with keeping track which variable to load onto the program duringthe refitting process
 handles.din.refit_filename=[];%the filename in which the refitting process will be enacted on
 handles.din.refit_finish1=0;%this is a flag that represent whether or not all of the spectras for the 1st harmonic is finished refitting (refitting mode)
@@ -3522,7 +3526,7 @@ delete(figure(900));
 f=figure(900);
 pos=get(f,'position');
 set(f,'position',[pos(1) pos(2) pos(3)/1.7 pos(4)/2],'menubar','none','numbertitle','off','name','Email setup');
-txt=uicontrol('style','text','string','Hit enter after inputting email address!','units','normalized',...
+txt=uicontrol('style','text','string','Be sure to click "Apply" to update settings!','units','normalized',...
     'fontweight','bold','fontsize',8,'position',[0.005 0.03 0.999 0.2/2],'backgroundcolor',get(f,'color'),...
     'horizontalalignment','left');
 toggle_email=uicontrol('style','radiobutton',...
@@ -3533,7 +3537,7 @@ toggle_email=uicontrol('style','radiobutton',...
 email=uicontrol('style','edit',...
     'string',get(handles.uipanel5,'userdata'),'units','normalized','position',[0.33 0.86 0.6 0.1],...
     'fontweight','bold','fontsize',10,'backgroundcolor',[1 1 1],...
-    'callback',{@email_func,handles,toggle_email,txt},'horizontalalignment','left');
+    'horizontalalignment','left');
 outserver=uicontrol('style','edit','units','normalized','position',[0.33 0.62 0.6 0.1]);
 outserver_txt=uicontrol('style','text','string','Outgoing server:','units','normalized',...
     'position',[0.001 0.60 0.3 0.1],'fontweight','bold','fontsize',8,'horizontalalignment','right');
@@ -3554,10 +3558,12 @@ function set_email_options(hObject,~,handles,outserver,host_email,host_email_pw,
 %check to see if all of the fields have been fillied out
 if isempty(outserver.String)==0&&isempty(host_email.String)==0&&isempty(host_email_pw.String)==0&&...
     toggle_email.Value==1
-handles.prefs.email_recipient=email.String;
-handles.prefs.email_host=host_email.String;
-%NEED TO CONTINUE WORKING ON THIS
-elseif toggle_email.Value==0
+    handles.prefs.email_recipient=email.String;%the email the notifications will be sent to
+    handles.prefs.email_host=host_email.String;%the email host
+    handles.prefs.email_pw=host_email_pw.String;%password associated with the email host
+    handles.prefs.email_outgoing_server=outserver.String;%the outgoing email server (e.g. smtp.gmail.com)
+    guidata(handles.primary1,handles);%update the handle structure
+elseif toggle_email.Value==0%if the radio dial for turning on email notifications is set to off state, do nothing    
 else
     set(txt,'string','Error! Make sure to fill all req. fields','foregroundcolor','r');
 end
