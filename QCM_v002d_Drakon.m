@@ -3951,7 +3951,7 @@ end
 function pref_ClickedCallback(hObject, ~, handles)%the purpose of this function is to provide a gui to set preferences for the program
 pref=figure(998);clf(figure(998));%dreate the figure
 %Create the relevant objects in the preferences
-set(pref,'dockcontrols','off','name','Set Preferences (Beta)','toolbar','none','menubar','none','numbertitle','off','color','w','position',[680 300 590 500]);
+set(pref,'dockcontrols','off','name','Set Preferences','toolbar','none','menubar','none','numbertitle','off','color','w','position',[680 300 590 500]);
 cwo_panel=uipanel('title','Command Window and Workspace options','foregroundcolor','b','fontweight','bold',...
     'position',[0 0.8 1 0.2]);
 radio_GB_values=uicontrol('style','radio','value',handles.prefs.show_GB,'tooltipstring','Display the fitted parameters in the command window.',...
