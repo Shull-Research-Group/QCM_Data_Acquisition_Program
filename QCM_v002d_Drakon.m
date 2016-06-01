@@ -3907,6 +3907,9 @@ handles.din.FG_frequency=NaN(handles.din.max_datapts,13);
 handles.din.FG_freq_shifts=NaN(handles.din.max_datapts,13);
 handles.din.chi_sqr_value=NaN(handles.din.max_datapts,13);
 nan_location=find(isnan(abs_freq(:,1)),1,'first');%find the first nan datapoint from the time column of the abs_freq variable
+if isempty(nan_location)==1
+    nan_location=size(abs_freq,1)+1;
+end
 %import in the data from the file to-be-appended to the current handles structure
 handles.din.FG_frequency(1:nan_location,:)=abs_freq(1:nan_location,:);
 handles.din.chi_sqr_value(1:nan_location,:)=chisq_values(1:nan_location,:);
