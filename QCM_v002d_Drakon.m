@@ -2783,7 +2783,8 @@ while get(handles.raw_fig,'value')==1&&get(handles.start,'value')==0
                         [mean([G_parameters(4),B_parameters(4)])/2+G_parameters(5),mean([G_parameters(4),B_parameters(4)])/2+G_parameters(5)],...
                         'o','color',[0 0.5 0],'markerfacecolor',[0 0.5 0],'markersize',6);
                     plot(a,freq,G_fit,'k','linewidth',2);
-                    text('units','normalized','position',[.02 .95 1],'string',['Xsq = ',num2str(sum(G_l_sq))],...
+                    text('units','normalized','position',[.02 .92 1],'string',...
+                        {['Xsq = ',num2str(sum(G_l_sq))];['f = ',num2str(G_parameters(1)),' Hz'];['\Gamma = ',num2str(G_parameters(2)),' Hz']},...
                     'fontweight','bold','backgroundcolor','none','edgecolor','k');
                     ylim_a=get(gca,'ylim');
                     b=axes('position',get(a,'position'));
@@ -3908,8 +3909,8 @@ handles.din.FG_freq_shifts=NaN(handles.din.max_datapts,13);
 handles.din.chi_sqr_value=NaN(handles.din.max_datapts,13);
 nan_location=find(isnan(abs_freq(:,1)),1,'first');%find the first nan datapoint from the time column of the abs_freq variable
 if isempty(nan_location)==1
-    nan_location=size(abs_freq,1)+1;
-end
+    nan_location=size(abs_freq,1);
+end%if isempty(nan_location)==1
 %import in the data from the file to-be-appended to the current handles structure
 handles.din.FG_frequency(1:nan_location,:)=abs_freq(1:nan_location,:);
 handles.din.chi_sqr_value(1:nan_location,:)=chisq_values(1:nan_location,:);
@@ -3917,6 +3918,9 @@ handles.din.FG_freq_shifts(1:nan_location,:)=freq_shift(1:nan_location,:);
 handles.din.ref_freq=freq_shift_ref(1,:);
 handles.din.ref_diss=freq_shift_ref(2,:);
 handles.din.n=find(isnan(abs_freq(:,1)),1,'first');
+if isempty(handles.din.n)==1
+    handles.din.n=nan_location+1;
+end%if isempty(handles.din.n)==1
 set(handles.reference_time,'string',reference(1,:));%redefine the reference time to the reference time from the file being appended
 [~, append_filename, ~] = fileparts(append_filename);
 handles.din.output_filename=append_filename;
