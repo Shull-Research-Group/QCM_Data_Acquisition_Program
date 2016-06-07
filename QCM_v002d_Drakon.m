@@ -147,6 +147,7 @@ handles.prefs.email_recipient=[];%prealloate empty field that will be used to st
 handles.prefs.email_host=[];%preallocate empty field that will be used to store the host email address for the email notification functionality
 handles.prefs.email_pw=[];%preallocate empty field that will be used to store the password of the host mail address for the email notification functionality
 handles.prefs.email_outgoing_server=[];%preallocate empty filed that will be used to store the outgoing email server for the email notification functionality
+handles.prefs.plot_dynamic_refresh=1;%this determines whether or not the plot will be dynamically refreshed after each scan
 handles.din.refit.counter=1;%this counter is associated with keeping track which variable to load onto the program duringthe refitting process
 handles.din.refit_filename=[];%the filename in which the refitting process will be enacted on
 handles.din.refit_finish1=0;%this is a flag that represent whether or not all of the spectras for the 1st harmonic is finished refitting (refitting mode)
@@ -890,6 +891,9 @@ while get(handles.start,'value')==1&&handles.din.refit_flag==0||...
             my_disp([num2str(temp),' seconds\n'],'blue');
         end%for get(handles.start,'value')==1
         write_settings(handles,harm_tot(dum));%update the setting txt file
+        if handles.prefs.plot_dynamic_refresh==1
+            guidata(handles.primary1,handles);
+        end%if handles.prefs.plot_dynamic_refresh==1
     end%for dum=1:size(harm_tot)
     my_disp('Datapoint(s): ','black');
     my_disp([num2str(n),'\n'],'blue');
@@ -3268,9 +3272,13 @@ function plot_primaryaxes1(handles,FG_frequency,harm_tot,n)
 hold on;
 active_plot_harmonics=[];
 flag=1;
+current_harm=handles.din.harmonic;
+if handles.prefs.plot_dynamic_refresh==1
+    handles=guidata(handles.primary1);
+end%if handles.prefs.plot_dynamic_refresh==1
 for dum=1:2:11
     plot_name_dial=['plot_',num2str(dum)];
-    if get(handles.(plot_name_dial),'value')==1&&sum(harm_tot==dum)==1&&dum==handles.din.harmonic
+    if get(handles.(plot_name_dial),'value')==1&&sum(harm_tot==dum)==1&&dum==current_harm
         active_plot_harmonics=[active_plot_harmonics,dum];
         flag=flag+1;
     end%if get(handles.(plot_name_dial),'value')==1
@@ -3315,9 +3323,13 @@ function plot_primaryaxes2(handles,FG_frequency,harm_tot,n)
 hold on;
 active_plot_harmonics=[];
 flag=1;
+current_harm=handles.din.harmonic;
+if handles.prefs.plot_dynamic_refresh==1
+    handles=guidata(handles.primary1);
+end%if handles.prefs.plot_dynamic_refresh==1
 for dum=1:2:11
     plot_name_dial=['plot2_',num2str(dum)];
-    if get(handles.(plot_name_dial),'value')==1&&sum(harm_tot==dum)==1&&dum==handles.din.harmonic
+    if get(handles.(plot_name_dial),'value')==1&&sum(harm_tot==dum)==1&&dum==current_harm
         active_plot_harmonics=[active_plot_harmonics,dum];
         flag=flag+1;
     end%if get(handles.(plot_name_dial),'value')==1
