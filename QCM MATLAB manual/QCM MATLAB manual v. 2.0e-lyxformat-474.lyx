@@ -4256,6 +4256,8 @@ Record data
 \end_inset
 
  time is greater than 10 s.
+ Also, the status bar will display the total number of errors the program
+ encounters during the measurement process.
 \end_layout
 
 \begin_layout Section

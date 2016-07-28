@@ -1,7 +1,9 @@
-#LyX 2.1 created this file. For more info see http://www.lyx.org/
-\lyxformat 474
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
 \begin_document
 \begin_header
+\save_transient_properties true
+\origin unavailable
 \textclass scrartcl
 \begin_preamble
 \usepackage{pdfsync}
@@ -12,16 +14,16 @@
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman default
-\font_sans default
-\font_typewriter default
-\font_math auto
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
 \font_default_family sfdefault
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
-\font_sf_scale 100
-\font_tt_scale 100
+\font_sf_scale 100 100
+\font_tt_scale 100 100
 \graphics default
 \default_output_format pdf2
 \output_sync 1
@@ -40,6 +42,7 @@
 \pdf_colorlinks true
 \pdf_backref false
 \pdf_pdfusetitle true
+\pdf_quoted_options "linkcolor=blue"
 \papersize default
 \use_geometry true
 \use_package amsmath 1
@@ -65,10 +68,10 @@
 \shortcut idx
 \color #008000
 \end_index
-\leftmargin 1in
-\topmargin 1in
-\rightmargin 1in
-\bottommargin 1in
+\leftmargin 0.5in
+\topmargin 0.5in
+\rightmargin 0.5in
+\bottommargin 0.5in
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
@@ -134,7 +137,7 @@ bigfoot
 \end_layout
 
 \begin_layout Date
-06/17/2015
+Updated on 07/07/16
 \end_layout
 
 \begin_layout Author
@@ -176,6 +179,13 @@ The MyVNA program is a software that was devloped by the original harware
 
 \begin_layout Subsubsection
 Step-by-step myVNA installation
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Step-by-step-myVNA-installation"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Enumerate
@@ -289,6 +299,58 @@ It is important that you run that execution file with administrator rights,
  This file is responsible for registering the myVNA program with OLE capabilites.
  In other words, this file allows the MyVNA program to be controlled remotely
  with a 3rd-party program (in this case, AccessMyVNA).
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+On the right hand panel in the MyVNA software, click on 
+\begin_inset Quotes eld
+\end_inset
+
+VNA Hardware
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Double click on 
+\begin_inset Quotes eld
+\end_inset
+
+Choose CDS/Harmonic mode
+\begin_inset Quotes erd
+\end_inset
+
+.
+ A window will appear; make sure 
+\begin_inset Quotes eld
+\end_inset
+
+Basic Mode
+\begin_inset Quotes erd
+\end_inset
+
+ is selected.
+ 
+\series default
+Doing this will significantly increase the scan speed of the Network Analyzer.
+ To the best of knowledge, differences between the 
+\begin_inset Quotes eld
+\end_inset
+
+Basic Mode
+\begin_inset Quotes erd
+\end_inset
+
+ and the 
+\begin_inset Quotes eld
+\end_inset
+
+Harmonic Suppression Mode
+\begin_inset Quotes erd
+\end_inset
+
+ is negligible (besides the difference in scan speed).
 \end_layout
 
 \begin_layout Enumerate
@@ -620,8 +682,9 @@ AccessMyVNAv0.7
 \begin_inset Quotes erd
 \end_inset
 
- on Windows 8 or higher, make sure to change the compatability mode of the
- 
+ on Windows 8 or higher, 
+\series bold
+make sure to change the compatability mode of the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -629,7 +692,9 @@ AccessMyVNAv0.7.exe
 \begin_inset Quotes erd
 \end_inset
 
- to Windows 7.
+ to Windows 7
+\series default
+.
  Otherwise, the program will unexpectedly crash.
 \end_layout
 
@@ -852,6 +917,13 @@ AccessMyVNA
 
  will no longer appear for versions 2.0c and higher.
  Instead, this program runs in the background.
+ A toggle button, 
+\begin_inset Graphics
+	filename Figures/myvna_button.png
+
+\end_inset
+
+, runs and closes the program using the Windows system cmd commands.
  The execution process, 
 \begin_inset Quotes eld
 \end_inset
@@ -870,6 +942,16 @@ MyVNA
 \end_inset
 
  will automatically run and be minimized on the desktop toolbar.
+ Changes associated with the number of average scans should be adjusted
+ in the 
+\begin_inset Quotes eld
+\end_inset
+
+MyVNA
+\begin_inset Quotes erd
+\end_inset
+
+ native program.
 \begin_inset VSpace defskip
 \end_inset
 
@@ -2064,6 +2146,7 @@ Record scan
  button 
 \begin_inset Graphics
 	filename Figures/Record scan.png
+	scale 80
 
 \end_inset
 
@@ -2083,7 +2166,7 @@ Output files
 No designated output filename and file location
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:No-designated-output"
+name "subsec:No-designated-output"
 
 \end_inset
 
@@ -2120,12 +2203,20 @@ fg_values.mat
 
 : This MATLAB .mat file contains frequency and dissipation information that
  was collected during the recording process.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
 Variables
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -2256,12 +2347,20 @@ raw_spectras.mat
 
 : This MATLAB .mat file contains raw spectra information that was collected
  during the scan.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
 Variables
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -2398,7 +2497,7 @@ default_settings.mat
 Designated output filename and file location
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:Designated-output-filename"
+name "subsec:Designated-output-filename"
 
 \end_inset
 
@@ -2420,12 +2519,20 @@ When an output filename and location are designated, the recorded data will
 
 : This MATLAB .mat file contains frequency and dissipation information that
  was collected during the recording process.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
 Variables
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -2442,6 +2549,10 @@ abs_freq
  The first column contains the timepoints.
  Columns 2, 4, 6, 8, 10, and 12 contain the absolute frequency data.
  Columns 3, 5, 7, 9, 11, and 13 contain the absolute dissipation data.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -2522,12 +2633,20 @@ reference
 
 : This MATLAB .mat file contains raw spectra information that was collected
  during the scan.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
 Variables
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -2703,7 +2822,7 @@ status open
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="17" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="0pt">
@@ -3389,7 +3508,7 @@ Since frequency and dissipation shifts are relative to a reference value,
  file (see Section 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Designated-output-filename"
+reference "subsec:Designated-output-filename"
 
 \end_inset
 
@@ -3420,7 +3539,7 @@ Home
 , see Section 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Home"
+reference "subsec:Home"
 
 \end_inset
 
@@ -3515,7 +3634,7 @@ This button saves the current state of the frequency and dissipation shift
  the default filenames (see Section 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:No-designated-output"
+reference "subsec:No-designated-output"
 
 \end_inset
 
@@ -3535,6 +3654,19 @@ Email notifications
 \begin_layout Standard
 Clicking on this button will bring up a window asking the user to input
  an email address and an option to turn on/off the email notifications.
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+For versions 002c and below:
 \end_layout
 
 \begin_layout Standard
@@ -3558,7 +3690,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Email notification window.
+Email notification window for versions 002c and below.
 \end_layout
 
 \end_inset
@@ -3632,6 +3764,104 @@ email_send
  a try/catch-block).
 \end_layout
 
+\begin_layout Standard
+*Note: The email notification window was revamped in version 002d_Drakon.
+ The outgoing email server is no longer hard-coded into the MATLAB script.
+ This change was made due to the public release of this program onto GitHub.
+ The outgoing server, host email, and host email password must be designated
+ in order for this option to work properly.
+ Also, a 
+\begin_inset Quotes eld
+\end_inset
+
+test connection
+\begin_inset Quotes erd
+\end_inset
+
+ button was added to ensure succesful email notification.
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+For versions 002d and above:
+\end_layout
+
+\begin_layout Standard
+For versions 002d and above, the email host information is no longer hard-coded
+ into the MATLAB program.
+ Versions 002d have been released publicly; thus, for security reasons,
+ email usernames and passwords were explicitely removed.
+ The user now has to input the email and associated password that he/she
+ wishes to use to send out email notifications.
+ The email outgoing host server also needs to be provided.
+\end_layout
+
+\begin_layout Standard
+A 
+\begin_inset Quotes eld
+\end_inset
+
+Test connection
+\begin_inset Quotes erd
+\end_inset
+
+ button has been added to test that the email communication between the
+ host and recipient email had been succesfully established; a 
+\begin_inset Quotes eld
+\end_inset
+
+test
+\begin_inset Quotes erd
+\end_inset
+
+ email is sent between the host and recipient servers.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/email_notifications2.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Email notification window for versions 002d and above.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 Plot options 
 \begin_inset Graphics
@@ -3691,6 +3921,100 @@ Set preferences
 
 \end_layout
 
+\begin_layout Standard
+Clicking on this button will bring up a window with a list of preferences
+ and options associated with the data collection process.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/preferences.png
+	width 50text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+User preference window.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+For versions 002c and above, the preference window is divided into four
+ panels:
+\end_layout
+
+\begin_layout Enumerate
+Command Window and Workspace options
+\end_layout
+
+\begin_layout Enumerate
+Additional spectra fitting options
+\end_layout
+
+\begin_layout Enumerate
+Fitting options
+\end_layout
+
+\begin_layout Enumerate
+Set Measurement Schedule
+\end_layout
+
+\begin_layout Standard
+Details of each option in the preferences can be found in associated the
+ tooltip string.
+\end_layout
+
+\begin_layout Standard
+The measurement scheduler is a useful tool that is designed for measurements
+ that require minimal monitoring.
+ A start and end time can be designated.
+ Also, the measurement recording increment time can be changed; this allows
+ for the user to change the measurement frequency that is appropriate for
+ the time scale in which the experiment takes place.
+ Be sure that the 
+\begin_inset Quotes eld
+\end_inset
+
+Set Preferences
+\begin_inset Quotes erd
+\end_inset
+
+ button is pushed before closing the Preferences window.
+ Otherwise, the settings will not be saved!
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Note:
+\series default
+ Changing preferenecs must be performed when the measurement is NOT in progress.
+ Otherwise, the changes in the preferences will not be set properly.
+\end_layout
+
 \begin_layout Subsubsection
 Home 
 \begin_inset Graphics
@@ -3701,7 +4025,7 @@ Home
 
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:Home"
+name "subsec:Home"
 
 \end_inset
 
@@ -3841,6 +4165,7 @@ GUI toolbar
 
 \begin_layout Standard
 \begin_inset Float figure
+placement H
 wide false
 sideways false
 status open
@@ -3886,7 +4211,7 @@ status open
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -4102,20 +4427,358 @@ Short description of each button on the GUI toolbar
 Settings panel
 \end_layout
 
+\begin_layout Standard
+The settings panel contains user interfaces to manipulate the harmonic scanning
+ range, the time resolution between each scan, and each set of harmonic
+ measurements.
+ Also, basic options related the fitting process can be set in this panel.
+ Further, this is the panel where the filename is designated and/or appended.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/Settings_panel.png
+	width 25text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The settings panel.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It is often useful to save the 
+\begin_inset Quotes eld
+\end_inset
+
+Settings
+\begin_inset Quotes erd
+\end_inset
+
+ of an experiment, so that the user is not required to re-input all of the
+ experimental parameters associated with the measurement process.
+ Previously saved settings can be loaded by clicking on the 
+\begin_inset Quotes eld
+\end_inset
+
+Load Settings
+\begin_inset Quotes erd
+\end_inset
+
+ button.
+ Note that only .mat files with the 
+\begin_inset Quotes eld
+\end_inset
+
+_settings
+\begin_inset Quotes erd
+\end_inset
+
+ appended at the end of the filename can be used to load in the settings:
+ 
+\begin_inset Quotes eld
+\end_inset
+
+<filename>_settings.mat
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Raw spectra panel
+\end_layout
+
+\begin_layout Standard
+The raw spectra panel contains the conductance and susceptance plots of
+ each harmonic.
+ Other information such as the peak tracking algorithm, the initial fitting
+ guess parameters, and data resolution are included.
+ The brown-orange orizontal line represent the range of data used for the
+ fitting process.
+ The location and peak width of the resonance peak are also plotted for
+ each harmonic.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/raw_spectra_panel.png
+	width 25text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The raw spectra panel.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
 Main plot panel
 \end_layout
 
+\begin_layout Standard
+The main plot panel contains data associated with the fitted frequency and
+ dissipation shifts.
+ The harmonic dataset can be selected by enablin/disabling the radio dials
+ in each of the subpanels.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/main_plot_panel.png
+	width 50text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The main plot panel.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Status toolbar
 \end_layout
 
+\begin_layout Standard
+The status toolbar can be found at the bottom of the main GUI window.
+ This toolbar reflects the current state of the program.
+ When everything is running properly, the toolbar foreground and background
+ should be red and black, respectively.
+ When an error occurs, the foreground and background colors are black and
+ red, respectively.
+ Any warning messages in the status bar will have a red and yellow color
+ for the foreground and background color respectively.
+ This toolbar will also have other useful information such as the total
+ number of datapoints that have been collected, and the most recent timepoint
+ that was recorded.
+ Also, a wait bar has been added in between sets of harmonic measurements
+ when the 
+\begin_inset Quotes eld
+\end_inset
+
+Record data
+\begin_inset Quotes erd
+\end_inset
+
+ time is greater than 10 s.
+ Also, the status bar will display the total number of errors the program
+ encounters during the measurement process.
+\end_layout
+
 \begin_layout Section
 Troubleshooting
+\end_layout
+
+\begin_layout Subsection
+MyVNA
+\end_layout
+
+\begin_layout Standard
+Here are some things to try and check if an error associated with MyVNA
+ occurs.
+\end_layout
+
+\begin_layout Itemize
+Make sure that the 
+\begin_inset Quotes eld
+\end_inset
+
+servers
+\begin_inset Quotes erd
+\end_inset
+
+ have been properly registered (with administrator priviledges).
+ This is important in establishing communication between the AccessMyVNA
+ and MyVNA programs.
+ See Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Step-by-step-myVNA-installation"
+
+\end_inset
+
+ for more details.
+\end_layout
+
+\begin_layout Itemize
+If the calibration cannot be properly loaded, it is best to redo the calibration
+ process.
+\end_layout
+
+\begin_layout Subsection
+AccessMyVNA
+\end_layout
+
+\begin_layout Standard
+Here are some things to try and check if an error occurs in the AccessMyVNA
+ program.
+ Note that for version 002c and above, AccessMyVNA is hidden and runs in
+ the background.
+ Use the task manager to determine whether this program is actively running.
+\end_layout
+
+\begin_layout Itemize
+If AccessMyVNA is running on Windows 8 or higher, ensure that compatability
+ mode has been enable for Windows 7.
+ See Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Step-by-step-myVNA-installation"
+
+\end_inset
+
+ for more details.
+\end_layout
+
+\begin_layout Itemize
+Make sure that the 
+\begin_inset Quotes eld
+\end_inset
+
+servers
+\begin_inset Quotes erd
+\end_inset
+
+ has been properly registered.
+ This is important in establishing communication between the AccessMyVNA
+ and MyVNA programs.
+ See Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Step-by-step-myVNA-installation"
+
+\end_inset
+
+ for more details.
+\end_layout
+
+\begin_layout Subsection
+MATLAB GUI
+\end_layout
+
+\begin_layout Standard
+When an error appears stating that MATLAB is unable to close or delete the
+ GUI window, make sure that the current MATLAB working directory is the
+ same in which the .m and .fig file of the GUI is located.
+ This error occurs because a custom close request function for exiting the
+ program was written; thus, MATLAB needs to be able to access this close
+ request function.
+ Alternatvely, the program can be forced-quit by using the 
+\begin_inset Quotes eld
+\end_inset
+
+delete
+\begin_inset Quotes erd
+\end_inset
+
+ function:
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\family typewriter
+delete(<figure handle to GUI>)
+\end_layout
+
+\begin_layout Standard
+Note that the figure handle to the GUI can be obtained with the 
+\begin_inset Quotes eld
+\end_inset
+
+findall
+\begin_inset Quotes erd
+\end_inset
+
+ function:
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\family typewriter
+findall(0,'type','figure')
 \end_layout
 
 \begin_layout Part
@@ -4182,6 +4845,13 @@ sideways false
 status open
 
 \begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/hardware setup.jpg
+	width 30text%
+
+\end_inset
+
 
 \end_layout
 
@@ -4525,8 +5195,1048 @@ Since the program heavily relies on the details on how the measurement process
 List of functions
 \end_layout
 
+\begin_layout Standard
+This section lists all of the functions that were written and used in the
+ GUI code.
+ The intent of this section is to provide a comprehensive list and brief
+ description of each function.
+ Function are group based on its type of function.
+\end_layout
+
+\begin_layout Subsection
+Functions that are explicitly initialized during the GUI start-up process
+\end_layout
+
+\begin_layout Standard
+These functions are always initialized and 
+\begin_inset Quotes eld
+\end_inset
+
+pre-made
+\begin_inset Quotes erd
+\end_inset
+
+ when a GUI script is created with the MATLAB GUIDE.
+ Some modifications were made to these 
+\begin_inset Quotes eld
+\end_inset
+
+prewritten
+\begin_inset Quotes erd
+\end_inset
+
+ functions in order to initialize default parameters properly.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+varargout = QCM_v002d_Eurynomos(varargin)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+QCM_<Program version>_OpeningFcn(hObject, eventdata, handles, varargin)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+varargout = QCM_v002d_Eurynomos_OutputFcn(~, ~, handles)
+\end_layout
+
+\begin_layout Subsection
+Measurement and scanning processes
+\end_layout
+
+\begin_layout Subsubsection
+Settings
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+set_settings_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+write_settings(handles,harm_num)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+save_settings_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+load_settings_Callback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Subsubsection
+Data acquisition
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+start_Callback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+[freq,conductance,susceptance,handles]=read_scan(handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+handles=save_data_Callback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+maintain_myVNA_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Subsection
+Plotting
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+handles=raw_fig_Callback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+plot1_choice_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+plot2_choice_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+plot_primaryaxes1(handles,FG_frequency,harm_tot,n)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+plot_primaryaxes2(handles,FG_frequency,harm_tot,n)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+plot_1_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+plot_3_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+plot_5_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+plot_7_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+plot_9_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+plot_11_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+plot2_1_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+plot2_3_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+plot2_5_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+plot2_7_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+plot2_9_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+plot2_11_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+num_harms=primaryaxes_harm(handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+num_harms=primaryaxes2_harm(handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+uipushtool6_ClickedCallback
+\series default
+: this function uses the 
+\begin_inset Quotes eld
+\end_inset
+
+inspect
+\begin_inset Quotes erd
+\end_inset
+
+ function to allow manipulation of the primary axes plots 1
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+uipushtool7_ClickedCallback
+\series default
+: this function uses the 
+\begin_inset Quotes eld
+\end_inset
+
+inspect
+\begin_inset Quotes erd
+\end_inset
+
+ function to allow manipulation of the primary axes plots 2
+\end_layout
+
+\begin_layout Subsection
+Fitting procedure
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+[G_fit,B_fit,G_l_sq,B_l_sq,combine_spectra,G_parameters,B_parameters,handles,I]=
+\begin_inset Newline linebreak
+\end_inset
+
+Lorentzian_dynamic_fit(handles,freq,conductance,susceptance,combine_spectra)
+\end_layout
+
+\begin_layout Subsubsection
+Initial guessing algorithms
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+[guess,f0,gamma0]=G_guess(freq,conductance,susceptance,handles,ylab)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+[guess,freq_mod,modulus,f0,gamma0]=deriv_guess(freq,conductance,susceptance,hand
+les)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+flag=preview_peak_identification(freq,ydata,index,ylabel_str,handles)
+\end_layout
+
+\begin_layout Subsubsection
+Lorentz fitting procedure
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+[G_fit,G_parameters,G_l_sq,B_fit,B_parameters,B_l_sq]=fit_spectra(handles,raw_da
+ta,guess,I)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+[G_parameters,B_parameters]=par_check(G_parameters,B_parameters)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+[fitted_y,residual,parameters]=fit_spectra_con(x0,freq_data,y_data,I,show_GB,lb,
+ub)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+[fitted_y,residual,parameters]=fit_spectra_sus(x0,freq_data,susceptance_data,I,s
+how_GB,lb,ub)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+[fitted_y,residual,parameters]=fit_spectra_both(x0,freq_data,conductance,suscept
+ance,num_peaks,
+\begin_inset Newline linebreak
+\end_inset
+
+I,handles,lb,ub)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+F_conductance = lfun4c(p,x)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+F_susceptance = lfun4s(p,x)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+F_conductance = lfun4c_2(p,x)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+F_susceptance = lfun4s_2(p,x)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+F_conductance = lfun4c_3(p,x)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+F_susceptance = lfun4s_3(p,x)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+fcns=lfun4_both_1(p,x)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+fcns=lfun4_both_2(p,x)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+fcns=lfun4_both_3(p,x)
+\end_layout
+
+\begin_layout Subsubsection
+Fitting options
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+radio_chi_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+dynamic_fit_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+fit_B_radio_Callback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Subsubsection
+Refitting algorithm
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+refit_ClickedCallback(hObject, eventdata, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+refit_start_Callback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+refit_inc_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+refit_end_Callback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Subsection
+Peak Centering/Tracking Functions
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+peak_centering_Callback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+center_peak_function(handles,harm,hObject)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+peak_center_SelectionChangeFcn(hObject, eventdata, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+store_num_data(hObject,~,handles,p)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+span_adjust(~,~,handles,p,factor,set_span)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+manual_set_span(~,~,handles,p,set_span)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+peak_tracking_flag(~,~,handles,radio_handles,flag,p)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+custom_peak_track_flag(~,~,handles,radio_handles,p)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+store_guess_options(~,~,handles,guess_handle,p)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+[handles]=smart_peak_tracker(handles,freq,conductance,susceptance,G_parameters)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+handles=confirm_peak_finding(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+[handles]=peak_finding_ClickedCallback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+fpo(hObject,~,handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+fp_close(hObject,~,handles,find_peak_options)
+\end_layout
+
+\begin_layout Subsubsection
+Harmonic radial dial selection
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+center1_Callback(hObject, eventdata, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+center3_Callback(hObject, eventdata, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+center5_Callback(hObject, eventdata, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+center7_Callback(hObject, eventdata, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+center9_Callback(hObject, eventdata, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+center11_Callback(hObject, eventdata, handles)
+\end_layout
+
+\begin_layout Subsubsection
+Toolbar buttons
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+my_closereq(~,~,handles,freq,radio_handles,guess_values_options,f1,p)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+myL_fit(~,~,handles,p,statistics_txt)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+refresh_button(~,~,handles,p)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+myzoomfcn(~,~,handles,set_span,p)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+output_txt = myupdatefcn(~,event_obj,handles,set_span,p)
+\end_layout
+
+\begin_layout Subsection
+Other Callback functions
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+primary1_CloseRequestFcn(hObject, ~, handles)
+\end_layout
+
+\begin_layout Subsubsection
+Settings callback functions
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+harm1_Callback(~,~,handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+harm3_Callback(~,~,handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+harm5_Callback(~,~,handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+harm7_Callback(~,~,handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+harm9_Callback(~,~,handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+harm11_Callback(~,~,handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+start_f1_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+end_f1_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+start_f3_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+end_f3_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+start_f5_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+end_f5_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+start_f7_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+end_f7_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+start_f9_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+end_f9_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+start_f11_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+end_f11_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+set_reference_time_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+polar_plot_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+fit_factor_Callback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+show_susceptance_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+wait_time_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+num_datapoints_Callback(~, ~, handles)
+\series default
+: this function is mostly defunct
+\end_layout
+
+\begin_layout Subsubsection
+GUI toolbar callback functions
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+handles=cla_raw_Callback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+clear_datapoints_Callback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+load_bare_ClickedCallback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+save_shifts_ClickedCallback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+exe_vna_ClickedCallback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Subsubsection
+Email functions
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+email_notification_Callback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+test_email(hObject,~,handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+set_email_options(hObject,~,handles,outserver,host_email,host_email_pw,txt,toggl
+e_email,email)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+toggle_func(hObject,~,handles,txt)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+email_push_ClickedCallback(hObject, eventdata, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+email_send(handles,message)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+handles=reset_fcn(hObject,eventdata,handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+home_push_ClickedCallback(hObject, eventdata, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+del_mode_ClickedCallback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+confirm_del_ClickedCallback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+append_data_Callback(hObject, eventdata, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+debug_ClickedCallback(~, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+uipushtool8_ClickedCallback(~, ~, ~)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+show_dfdg_callback(~,~,handles,show_dfdg,status)
+\end_layout
+
+\begin_layout Subsubsection
+Preference functions
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+pref_ClickedCallback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+schedule_table_callback(~,callbackdata,handles,schedule_table)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+reset_row_callback(~,~,handles,reset_row,schedule_table)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+del_row_callback(~,~,handles,del_row,schedule_table)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+add_row_callback(~,~,handles,add_row,schedule_table)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+scheduler_onoff(~,~,hObject,handles,radio_on_off_schedule,schedule_table,add_row
+,
+\begin_inset Newline linebreak
+\end_inset
+
+del_row,reset_row,status,flag)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+set_pref1(~,~,hObject,handles,set_pref,radio_GB_values,radio_clc_cw,radio_output
+_raw,
+\begin_inset Newline linebreak
+\end_inset
+
+radio_simul_peak,schedule_table,radio_on_off_schedule,show_dfdg,status,radio_dia
+ry)
+\end_layout
+
+\begin_layout Subsection
+Misc
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+pause_func(~,~,handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+harm_tot=find_num_harms(handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+check_freq_range(harm, min_range, max_range, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+refreshing(handles,harm,flag)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+pause_func1(~,~,handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+refresh_button2(~,~,handles,p)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+num_peaks_check(~,~,num_peaks_edit)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+my_disp(msg,color)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+ins(hObject,~)
+\end_layout
+
+\begin_layout Section
+List of versions released
+\end_layout
+
+\begin_layout Standard
+Version control is managed by GitHub, under the username Shull-Research-Group.
+\end_layout
+
+\begin_layout Enumerate
+version 001b
+\end_layout
+
+\begin_layout Enumerate
+version001c
+\end_layout
+
+\begin_layout Enumerate
+version002a
+\end_layout
+
+\begin_layout Enumerate
+version002b_bigfoot
+\end_layout
+
+\begin_layout Enumerate
+version002c_Cthulhu
+\end_layout
+
+\begin_layout Enumerate
+version002d_Drakon
+\end_layout
+
+\begin_layout Enumerate
+version002e_Eurynomos
+\end_layout
+
 \begin_layout Part
-Aknowledgements
+Acknowledgements
 \end_layout
 
 \begin_layout Standard

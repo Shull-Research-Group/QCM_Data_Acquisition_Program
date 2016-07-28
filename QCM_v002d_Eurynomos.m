@@ -1324,8 +1324,6 @@ check_freq_range(1, handles.din.freq_range(1,1), handles.din.freq_range(1,2), ha
 %THIRD HARMONIC
 function start_f3_Callback(~, ~, handles)
 check_freq_range(3, handles.din.freq_range(2,1), handles.din.freq_range(2,2), handles);
-% write_settings(handles,3);
-% --- Executes during object creation, after setting all properties.
 function end_f3_Callback(~, ~, handles)
 check_freq_range(3, handles.din.freq_range(2,1), handles.din.freq_range(2,2), handles);
 
