@@ -3313,6 +3313,10 @@ if isempty(dum)==0
                 set(handles.primaryaxes1,'xlim',[FG_frequency(1,1)-1, max(FG_frequency(:,1))*1.2]);
             end% if (max(FG_frequency(:,1)))>=get(gca,'xlim')(1,2)-10            
     end
+    yt=get(handles.primaryaxes1,'ytick');
+    set(handles.ytick1,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
+else
+    set(handles.ytick1,'string','---');
 end%if isempty(dum)==0
 
 
@@ -3364,6 +3368,10 @@ if isempty(dum)==0
                 set(handles.primaryaxes2,'xlim',[FG_frequency(1,1)-1, max(FG_frequency(:,1))*1.2]);
             end% if (max(FG_frequency(:,1)))>=get(gca,'xlim')(1,2)-10            
     end
+    yt=get(handles.primaryaxes2,'ytick');
+    set(handles.ytick2,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
+else
+    set(handles.ytick2,'string','---');
 end%if isempty(dum)==0
 
 
