@@ -39,7 +39,7 @@ function varargout = QCM_v002d_Eurynomos(varargin)
 
 % Edit the above text to modify the response to help QCM_v002d_Eurynomos
 
-% Last Modified by GUIDE v2.5 20-Jun-2016 15:03:05
+% Last Modified by GUIDE v2.5 03-Oct-2016 16:32:04
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -315,6 +315,8 @@ disp('MATLAB GUI initialized!');
 guidata(hObject, handles);
 figure(h);delete(h);
 warning('off','MATLAB:DELETE:FileNotFound');
+
+
 try delete('qcm_diary.txt');catch;end;
 
 % UIWAIT makes QCM_v002d_Eurynomos wait for user response (see UIRESUME)
@@ -4559,3 +4561,30 @@ function center11_Callback(hObject, eventdata, handles)
 if get(hObject,'value')==1
     peak_center_SelectionChangeFcn(hObject, eventdata, handles)
 end%if get(hObject,'value')==1
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HANDLES.PRIMARY1 TOOLBAR CALLBACK FUNCTIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% --------------------------------------------------------------------    
+function update_tick_display(~,~,handles)
+yt1=get(handles.primaryaxes1,'ytick');
+yt2=get(handles.primaryaxes2,'ytick');    
+handles.ytick1.String=[num2str(abs(yt1(1)-yt1(2))),' Hz'];
+handles.ytick2.String=[num2str(abs(yt2(1)-yt2(2))),' Hz'];
+
+function zoom_out_ClickedCallback(hObject, eventdata, handles)
+if strcmp(hObject.State,'on')
+    my_zoom=zoom(handles.primary1);
+    set(my_zoom,'Direction','out','Enable','on' ,'ActionPostCallback',{@update_tick_display,handles});        
+else    
+    zoom off;
+end
+
+function zoom_in_ClickedCallback(hObject, eventdata, handles)
+if strcmp(hObject.State,'on')
+    my_zoom=zoom(handles.primary1);
+    set(my_zoom,'Direction','in','Enable','on' ,'ActionPostCallback',{@update_tick_display,handles});        
+else    
+    zoom off;
+end
