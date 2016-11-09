@@ -114,7 +114,7 @@ handles.din.fit_factor_range=6;%this factor influences the width or freq range i
 set(handles.fit_factor,'string',handles.din.fit_factor_range);
 handles.din.default_start_freq=[4.9;14.9;24.9;34.9;44.9;54.9];%set default start frequencies
 handles.din.default_end_freq=[5.1;15.1;25.1;35.1;45.1;55.1];%set default end frequencies
-handles.din.num_pts=200;%set default number of datapoints
+handles.din.num_pts=500;%set default number of datapoints
 handles.din.flag=0;%this is the toggle state of the raw fig button
 handles.din.output_path=pwd;%set default path directory to current path working directory
 handles.din.refit_flag=0;%create a flag that keeps track whether or not raw spectra data has been uploaded (0: no data loaded) (1: loaded)
@@ -738,12 +738,12 @@ while get(handles.start,'value')==1&&handles.din.refit_flag==0||...
                                     'xdata',freq,'ydata',conductance,'visible','on');%plot conductance versus frequency
                                 set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'b']),...
                                     'xdata',freq,'ydata',susceptance,'visible','on');%plot susceptance versus frequency
-                                set(handles.(ax1),'xlim',[min(freq) max(freq)],'ylim',[min(conductance)-.2*abs(min(conductance)),max(conductance)+.2*abs(max(conductance))]);%adjust axes
-                                set(handles.(ax2),'xlim',get(handles.(ax1),'xlim'),'visible','on');%adjust axes
+                                set(handles.(ax1),'xlim',[min(freq) max(freq)],'ylim',[min(conductance),min(conductance)+1.2*(max(conductance)-min(conductance))]-0.05*(max(conductance)-min(conductance)));%adjust axes
+                                set(handles.(ax2),'xlim',get(handles.(ax1),'xlim'),'ylim',[min(susceptance),min(susceptance)+1.2*(max(susceptance)-min(susceptance))]-0.05*(max(susceptance)-min(susceptance)),'visible','on');%adjust axes
                             else%if get(handles.show_susceptance,'value')==1 <-----------------------------ONLY PLOT THE CONDUCTANCE CURVE
                                 set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'a']),...
                                     'xdata',freq,'ydata',conductance,'visible','on');%Plot conductance versus frequency
-                                set(handles.(ax1),'xlim',[min(freq) max(freq)],'ylim',[min(conductance)-.2*abs(min(conductance)),max(conductance)+.2*abs(max(conductance))]);%adjust axes
+                                set(handles.(ax1),'xlim',[min(freq) max(freq)],'ylim',[min(conductance),min(conductance)+1.2*(max(conductance)-min(conductance))]-0.05*(max(conductance)-min(conductance)));%adjust axes
                                 set(handles.(ax1),'ylimmode','auto');
                             end%if get(handles.show_susceptance,'value')==1
                             if get(handles.dynamic_fit,'value')==1%<---------------------------------------run this block of code if the option to fit the curves dynamically is turned on
@@ -3318,7 +3318,7 @@ if isempty(dum)==0
     yt=get(handles.primaryaxes1,'ytick');
     set(handles.ytick1,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
 else
-    set(handles.ytick1,'string','---');
+%     set(handles.ytick1,'string','---');
 end%if isempty(dum)==0
 
 
@@ -3373,7 +3373,7 @@ if isempty(dum)==0
     yt=get(handles.primaryaxes2,'ytick');
     set(handles.ytick2,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
 else
-    set(handles.ytick2,'string','---');
+%     set(handles.ytick2,'string','---');
 end%if isempty(dum)==0
 
 
