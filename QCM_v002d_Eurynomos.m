@@ -2797,8 +2797,8 @@ while get(handles.raw_fig,'value')==1&&get(handles.start,'value')==0
                     set(a,'box','off','ylim',ylim_a);                      
                     set(b,'yaxislocation','right','ycolor','r','color','none','box','off');
                     xlabel(a,'Frequency (Hz)','fontweight','bold');
-                    ylabel(a,'Conductance (S)','fontweight','bold');
-                    ylabel(b,'Susceptance (S)','fontweight','bold');
+                    ylabel(a,'Conductance (mS)','fontweight','bold');
+                    ylabel(b,'Susceptance (mS)','fontweight','bold');
                     set(get(b,'ylabel'),'rotation',-90,'units','normalized','position',[1.11 0.5 1]);
                     set(b,'position',get(a,'position'));
                     title(['Harmonic number: ',num2str(dum*2-1)],'fontweight','bold');
@@ -2820,8 +2820,8 @@ while get(handles.raw_fig,'value')==1&&get(handles.start,'value')==0
                     set(a,'box','off','ylim',ylim_a);                    
                     set(b,'yaxislocation','right','ycolor','r','color','none','box','off');
                     xlabel(a,'Frequency (Hz)','fontweight','bold');
-                    ylabel(a,'Conductance (S)','fontweight','bold');
-                    ylabel(b,'Susceptance (S)','fontweight','bold');
+                    ylabel(a,'Conductance (mS)','fontweight','bold');
+                    ylabel(b,'Susceptance (mS)','fontweight','bold');
                     set(get(b,'ylabel'),'rotation',-90,'units','normalized',...
                         'position',[1.2 0.5 1]);
                     set(b,'position',get(a,'position'));
