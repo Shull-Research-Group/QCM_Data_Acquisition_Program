@@ -1,6 +1,7 @@
 function varargout = QCM_v002d_Eurynomos(varargin)
 %
 % Copyright (C) 2016 Joshua Yeh (Shull Research Group, Northwestern Uni.)
+% Contributing authors: Shu Funato
 % 
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -114,7 +115,7 @@ handles.din.fit_factor_range=6;%this factor influences the width or freq range i
 set(handles.fit_factor,'string',handles.din.fit_factor_range);
 handles.din.default_start_freq=[4.9;14.9;24.9;34.9;44.9;54.9];%set default start frequencies
 handles.din.default_end_freq=[5.1;15.1;25.1;35.1;45.1;55.1];%set default end frequencies
-handles.din.num_pts=500;%set default number of datapoints
+handles.din.num_pts=300;%set default number of datapoints
 handles.din.flag=0;%this is the toggle state of the raw fig button
 handles.din.output_path=pwd;%set default path directory to current path working directory
 handles.din.refit_flag=0;%create a flag that keeps track whether or not raw spectra data has been uploaded (0: no data loaded) (1: loaded)
@@ -744,7 +745,6 @@ while get(handles.start,'value')==1&&handles.din.refit_flag==0||...
                                 set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'a']),...
                                     'xdata',freq,'ydata',conductance,'visible','on');%Plot conductance versus frequency
                                 set(handles.(ax1),'xlim',[min(freq) max(freq)],'ylim',[min(conductance),min(conductance)+1.2*(max(conductance)-min(conductance))]-0.05*(max(conductance)-min(conductance)));%adjust axes
-                                set(handles.(ax1),'ylimmode','auto');
                             end%if get(handles.show_susceptance,'value')==1
                             if get(handles.dynamic_fit,'value')==1%<---------------------------------------run this block of code if the option to fit the curves dynamically is turned on
                                 set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'c']),...
@@ -1919,7 +1919,7 @@ function [fitted_y,residual,parameters]=fit_spectra_both(x0,freq_data,conductanc
 %ub: upper bound
 if nargin==7
     lb=[.999*min(freq_data) 0 -180 -200 -200];
-    ub=[1.001*max(freq_data) 2*(max(freq_data)-min(freq_data)) 180 500 500];
+    ub=[1.001*max(freq_data) 2*(max(freq_data)-min(freq_data)) 180 inf inf];
 end%if nargin==6
 options=optimset('display','off','tolfun',1e-10,'tolx',1e-10,'MaxFunEvals',3e4,'maxiter',3e3);
 if length(x0)==6%fitting code for one peak
@@ -2919,8 +2919,8 @@ peak_track=get(handles.(['peak_track',num2str(handles.din.harmonic)]),'userdata'
             set(handles.(['end_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(2),12));%set new end freq in MHz
         else
             thresh1=.05*current_span+current_xlim(1)*1e6;%Threshold frequency in Hz
-            thresh2=.05*current_span;%Threshold frequency span in Hz
-            LB_peak=peak_f-halfg_freq*2.8;%lower bound of the resonance peak
+            thresh2=.02*current_span;%Threshold frequency span in Hz
+            LB_peak=peak_f-halfg_freq*3;%lower bound of the resonance peak
             if LB_peak-thresh1>halfg_freq*8%if peak is to thin, zoom into the peak
                 new_xlim(1)=(current_xlim(1)*1e6+thresh2)*1e-6;%MHz
                 new_xlim(2)=(current_xlim(2)*1e6-thresh2)*1e-6;%MHz
@@ -3292,33 +3292,23 @@ if isempty(dum)==0
             end%for dum1:6
         case 2%plot frequency shift versus time
             F_frequency_shifts=FG_frequency(1:n,active_plot_harmonics(1)+1)-handles.din.ref_freq((active_plot_harmonics(1)+1)./2);
-            set(handles.primary_handles.(['phantom',num2str(dum),'a']),'xdata',FG_frequency(1:n,1),'ydata',F_frequency_shifts(1:n),'visible','on');
-            if (max(FG_frequency(:,1)))>=max(get(handles.primaryaxes1,'xlim'))
-                set(handles.primaryaxes1,'xlim',[FG_frequency(1,1)-1, max(FG_frequency(:,1))*1.2]);
-            end% if (max(FG_frequency(:,1)))>=get(gca,'xlim')(1,2)-10  
+            set(handles.primary_handles.(['phantom',num2str(dum),'a']),'xdata',FG_frequency(1:n,1),'ydata',F_frequency_shifts(1:n),'visible','on');            
         case 3%plot frequency shift/harmonic order versus time
             F_frequency_shifts=FG_frequency(1:n,active_plot_harmonics(1)+1)-handles.din.ref_freq((active_plot_harmonics(1)+1)./2);
             set(handles.primary_handles.(['phantom',num2str(dum),'a']),'xdata',FG_frequency(1:n,1),'ydata',F_frequency_shifts(1:n)./active_plot_harmonics,'visible','on');
-            if (max(FG_frequency(:,1)))>=max(get(handles.primaryaxes1,'xlim'))
-                set(handles.primaryaxes1,'xlim',[FG_frequency(1,1)-1, max(FG_frequency(:,1))*1.2]);
-            end% if (max(FG_frequency(:,1)))>=get(gca,'xlim')(1,2)-10       
         case 4%plot gamma shift versus time
             G_frequency_shifts= FG_frequency(:,active_plot_harmonics(1)+2)-handles.din.ref_diss((active_plot_harmonics(1)+1)./2);
-            set(handles.primary_handles.(['phantom',num2str(dum),'a']),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n),'visible','on');
-            if (max(FG_frequency(:,1)))>=max(get(handles.primaryaxes1,'xlim'))
-                set(handles.primaryaxes1,'xlim',[FG_frequency(1,1)-1, max(FG_frequency(:,1))*1.2]);
-            end% if (max(FG_frequency(:,1)))>=get(gca,'xlim')(1,2)-10                
+            set(handles.primary_handles.(['phantom',num2str(dum),'a']),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n),'visible','on');      
         case 5%plot gamma shift/harmonic order versus time
             G_frequency_shifts= FG_frequency(:,active_plot_harmonics(1)+2)-handles.din.ref_diss((active_plot_harmonics(1)+1)./2);
-            set(handles.primary_handles.(['phantom',num2str(dum),'a']),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n)./active_plot_harmonics,'visible','on');
-            if (max(FG_frequency(:,1)))>=max(get(handles.primaryaxes1,'xlim'))
-                set(handles.primaryaxes1,'xlim',[FG_frequency(1,1)-1, max(FG_frequency(:,1))*1.2]);
-            end% if (max(FG_frequency(:,1)))>=get(gca,'xlim')(1,2)-10            
+            set(handles.primary_handles.(['phantom',num2str(dum),'a']),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n)./active_plot_harmonics,'visible','on');        
     end
+%     if (max(FG_frequency(:,1)))>=max(get(handles.primaryaxes1,'xlim'))&&strcmp(handles.del_mode.State,'off')==1
+%         set(handles.primaryaxes1,'xlim',[FG_frequency(1,1)-1, max(FG_frequency(:,1))*1.2]);
+%     end% if (max(FG_frequency(:,1)))>=get(gca,'xlim')(1,2)-10  
     yt=get(handles.primaryaxes1,'ytick');
     set(handles.ytick1,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
 else
-%     set(handles.ytick1,'string','---');
 end%if isempty(dum)==0
 
 
@@ -3348,32 +3338,22 @@ if isempty(dum)==0
         case 2%plot frequency shift versus time
             F_frequency_shifts=FG_frequency(1:n,active_plot_harmonics(1)+1)-handles.din.ref_freq((active_plot_harmonics(1)+1)./2);
             set(handles.primary_handles.(['phantom',num2str(dum),'b']),'xdata',FG_frequency(1:n,1),'ydata',F_frequency_shifts(1:n),'visible','on');
-            if (max(FG_frequency(:,1)))>=max(get(handles.primaryaxes2,'xlim'))
-                set(handles.primaryaxes2,'xlim',[FG_frequency(1,1)-1, max(FG_frequency(:,1))*1.2]);
-            end% if (max(FG_frequency(:,1)))>=get(gca,'xlim')(1,2)-10  
         case 3%plot frequency shift/harmonic order versus time
             F_frequency_shifts=FG_frequency(1:n,active_plot_harmonics(1)+1)-handles.din.ref_freq((active_plot_harmonics(1)+1)./2);
-            set(handles.primary_handles.(['phantom',num2str(dum),'b']),'xdata',FG_frequency(1:n,1),'ydata',F_frequency_shifts(1:n)./active_plot_harmonics,'visible','on');
-            if (max(FG_frequency(:,1)))>=max(get(handles.primaryaxes2,'xlim'))
-                set(handles.primaryaxes2,'xlim',[FG_frequency(1,1)-1, max(FG_frequency(:,1))*1.2]);
-            end% if (max(FG_frequency(:,1)))>=get(gca,'xlim')(1,2)-10       
+            set(handles.primary_handles.(['phantom',num2str(dum),'b']),'xdata',FG_frequency(1:n,1),'ydata',F_frequency_shifts(1:n)./active_plot_harmonics,'visible','on');    
         case 4%plot gamma shift versus time
             G_frequency_shifts= FG_frequency(:,active_plot_harmonics(1)+2)-handles.din.ref_diss((active_plot_harmonics(1)+1)./2);
-            set(handles.primary_handles.(['phantom',num2str(dum),'b']),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n),'visible','on');
-            if (max(FG_frequency(:,1)))>=max(get(handles.primaryaxes2,'xlim'))
-                set(handles.primaryaxes2,'xlim',[FG_frequency(1,1)-1, max(FG_frequency(:,1))*1.2]);
-            end% if (max(FG_frequency(:,1)))>=get(gca,'xlim')(1,2)-10                
+            set(handles.primary_handles.(['phantom',num2str(dum),'b']),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n),'visible','on');          
         case 5%plot gamma shift/harmonic order versus time
             G_frequency_shifts= FG_frequency(:,active_plot_harmonics(1)+2)-handles.din.ref_diss((active_plot_harmonics(1)+1)./2);
-            set(handles.primary_handles.(['phantom',num2str(dum),'b']),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n)./active_plot_harmonics,'visible','on');
-            if (max(FG_frequency(:,1)))>=max(get(handles.primaryaxes2,'xlim'))
-                set(handles.primaryaxes2,'xlim',[FG_frequency(1,1)-1, max(FG_frequency(:,1))*1.2]);
-            end% if (max(FG_frequency(:,1)))>=get(gca,'xlim')(1,2)-10            
+            set(handles.primary_handles.(['phantom',num2str(dum),'b']),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n)./active_plot_harmonics,'visible','on');           
     end
+%     if (max(FG_frequency(:,1)))>=max(get(handles.primaryaxes2,'xlim'))
+%         set(handles.primaryaxes2,'xlim',[FG_frequency(1,1)-1, max(FG_frequency(:,1))*1.2]);
+%     end% if (max(FG_frequency(:,1)))>=get(gca,'xlim')(1,2)-10   
     yt=get(handles.primaryaxes2,'ytick');
     set(handles.ytick2,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
 else
-%     set(handles.ytick2,'string','---');
 end%if isempty(dum)==0
 
 
@@ -3833,9 +3813,9 @@ else%Rune this code is the delete points mode has been turned off
     brush off
     uiresume(gcf);
     harm_tot=find_num_harms(handles);%find the total number of harmonics
+    handles=cla_raw_Callback(hObject,1,handles);%clear the axes
     for dum2=1:length(harm_tot)
-        handles.din.harmonic=harm_tot(dum2);
-        handles=cla_raw_Callback(hObject,1,handles);%clear the axes
+        handles.din.harmonic=harm_tot(dum2);        
         plot_primaryaxes1(handles,handles.din.FG_frequency,harm_tot,handles.din.n);%refresh/replot the primaryaxes1
         plot_primaryaxes2(handles,handles.din.FG_frequency,harm_tot,handles.din.n);%refresh/replot the primaryaxes2
     end
