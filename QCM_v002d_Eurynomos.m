@@ -632,18 +632,16 @@ while get(handles.start,'value')==1&&handles.din.refit_flag==0||...
             assignin('base','err_message',err_message);            
         end
         if get(handles.start,'value')==1&&handles.din.refit_flag==0||handles.din.refit_flag==1&&handles.din.(['refit_finish',num2str(handles.din.harmonic)])==0
-            my_disp('Scanning harmonic: ','cyan');
-            my_disp([num2str(harm_tot(dum)),'\n'],'cyan');
+            my_disp('Scanning harmonic: ','black');
+            my_disp([num2str(harm_tot(dum)),'\n'],'red');
             tic
             try                
                 %only run the following if statement if the user wants to see the it dynamically            
                 if get(handles.dynamic_fit,'value')==1%this if statement will run the Lorentzian fitting function
-                      [combine_spectra,GB_parameters,handles,I]=Lorentzian_dynamic_fit(handles,freq,conductance,susceptance,[freq,conductance,susceptance]);
+                      [G_fit,B_fit,~,~,combine_spectra,G_parameters,B_parameters,handles,I]=Lorentzian_dynamic_fit(handles,freq,conductance,susceptance,[freq,conductance,susceptance]);
                 else%if the "dynamic fit" option is not turned on, output the freq, conductance, susceptance as a zero matrix
-                    combine_spectra=[freq,conductance,susceptance,zeros(size(freq,1),7)];
-                end%if get(handles.dynamic_fit,'value')==1
-                G_fit=combine_spectra(:,4);
-                B_fit=combine_spectra(:,5);
+                    combine_spectra=[freq,conductance,susceptance,zeros(size(freq,1),4)];
+                end%if get(handles.dynamic_fit,'value')==1                            
                 %//////////////////////////////////////////////////////////////
                 %write out spectra in specified spectra filename
                 try
@@ -653,11 +651,16 @@ while get(handles.start,'value')==1&&handles.din.refit_flag==0||...
                     end%if handles.din.refit_flag==0                    
                     if get(handles.dynamic_fit,'value')==1
                         handles.din.FG_frequency(n,1)=str2double(strrep(timestamp,'dot','.'));%timestamp
-                        handles.din.FG_frequency(n,harm_tot(dum)+1)=GB_parameters(1)*1e6;%frequency at peak of Lorentzian fit, f0
-                        handles.din.FG_frequency(n,harm_tot(dum)+2)=GB_parameters(2)*1e4;%HMHW of Lorentzian peak, Ga
+                        if get(handles.fit_B_radio,'value')==1%check to see if fitting the susceptance has been enabled
+                            handles.din.FG_frequency(n,harm_tot(dum)+1)=mean([G_parameters(1),B_parameters(1)]);%frequency at peak of Lorentzian fit, f0
+                            handles.din.FG_frequency(n,harm_tot(dum)+2)=mean([G_parameters(2),B_parameters(2)]);%HMHW of Lorentzian peak, Ga
+                        else
+                            handles.din.FG_frequency(n,harm_tot(dum)+1)=G_parameters(1);%frequency at peak of Lorentzian fit, f0
+                            handles.din.FG_frequency(n,harm_tot(dum)+2)=G_parameters(2);%HMHW of Lorentzian peak, Gamma0
+                        end%if get(fit_B_radio,'value')==1
                         handles.din.FG_freq_shifts(n,1)=handles.din.FG_frequency(n,1);%timestamp
-                        handles.din.FG_freq_shifts(n,harm_tot(dum)+1)=GB_parameters(1)*1e6-handles.din.ref_freq((harm_tot(dum)+1)./2);%calculate delta f
-                        handles.din.FG_freq_shifts(n,harm_tot(dum)+2)=GB_parameters(2)*1e4-handles.din.ref_diss((harm_tot(dum)+1)./2);  %calculate delta Gamma
+                        handles.din.FG_freq_shifts(n,harm_tot(dum)+1)=G_parameters(1)-handles.din.ref_freq((harm_tot(dum)+1)./2);%calculate delta f
+                        handles.din.FG_freq_shifts(n,harm_tot(dum)+2)=G_parameters(2)-handles.din.ref_diss((harm_tot(dum)+1)./2);  %calculate delta Gamma
                         %Chi sq calculation (right now it is least squares not chi squares (04012014))
                         handles.din.chi_sqr_value(n,1)=str2double(strrep(timestamp,'dot','.'));%Timestamps chi squared value variable
                         handles.din.chi_sqr_value(n,harm_tot(dum)+1)=sum(combine_spectra(:,6));%stores chi squared for G
@@ -671,10 +674,10 @@ while get(handles.start,'value')==1&&handles.din.refit_flag==0||...
                         if handles.prefs.show_dfdg==1&&get(handles.radio_chi,'value')==0
                             xsq_name=['X',num2str(harm_tot(dum))];
                             set(handles.(xsq_name),'visible','on','string',...
-                                ['del_f= ',num2str(GB_parameters(1)*1e6-handles.din.ref_freq((harm_tot(dum)+1)./2),1),...
-                                ' del_g= ',num2str(GB_parameters(2)*1e4-handles.din.ref_diss((harm_tot(dum)+1)./2),1)],'fontsize',6,...
-                                'tooltipstring',['del_f= ',num2str(GB_parameters(1)*1e6-handles.din.ref_freq((harm_tot(dum)+1)./2),8),...
-                                ' del_g= ',num2str(GB_parameters(2)*1e4-handles.din.ref_diss((harm_tot(dum)+1)./2),8)]);
+                                ['del_f= ',num2str(mean([G_parameters(1)-handles.din.ref_freq((harm_tot(dum)+1)/2),B_parameters(1)-handles.din.ref_freq((harm_tot(dum)+1)/2)]),1),...
+                                ' del_g= ',num2str(mean([G_parameters(2)-handles.din.ref_diss((harm_tot(dum)+1)/2),B_parameters(2)-handles.din.ref_diss((harm_tot(dum)+1)/2)]),1)],'fontsize',6,...
+                                'tooltipstring',['del_f= ',num2str(mean([G_parameters(1)-handles.din.ref_freq((harm_tot(dum)+1)/2),B_parameters(1)-handles.din.ref_freq((harm_tot(dum)+1)/2)]),8),...
+                                ' del_g= ',num2str(mean([G_parameters(2)-handles.din.ref_diss((harm_tot(dum)+1)/2),B_parameters(2)-handles.din.ref_diss((harm_tot(dum)+1)/2)]),8)]);
                         end%if handles.prefs.show_dfdg==1
                     end%if get(handles.dynamic_fit,'value')==1
                 catch err_message
@@ -754,13 +757,25 @@ while get(handles.start,'value')==1&&handles.din.refit_flag==0||...
                                     set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'d']),...
                                         'xdata',freq,'ydata',B_fit,'visible','on');%plot the fitted susceptance values versus the frequency
                                     set(handles.(ax2),'xlim',get(handles.(ax1),'xlim'),'visible','on');%adjust the axes
-                                    if length(GB_parameters)>=6%<------------if plotting 1 peak
+                                    if length(G_parameters)==5%<------------if plotting 1 peak
                                         set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'f']),...
-                                            'xdata',GB_parameters(1)*1e6,'ydata',GB_parameters(4)+GB_parameters(5),'visible','on');                                    
+                                            'xdata',G_parameters(1),'ydata',G_parameters(4)+G_parameters(5),'visible','on');                                    
                                         set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'g']),...
-                                            'xdata',[GB_parameters(1)*1e6-GB_parameters(2)*1e4,GB_parameters(1)*1e6+GB_parameters(2)*1e4],...
-                                            'ydata',[GB_parameters(4)/2,GB_parameters(4)/2]+GB_parameters(5),'visible','on');   
-                                    end%if length(GB_parameters)>=6
+                                            'xdata',[G_parameters(1)-G_parameters(2),G_parameters(1)+G_parameters(2)],...
+                                            'ydata',[G_parameters(4)/2,G_parameters(4)/2]+G_parameters(5),'visible','on');   
+                                    elseif length(G_parameters)==10%<------------if plotting 2 peaks
+                                        set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'f']),...
+                                            'xdata',G_parameters(1),'ydata',G_parameters(4)+G_parameters(5)+G_parameters(10),'visible','on');                                    
+                                        set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'g']),...
+                                            'xdata',[G_parameters(1)-G_parameters(2),G_parameters(1)+G_parameters(2)],...
+                                            'ydata',[0.5*G_parameters(4)+G_parameters(5)+G_parameters(10),0.5*G_parameters(4)+G_parameters(5)+G_parameters(10)],'visible','on');  
+                                    elseif length(G_parameters)==15%<------------if plotting 3 peaks
+                                        set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'f']),...
+                                            'xdata',G_parameters(1),'ydata',G_parameters(4)+G_parameters(5)+G_parameters(10)+G_parameters(15),'visible','on');                                    
+                                        set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'g']),...
+                                            'xdata',[G_parameters(1)-G_parameters(2),G_parameters(1)+G_parameters(2)],...
+                                            'ydata',[0.5*G_parameters(4)+G_parameters(5)+G_parameters(10)+G_parameters(15),0.5*G_parameters(4)+G_parameters(5)+G_parameters(10)+G_parameters(15)],'visible','on');  
+                                    end%if length(G_parameters)==5
                                     peak_track=get(handles.(['peak_track',num2str(handles.din.harmonic)]),'userdata');%extract out the peak tracking conditions
                                     if peak_track(1)==1&&peak_track(2)==0%if peak tracking algorithm is set to set span, show tolerance interval lines
                                         current_span=max(freq)-min(freq);%extract the span set by the start and end frequencies
@@ -786,12 +801,24 @@ while get(handles.start,'value')==1&&handles.din.refit_flag==0||...
                                             'xdata',[mean(freq)+current_span*handles.din.set_span_factor_sensitivity,mean(freq)+current_span*handles.din.set_span_factor_sensitivity],...
                                             'ydata',temp_ylim,'visible','on');
                                     end   %if peak_track(1)==1&&peak_track(2)==0
-                                    if length(GB_parameters)>=6%<------------if plotting 1 peak
+                                    if length(G_parameters)==5%<------------if plotting 1 peak
                                         set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'f']),...
-                                            'xdata',GB_parameters(1)*1e6,'ydata',GB_parameters(4)+GB_parameters(5),'visible','on');                                    
+                                            'xdata',G_parameters(1),'ydata',G_parameters(4)+G_parameters(5),'visible','on');                                    
                                         set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'g']),...
-                                            'xdata',[GB_parameters(1)*1e6-GB_parameters(2)*1e4,GB_parameters(1)*1e6+GB_parameters(2)*1e4],...
-                                            'ydata',[GB_parameters(4)/2,GB_parameters(4)/2]+GB_parameters(5),'visible','on');   
+                                            'xdata',[G_parameters(1)-G_parameters(2),G_parameters(1)+G_parameters(2)],...
+                                            'ydata',[G_parameters(4)/2,G_parameters(4)/2]+G_parameters(5),'visible','on');   
+                                    elseif length(G_parameters)==10%<------------if plotting 2 peaks
+                                        set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'f']),...
+                                            'xdata',G_parameters(1),'ydata',G_parameters(4)+G_parameters(5)+G_parameters(10),'visible','on');                                    
+                                        set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'g']),...
+                                            'xdata',[G_parameters(1)-G_parameters(2),G_parameters(1)+G_parameters(2)],...
+                                            'ydata',[0.5*G_parameters(4)+G_parameters(5)+G_parameters(10),0.5*G_parameters(4)+G_parameters(5)+G_parameters(10)],'visible','on');  
+                                    elseif length(G_parameters)==15%<------------if plotting 3 peaks
+                                        set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'f']),...
+                                            'xdata',G_parameters(1),'ydata',G_parameters(4)+G_parameters(5)+G_parameters(10)+G_parameters(15),'visible','on');                                    
+                                        set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'g']),...
+                                            'xdata',[G_parameters(1)-G_parameters(2),G_parameters(1)+G_parameters(2)],...
+                                            'ydata',[0.5*G_parameters(4)+G_parameters(5)+G_parameters(10)+G_parameters(15),0.5*G_parameters(4)+G_parameters(5)+G_parameters(10)+G_parameters(15)],'visible','on');  
                                     end%if length(G_parameters)==5
                                     set(handles.(ax1),'ylimmode','auto');
                                 end%if get(handles.show_susceptance,'value')==1
@@ -806,13 +833,13 @@ while get(handles.start,'value')==1&&handles.din.refit_flag==0||...
                             set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'j']),...
                                 'xdata',conductance,'ydata',susceptance,'visible','on');
                             axis tight
-                            if get(handles.dynamic_fit,'value')==1
+                            if get(handles.dynamic_fit,'value')==1&&get(handles.fit_B_radio,'value')==1
                                 set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'c']),...
                                     'xdata',G_fit','ydata',B_fit,'visible','on');
                                 set(handles.spectra_handles.(['phantom',num2str((harm_tot(dum)+1)*0.5),'e']),...
                                     'xdata',G_fit(I),'ydata',B_fit(I),'visible','on');
                                 set(handles.(ax1),'xlim',[min(G_fit) max(G_fit)],'ylim',[min(B_fit) max(B_fit)])
-                            end%if get(handles.dynamic_fit,'value')==1
+                            end%if get(handles.dynamic_fit,'value')==1&&get(handles.fit_B_radio,'value')==1
                             if get(handles.dynamic_fit,'value')==1
                                 plot_primaryaxes1(handles,handles.din.FG_frequency,harm_tot,n);
                                 plot_primaryaxes2(handles,handles.din.FG_frequency,harm_tot,n);
@@ -844,7 +871,7 @@ while get(handles.start,'value')==1&&handles.din.refit_flag==0||...
             %this block of code deals with peak tracking
             if get(handles.dynamic_fit,'value')==1&&handles.din.refit_flag==0%use the fitted parameters to determine how to track the peak
                 disp('Tracking peak...');
-                try handles=smart_peak_tracker(handles,freq,conductance,susceptance,GB_parameters(1:5)); catch;  end;              
+                try handles=smart_peak_tracker(handles,freq,conductance,susceptance,G_parameters); catch;  end;              
             elseif get(handles.dynamic_fit,'value')~=1&&handles.din.refit_flag==0%guess what f0 and gamma0 to determine how to track the peak
                 [peak_detect,index]=findpeaks(conductance,'sortstr','descend');
                 Gmax=peak_detect(1);%find peak of curve
@@ -862,16 +889,16 @@ while get(handles.start,'value')==1&&handles.din.refit_flag==0||...
             end%if handles.din.refit_flag==0
             refreshing(handles,harm_tot(dum),0);
             temp=toc;
-            my_disp('Elapsed time is ','cyan');
-            my_disp([num2str(temp),' seconds\n'],'cyan');
+            my_disp('Elapsed time is ','black');
+            my_disp([num2str(temp),' seconds\n'],'blue');
         end%for get(handles.start,'value')==1
         write_settings(handles,harm_tot(dum));%update the setting txt file
         if handles.prefs.plot_dynamic_refresh==1
             guidata(handles.primary1,handles);
         end%if handles.prefs.plot_dynamic_refresh==1
     end%for dum=1:size(harm_tot)
-    my_disp('Datapoint(s): ','cyan');
-    my_disp([num2str(n),'\n'],'cyan');
+    my_disp('Datapoint(s): ','black');
+    my_disp([num2str(n),'\n'],'blue');
     set(handles.tot_datapts,'string',['Datapts collected: ',num2str(n)]);   %display total number of collected datapoints for each harmonic
     n=n+1;
     %//////////////////////////////////////////////////////////////////////////
@@ -902,7 +929,8 @@ while get(handles.start,'value')==1&&handles.din.refit_flag==0||...
             name=['X',num2str(dum)];
             prev_data=get(handles.(name),'userdata');
             if isempty(prev_data)~=1
-                handles.din.(['GB_prev',num2str(dum)])=prev_data(1,:);
+                handles.din.(['G_prev',num2str(dum)])=prev_data(1,:);
+                handles.din.(['B_prev',num2str(dum)])=prev_data(2,:);
             end%if isempty(prev_data)~=1
         end%for dum=1:2:11
         handles.din.n=n;
@@ -935,7 +963,8 @@ while get(handles.start,'value')==1&&handles.din.refit_flag==0||...
             name=['X',num2str(dum)];
             prev_data=get(handles.(name),'userdata');
             if isempty(prev_data)~=1
-                handles.din.(['GB_prev',num2str(dum)])=prev_data(1,:);
+                handles.din.(['G_prev',num2str(dum)])=prev_data(1,:);
+                handles.din.(['B_prev',num2str(dum)])=prev_data(2,:);
             end%if isempty(prev_data)~=1
         end%for dum=1:2:11
         handles.din.n=n;
@@ -1010,7 +1039,8 @@ for dum=1:2:11
     name=['X',num2str(dum)];
     prev_data=get(handles.(name),'userdata');
     if isempty(prev_data)~=1
-        handles.din.(['GB_prev',num2str(dum)])=prev_data(1,:);
+        handles.din.(['G_prev',num2str(dum)])=prev_data(1,:);
+        handles.din.(['B_prev',num2str(dum)])=prev_data(2,:);
     end%if isempty(prev_data)~=1
 end%for dum=1:2:11
 set(handles.status,'string','Status: Data saved! Ready...','backgroundcolor','k','foregroundcolor','r');
@@ -1374,9 +1404,9 @@ end%if get(handles.set_reference_time,'value')==1
 
 
 
-%% Functions to fit a Lorentz curve to the spectra data BEGINS HERE-----------
-
-function [combine_spectra,GB_parameters,handles,I]=Lorentzian_dynamic_fit(handles,freq,conductance,susceptance,combine_spectra)
+%Functions to fit a Lorentz curve to the spectra data BEGINS HERE-----------
+%\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+function [G_fit,B_fit,G_l_sq,B_l_sq,combine_spectra,G_parameters,B_parameters,handles,I]=Lorentzian_dynamic_fit(handles,freq,conductance,susceptance,combine_spectra)
 factor_range_fit=handles.din.fit_factor_range;
 %make sure to change user-defined values to previous values if the user is
 %conducting the measurements. This prevents the program from pausing and
@@ -1386,122 +1416,149 @@ if  get(handles.(['fit',num2str(handles.din.harmonic)]),'userdata')==5&&get(hand
     set(handles.(['fit',num2str(handles.din.harmonic)]),'userdata',4,'string','Previous values');
 end%if  get(handles.(['fit',num2str(handles.din.harmonic)]),'userdata')
 if get(handles.start,'value')==0; disp('Fitting...'); end;
-G_fit=nan(size(freq,1),size(freq,2));
-B_fit=nan(size(freq,1),size(freq,2));  I=1;
+G_fit=nan(size(freq,1),size(freq,2));   G_parameters=nan(1,5);  G_l_sq=G_fit;
+B_fit=nan(size(freq,1),size(freq,2));   B_parameters=nan(1,5);  B_l_sq=B_fit;  I=1;
 switch get(handles.(['fit',num2str(handles.din.harmonic)]),'userdata')
     case 1%Guess value based on max conductance
         [guess,f0,gamma0]=G_guess(freq,conductance,susceptance,handles,'Conductance (mS)');
         if isempty(guess)==1
-            GB_fit=[];GB_fit=[];GB_parameters=[];I=[];combine_spectra=[];
+            G_fit=[];B_fit=[];G_l_sq=[];B_l_sq=[];combine_spectra=[];G_parameters=[];B_parameters=[];I=[];
             return
         end%if isempty(guess)
         I=find(freq>=(f0-gamma0*factor_range_fit)&freq<=(gamma0*factor_range_fit+f0)); 
         try %fitting with Gmax initial guesses
-            [GB_fit,GB_residual,GB_parameters]=fit_spectra(handles,[freq,conductance,susceptance],guess,I);
+            [G_fit,G_parameters,G_l_sq,B_fit,B_parameters,B_l_sq]=fit_spectra(handles,[freq,conductance,susceptance],guess,I);
+            combine_spectra=[freq,conductance,susceptance,G_fit,B_fit,G_l_sq,B_l_sq];%put everything in one variable
         catch% tryGuess values based on the Derivative of the Fit
             disp('Fitting based on the Gmax guess  failed!!');
             disp('Attempting to use derivative values to fit...');
             [p,freq_mod,modulus,~,~]=deriv_guess(freq,conductance,susceptance,handles);
             if isempty(p)==1
-                GB_fit=[];GB_fit=[];GB_parameters=[];I=[];combine_spectra=[];
+                G_fit=[];B_fit=[];G_l_sq=[];B_l_sq=[];combine_spectra=[];G_parameters=[];B_parameters=[];I=[];
                 return
             end%if isempty(guess)
             [~,~,test]=fit_spectra_con(p,freq_mod,modulus,handles.prefs.show_GB);
             guess=[test(1) test(2) p(3:4) mean([conductance(1) conductance(end)])];%guess values
             try% tryGuess values based on the Derivative of the Fit
-                [GB_fit,GB_residual,GB_parameters]=fit_spectra(handles,[freq,conductance,susceptance],guess,I);
+                [G_fit,G_parameters,G_l_sq,B_fit,B_parameters,B_l_sq]=fit_spectra(handles,[freq,conductance,susceptance],guess,I);
+                combine_spectra=[freq,conductance,susceptance,G_fit,B_fit,G_l_sq,B_l_sq];%put everything in one variable
                 disp('Gmax guess values suceeded!');
             catch%if fit fails, output nan arrays
-                disp('Fit failed!');                                           
+                disp('Fit failed!');
+                G_fit=nan(size(freq,1),size(freq,2));   G_parameters=nan(1,5);  G_l_sq=G_fit;
+                B_fit=nan(size(freq,1),size(freq,2));   B_parameters=nan(1,5);  B_l_sq=B_fit;                                                
             end%try
         end%try
     case 2  %Guess values based on the Derivative of the Fit
         [guess,freq_mod,modulus,f0,gamma0]=deriv_guess(freq,conductance,susceptance,handles);
         if isempty(guess)==1
-            GB_fit=[];GB_fit=[];GB_parameters=[];I=[];combine_spectra=[];
+            G_fit=[];B_fit=[];G_l_sq=[];B_l_sq=[];combine_spectra=[];G_parameters=[];B_parameters=[];I=[];
             return
         end%if isempty(guess)
         I=find(freq_mod>=(f0-gamma0*factor_range_fit)&freq_mod<=(gamma0*factor_range_fit+f0)); 
         try
-            [GB_fit,GB_residual,GB_parameters]=fit_spectra(handles,[freq conductance susceptance],guess,I);
+            [G_fit,G_parameters,G_l_sq,B_fit,B_parameters,B_l_sq]=fit_spectra(handles,[freq conductance susceptance],guess,I);
+            combine_spectra=[freq,conductance,susceptance,G_fit,B_fit,G_l_sq,B_l_sq];%put everything in one variable
         catch%try GMAx as guess values
             disp('Fitting based on the derivative failed!!');
             disp('Attempting to use Gmax guess values to fit...');
             [guess,~,~]=G_guess(freq,conductance,susceptance,handles,'Conductance (mS)');       
             if isempty(guess)==1
-                GB_fit=[];GB_fit=[];GB_parameters=[];I=[];combine_spectra=[];
+                G_fit=[];B_fit=[];G_l_sq=[];B_l_sq=[];combine_spectra=[];G_parameters=[];B_parameters=[];I=[];
                 return
             end%if isempty(guess)
             try
-                [GB_fit,GB_residual,GB_parameters]=fit_spectra(handles,[freq conductance susceptance],guess,I);
+                [G_fit,G_parameters,G_l_sq,B_fit,B_parameters,B_l_sq]=fit_spectra(handles,[freq conductance susceptance],guess,I);
+                combine_spectra=[freq,conductance,susceptance,G_fit,B_fit,G_l_sq,B_l_sq];%put everything in one variable
                 disp('Gmax guess values suceeded!');
             catch%if fit fails, output nan arrays
                 disp('Fit failed!');
+                G_fit=nan(size(freq,1),size(freq,2));   G_parameters=nan(1,5);  G_l_sq=G_fit;
+                B_fit=nan(size(freq,1),size(freq,2));   B_parameters=nan(1,5);  B_l_sq=B_fit;
             end%try            
         end%try           
     case 4%Guess value base on the previous fit values
         if isempty(get(handles.(['X',num2str(handles.din.harmonic)]),'userdata'))~=1&&sum(sum(isnan(get(handles.(['X',num2str(handles.din.harmonic)]),'userdata'))))==0
             disp('Previous guess parameters found.');
             prev_par=get(handles.(['X',num2str(handles.din.harmonic)]),'userdata');
-            guess=prev_par(1,:);
-            I=find(freq>=(guess(1)-guess(2)*factor_range_fit)&freq<=(guess(2)*factor_range_fit+guess(1))); 
+            G_prev=prev_par(1,:);
+            guess=mean(prev_par,1);
+            if handles.prefs.simul_peak==1
+                if length(guess)==5
+                    guess=[guess prev_par(2,5)];
+                elseif length(guess)==10
+                    guess=[guess prev_par(2,5) prev_par(2,10)];
+                elseif length(guess)==15
+                    guess=[guess prev_par(2,5) prev_par(2,10) prev_par(2,15)];
+                end% if length(guess)==5
+            end%if handles.prefs.simul_peak==1
+            I=find(freq>=(G_prev(1)-G_prev(2)*factor_range_fit)&freq<=(G_prev(2)*factor_range_fit+G_prev(1))); 
             try
-                [GB_fit,GB_residual,GB_parameters]=fit_spectra(handles,[freq conductance susceptance],guess,I);
+                [G_fit,G_parameters,G_l_sq,B_fit,B_parameters,B_l_sq]=fit_spectra(handles,[freq conductance susceptance],guess,I);
             catch
-                [guess,freq_mod,~,f0,gamma0]=deriv_guess(freq,conductance,susceptance,handles);
+                [guess,freq_mod,modulus,f0,gamma0]=deriv_guess(freq,conductance,susceptance,handles);
                 if isempty(guess)==1
-                    GB_fit=[];GB_fit=[];GB_parameters=[];I=[];combine_spectra=[];
                     return
                 end%if isempty(guess)
                 I=find(freq_mod>=(f0-gamma0*factor_range_fit)&freq_mod<=(gamma0*factor_range_fit+f0)); 
                 try
-                    [GB_fit,GB_residual,GB_parameters]=fit_spectra(handles,[freq conductance susceptance],guess,I);                   
+                    [G_fit,G_parameters,G_l_sq,B_fit,B_parameters,B_l_sq]=fit_spectra(handles,[freq conductance susceptance],guess,I);
+                    combine_spectra=[freq,conductance,susceptance,G_fit,B_fit,G_l_sq,B_l_sq];%put everything in one variable
                 catch%if fit fails, output nan arrays
                     disp('Fit failed!');
+                    G_fit=nan(size(freq,1),size(freq,2));   G_parameters=nan(1,5);  G_l_sq=G_fit;
+                    B_fit=nan(size(freq,1),size(freq,2));   B_parameters=nan(1,5);  B_l_sq=B_fit;
                 end%try  
-            end            
+            end
+            combine_spectra=[freq,conductance,susceptance,G_fit,B_fit,G_l_sq,B_l_sq];%put everything in one variable
         else%if not try to fit the data by choosing guess values from the derivative of the polar plot
             disp('Previous guess values not found. Guess values will be chosen from the derivative of the polar plot');
-            [guess,freq_mod,~,f0,gamma0]=deriv_guess(freq,conductance,susceptance,handles);
+            [guess,freq_mod,modulus,f0,gamma0]=deriv_guess(freq,conductance,susceptance,handles);
             if isempty(guess)==1
-                GB_fit=[];GB_fit=[];GB_parameters=[];I=[];combine_spectra=[];
                 return
             end%if isempty(guess)
             I=find(freq_mod>=(f0-gamma0*factor_range_fit)&freq_mod<=(gamma0*factor_range_fit+f0)); 
             try
-                [GB_fit,GB_residual,GB_parameters]=fit_spectra(handles,[freq conductance susceptance],guess,I);                
+                [G_fit,G_parameters,G_l_sq,B_fit,B_parameters,B_l_sq]=fit_spectra(handles,[freq conductance susceptance],guess,I);
+                combine_spectra=[freq,conductance,susceptance,G_fit,B_fit,G_l_sq,B_l_sq];%put everything in one variable
             catch%if fit fails, output nan arrays
                 disp('Fit failed!');
+                G_fit=nan(size(freq,1),size(freq,2));   G_parameters=nan(1,5);  G_l_sq=G_fit;
+                B_fit=nan(size(freq,1),size(freq,2));   B_parameters=nan(1,5);  B_l_sq=B_fit;
             end%try             
         end%if isfield(handles.din,'G_prev')
         if isempty(guess)==1
-            GB_fit=[];GB_fit=[];GB_parameters=[];I=[];combine_spectra=[];
+            G_fit=[];B_fit=[];G_l_sq=[];B_l_sq=[];combine_spectra=[];G_parameters=[];B_parameters=[];I=[];
             return
         end%if isempty(guess)
     case 3%Use the susceptance spectra to find the guess values
         [guess,f0,gamma0]=G_guess(freq,susceptance,conductance,handles,'Susceptance (mS)');
         if isempty(guess)==1
-            GB_fit=[];GB_fit=[];GB_parameters=[];I=[];combine_spectra=[];
+            G_fit=[];B_fit=[];G_l_sq=[];B_l_sq=[];combine_spectra=[];G_parameters=[];B_parameters=[];I=[];
             return
         end%if isempty(guess)
         I=find(freq>=(f0-gamma0*factor_range_fit)&freq<=(gamma0*factor_range_fit+f0)); 
         try %fitting with Gmax initial guesses
-            [GB_fit,GB_residual,GB_parameters]=fit_spectra(handles,[freq,conductance,susceptance],guess,I);            
+            [G_fit,G_parameters,G_l_sq,B_fit,B_parameters,B_l_sq]=fit_spectra(handles,[freq,conductance,susceptance],guess,I);
+            combine_spectra=[freq,conductance,susceptance,G_fit,B_fit,G_l_sq,B_l_sq];%put everything in one variable
         catch% tryGuess values based on the Derivative of the Fit
             disp('Fitting based on the Gmax guess  failed!!');
             disp('Attempting to use derivative values to fit...');
             [p,freq_mod,modulus,~,~]=deriv_guess(freq,conductance,susceptance,handles);
             if isempty(p)==1
-                GB_fit=[];GB_fit=[];GB_parameters=[];I=[];combine_spectra=[];
+                G_fit=[];B_fit=[];G_l_sq=[];B_l_sq=[];combine_spectra=[];G_parameters=[];B_parameters=[];I=[];
                 return
             end%if isempty(guess)
             [~,~,test]=fit_spectra_con(p,freq_mod,modulus,handles.prefs.show_GB);
             guess=[test(1) test(2) p(3:4) mean([conductance(1) conductance(end)])];%guess values
             try% tryGuess values based on the Derivative of the Fit
-                [GB_fit,GB_residual,GB_parameters]=fit_spectra(handles,[freq,conductance,susceptance],guess,I);
+                [G_fit,G_parameters,G_l_sq,B_fit,B_parameters,B_l_sq]=fit_spectra(handles,[freq,conductance,susceptance],guess,I);
+                combine_spectra=[freq,conductance,susceptance,G_fit,B_fit,G_l_sq,B_l_sq];%put everything in one variable
                 disp('Gmax guess values suceeded!');
             catch%if fit fails, output nan arrays
-                disp('Fit failed!');                                              
+                disp('Fit failed!');
+                G_fit=nan(size(freq,1),size(freq,2));   G_parameters=nan(1,5);  G_l_sq=G_fit;
+                B_fit=nan(size(freq,1),size(freq,2));   B_parameters=nan(1,5);  B_l_sq=B_fit;                                                
             end%try
         end%try
     case 5%Guess values based on user defined parameters
@@ -1546,17 +1603,20 @@ switch get(handles.(['fit',num2str(handles.din.harmonic)]),'userdata')
                 guess=get(ud_table,'data');%extract the user-defined guess values
                 disp('Using user-defined values');
                 I=find(freq>=(f0-gamma0*factor_range_fit)&freq<=(gamma0*factor_range_fit+f0)); 
-                guess=[guess(1,1),guess(2,1),guess(3,1),guess(4,1),guess(5,1),...
-                    guess(1,2),guess(2,2),guess(3,2),guess(4,2),sum([guess(5,2),guess(6,1),guess(6,2)])];%reformat the guess array
+                guess=[guess(1,1),guess(2,1),guess(3,1),guess(4,1),guess(5,1),guess(1,2),...
+                    guess(2,2),guess(3,2),guess(4,2),guess(5,2),guess(6,1),guess(6,2)];%reformat the guess array
                 %set the number of peaks to fit to 2
                 peak_sens=get(handles.peak_finding,'userdata');
                 peak_sens(handles.din.harmonic,3)=2;
                 set(handles.peak_finding,'userdata',peak_sens);
                 try% tryGuess values based on user-input values
-                    [GB_fit,GB_residual,GB_parameters]=fit_spectra(handles,[freq,conductance,susceptance],guess,I);
+                    [G_fit,G_parameters,G_l_sq,B_fit,B_parameters,B_l_sq]=fit_spectra(handles,[freq,conductance,susceptance],guess,I);
+                    combine_spectra=[freq,conductance,susceptance,G_fit,B_fit,G_l_sq,B_l_sq];%put everything in one variable
                     disp('User-defined fit completed!');
                 catch%if fit fails, output nan arrays
-                    disp('Fit failed!');                               
+                    disp('Fit failed!');
+                    G_fit=nan(size(freq,1),size(freq,2));   G_parameters=nan(1,5);  G_l_sq=G_fit;
+                    B_fit=nan(size(freq,1),size(freq,2));   B_parameters=nan(1,5);  B_l_sq=B_fit;                                    
                 end%try
             case 'Three'%fit 3 peaks
                 %provide starting guess values for user to edit
@@ -1598,49 +1658,37 @@ switch get(handles.(['fit',num2str(handles.din.harmonic)]),'userdata')
                 guess=get(ud_table,'data');%extract the user-defined guess values
                 disp('Using user-defined values');
                 I=find(freq>=(f0-gamma0*factor_range_fit)&freq<=(gamma0*factor_range_fit+f0)); 
-                guess=[guess(1,1),guess(2,1),guess(3,1),guess(4,1),sum([guess(5,1) guess(5,2) guess(5,3)]),...
-                    guess(1,2),guess(2,2),guess(3,2),guess(4,2),...
-                    guess(1,3),guess(2,3),guess(3,3),guess(4,3),sum([guess(6,1),guess(6,2),guess(6,3)])];%reformat the guess array
+                guess=[guess(1,1),guess(2,1),guess(3,1),guess(4,1),guess(5,1),guess(1,2),...
+                    guess(2,2),guess(3,2),guess(4,2),guess(5,2),...
+                    guess(1,3),guess(2,3),guess(3,3),guess(4,3),guess(5,3),guess(6,1),guess(6,2),guess(6,3)];%reformat the guess array
                 %set the number of peaks to fit to 3
                 peak_sens=get(handles.peak_finding,'userdata');
                 peak_sens(handles.din.harmonic,3)=3;
                 set(handles.peak_finding,'userdata',peak_sens);
                 try% tryGuess values based on user-input values
-                    [GB_fit,GB_residual,GB_parameters]=fit_spectra(handles,[freq,conductance,susceptance],guess,I);                    
+                    [G_fit,G_parameters,G_l_sq,B_fit,B_parameters,B_l_sq]=fit_spectra(handles,[freq,conductance,susceptance],guess,I);
+                    combine_spectra=[freq,conductance,susceptance,G_fit,B_fit,G_l_sq,B_l_sq];%put everything in one variable
                     disp('User-defined fit completed!');
                 catch%if fit fails, output nan arrays
-                    disp('Fit failed!');                                   
+                    disp('Fit failed!');
+                    G_fit=nan(size(freq,1),size(freq,2));   G_parameters=nan(1,5);  G_l_sq=G_fit;
+                    B_fit=nan(size(freq,1),size(freq,2));   B_parameters=nan(1,5);  B_l_sq=B_fit;                                    
                 end%try
             case 'Cancel'%cancel user defined values and bring back to default Gmax choice
                 set(handles.(['fit',num2str(handles.din.harmonic)]),'userdata',1);
                 set(get(handles.reference_time,'userdata'),'value',1);%reset the guess value choice to Gmax
-        end%switch user_peaks    
-end%switch
-combine_spectra=[freq,conductance,susceptance,GB_fit,GB_residual];%put everything in one variable
-GB_parameters=par_check(GB_parameters);
-set(handles.(['X',num2str(handles.din.harmonic)]),'userdata',GB_parameters);
+                G_fit=nan(size(freq,1),size(freq,2));   G_parameters=nan(1,5);  G_l_sq=G_fit;%output nan arrays
+                B_fit=nan(size(freq,1),size(freq,2));   B_parameters=nan(1,5);  B_l_sq=B_fit;  I=1;
+        end%switch user_peaks
+end%switch 
+if sum(isnan(G_parameters))==0&&sum(isnan(B_parameters))>0%This if statemens ensures that there will not be dimenaional mismatch
+    B_parameters=nan(1,length(G_parameters));
+end%if sum(isnan(G_parameters))==0&&sum(isnan(B_parameters))>0
+set(handles.(['X',num2str(handles.din.harmonic)]),'userdata',[G_parameters; B_parameters]);
 if handles.prefs.show_GB==1
-    disp(['G_l_sq: ',num2str(sum(GB_residual(:,1)))]);
-    disp(['B_l_sq: ',num2str(sum(GB_residual(:,2)))]);
+    disp(['G_l_sq: ',num2str(sum(G_l_sq))]);
+    disp(['B_l_sq: ',num2str(sum(B_l_sq))]);
 end%if handles.prefs.show_GB==1
-
-function GB_parameters=par_check(GB_parameters)
-%this function checks to see that the first 5 values in the parmeters
-%variable is the most left one, representing the harmonic peak
-if length(GB_parameters)==10
-    if GB_parameters(1)>GB_parameters(6)
-        GB_parameters=[GB_parameters(6:9),GB_parameters(5),GB_parameters(1:4),GB_parameters(10)];
-    end%if G_parameters(1)>G_parameters(5)
-elseif length(GB_parameters)==14
-    test=[GB_parameters(1) GB_parameters(6) GB_parameters(10)];
-    I=find(test==min(test));
-    switch I
-        case 2
-            GB_parameters=[GB_parameters(6:9) GB_parameters(5) GB_parameters(1:4) GB_parameters(10:15)];
-        case 3
-            GB_parameters=[GB_parameters(10:14) GB_parameters(5) GB_parameters(1:4) GB_parameters(6:9) GB_parameters(15)];
-    end%switch I
-end%if length(G_parameters)==10
 
 function ud_values(hObject,event,handles)
 
@@ -1669,17 +1717,18 @@ f0=freq(index(1));%finds freq at which Gmax happens
 halfg=(Gmax-min(conductance))./2+min(conductance);%half of the Gmax
 halfg_freq=freq(find(abs(halfg-conductance)==min(abs((halfg-conductance))),1));
 gamma0=abs(halfg_freq-f0);%Guess for gamma, HMHW of peak
+guess=[f0 gamma0 phi Gmax offset];%consolidate the guess values into a single variable
 if peak_sens((handles.din.harmonic+1)/2,3)>=1&&size(peak_detect,1)>0
-    guess=[f0/1e6 gamma0/1e4 phi*1e2 Gmax offset 0];
+    guess=[guess 0];
 end%if peak_sens((handles.din.harmonic+1)/2,3)==1&&size(peak_detect,1)==1
 if peak_sens((handles.din.harmonic+1)/2,3)>=2&&size(peak_detect,1)>1
-    guess=[f0/1e6 gamma0/1e4 phi*1e2 Gmax offset...
-        freq(index(2))/1e6 gamma0/2/1e4 phi*1e2 peak_detect(2) offset];
+    guess=[f0 gamma0 phi Gmax offset...
+        freq(index(2)) gamma0/4 phi peak_detect(2) offset offset offset];
 end%if peak_sens((handles.din.harmonic+1)/2,3)>=2&&size(peak_detect,1)>1
 if peak_sens((handles.din.harmonic+1)/2,3)>=3&&size(peak_detect,1)>2
-    guess=[f0/1e6 gamma0/1e4 phi*1e2 Gmax offset...
-        freq(index(2))/1e6 gamma0/2/1e4 phi*1e2 peak_detect(2)...
-        freq(index(3))/1e6 gamma0/2/1e4 phi*1e2 peak_detect(3) offset];
+    guess=[f0 gamma0 phi Gmax offset...
+        freq(index(2)) gamma0/2 phi peak_detect(2) offset...
+        freq(index(3)) gamma0/2 phi peak_detect(3) offset offset offset offset];
 end%if peak_sens((handles.din.harmonic+1)/2,3)>=3&&size(peak_detect,1)>2
 
 function [guess,freq_mod,modulus,f0,gamma0]=deriv_guess(freq,conductance,susceptance,handles)
@@ -1714,17 +1763,18 @@ halfg=(modulus_max-min(modulus))./2+min(modulus);%half of the Gmax
 halfg_freq=freq_mod(find(abs(halfg-modulus)==min(abs((halfg-modulus))),1));
 gamma0=abs(halfg_freq-f0);%Guess for gamma, HMHW of peak
 phi=asind(conductance(1)/(sqrt((conductance(1))^2+(susceptance(1))^2)));%guess of the phase angle between the conductance and susceptance
+guess=[f0 gamma0 phi modulus_max offset];%consolidate the guess values into a single variable
 if peak_sens((handles.din.harmonic+1)/2,3)>=1&&size(peak_detect,1)>0
-    guess=[f0/1e6 gamma0/1e4 phi*1e2 modulus_max offset 0];
+    guess=[guess 0];
 end%if peak_sens((handles.din.harmonic+1)/2,3)==1&&size(peak_detect,1)==1
 if peak_sens((handles.din.harmonic+1)/2,3)>=2&&size(peak_detect,1)>1
-    guess=[f0/1e6 gamma0/1e4 phi*1e2 modulus_max offset...
-        freq(index(2)) gamma0/2/1e4 phi*1e2 peak_detect(2) offset];
+    guess=[f0 gamma0 phi modulus_max offset...
+        freq(index(2)) gamma0/2 phi peak_detect(2) offset offset offset];
 end%if peak_sens((handles.din.harmonic+1)/2,3)==2&&size(peak_detect,1)>1
 if peak_sens((handles.din.harmonic+1)/2,3)>=3&&size(peak_detect,1)>2
-    guess=[f0/1e6 gamma0/1e4 phi*1e2 modulus_max offset...
-        freq(index(2)) gamma0/2/1e4 phi*1e2 peak_detect(2) offset...
-        freq(index(3)) gamma0/2/1e4 phi*1e2 peak_detect(3) offset];
+    guess=[f0 gamma0 phi modulus_max offset...
+        freq(index(2)) gamma0/2 phi peak_detect(2) offset...
+        freq(index(3)) gamma0/2 phi peak_detect(3) offset offset offset offset];
 end%if peak_sens((handles.din.harmonic+1)/2,3)>=3&&size(peak_detect,1)>2
 
 function flag=preview_peak_identification(freq,ydata,index,ylabel_str,handles)
@@ -1749,14 +1799,65 @@ if get(handles.start,'value')==0&&get(handles.peak_centering,'value')==1
     end
 end%et(handles.start,'value')==0
 
-function [GB_fit,GB_residual,GB_parameters]=fit_spectra(handles,raw_data,guess,I)
+function [G_fit,G_parameters,G_l_sq,B_fit,B_parameters,B_l_sq]=fit_spectra(handles,raw_data,guess,I)
 %This function tries to fit the raw spectra using the provided guess values
 freq=raw_data(:,1);
 conductance=raw_data(:,2);
 susceptance=raw_data(:,3);
-tic
-[GB_fit,GB_residual,GB_parameters]=fit_spectra_both(guess,freq,conductance,susceptance,handles.prefs.num_peaks,I,handles);
-toc
+if handles.prefs.simul_peak==0
+    [G_fit,G_residual,G_parameters]=fit_spectra_con(guess,freq,conductance,I,handles.prefs.show_GB);            
+    G_l_sq=(G_residual.^2)./((str2double(get(handles.num_datapoints,'string'))-1));%chi-squared calculation
+    if get(handles.fit_B_radio,'value')==1
+        [B_fit,B_residual,B_parameters]=fit_spectra_sus(guess,freq,susceptance,I,handles.prefs.show_GB);
+        B_l_sq=(B_residual.^2)./((str2double(get(handles.num_datapoints,'string'))-1));%chi-squared calculation
+    else%set susceptance variables to nan values
+        B_fit=NaN(size(G_fit,1),size(G_fit,2));
+        B_l_sq=B_fit;
+        B_parameters=[NaN NaN NaN NaN NaN];
+    end%if get(handles.fit_B_radio,'value')==1
+elseif handles.prefs.simul_peak==1%run this block of code if the fitting G and B simultaneously option is turned on
+    tic
+    [GB_fit,GB_residual,GB_parameters]=fit_spectra_both(guess,freq,conductance,susceptance,handles.prefs.num_peaks,I,handles);
+    toc
+    try
+        if length(GB_parameters)==6
+            G_parameters=GB_parameters(1:5);        B_parameters=[GB_parameters(1:4) GB_parameters(6)];
+        elseif length(GB_parameters)==12
+            G_parameters=GB_parameters(1:10);       B_parameters=[GB_parameters(1:4) GB_parameters(11) GB_parameters(6:9) GB_parameters(12)];
+        elseif length(GB_parameters)==18
+            G_parameters=GB_parameters(1:15);       B_parameters=[GB_parameters(1:4) GB_parameters(16) GB_parameters(6:9) GB_parameters(17) GB_parameters(11:14) GB_parameters(18)];
+        end%if length(GB_parameters)==6
+        G_fit=GB_fit(:,1);                       B_fit=GB_fit(:,2);
+        G_residual=GB_residual(:,1);             B_residual=GB_residual(:,2);
+        G_l_sq=(G_residual.^2)./((str2double(get(handles.num_datapoints,'string'))-1));%chi-squared calculation
+        B_l_sq=(B_residual.^2)./((str2double(get(handles.num_datapoints,'string'))-1));%chi-squared calculation
+        [G_parameters,B_parameters]=par_check(G_parameters,B_parameters);
+    catch
+        G_fit=nan(size(freq,1),size(freq,2));   G_parameters=nan(1,5);  G_l_sq=G_fit;
+        B_fit=nan(size(freq,1),size(freq,2));   B_parameters=nan(1,5);  B_l_sq=B_fit;
+    end
+end%if handles.prefs.simul_peak==0
+
+function [G_parameters,B_parameters]=par_check(G_parameters,B_parameters)
+%this function checks to see that the first 5 values in the parmeters
+%variable is the most left one, representing the harmonic peak
+if length(G_parameters)==10
+    if G_parameters(1)>G_parameters(6)
+        G_parameters=[G_parameters(6:10),G_parameters(1:5)];
+        B_parameters=[B_parameters(6:10),B_parameters(1:5)];
+    end%if G_parameters(1)>G_parameters(5)
+elseif length(G_parameters)==15
+    test=[G_parameters(1) G_parameters(6) G_parameters(11)];
+    I=find(test==min(test));
+    switch I
+        case 2
+            G_parameters=[G_parameters(6:10) G_parameters(1:5) G_parameters(11:15)];
+            B_parameters=[B_parameters(6:10) B_parameters(1:5) B_parameters(11:15)];
+        case 3
+            G_parameters=[G_parameters(11:15) G_parameters(1:5) G_parameters(6:10)];
+            B_parameters=[B_parameters(11:15) B_parameters(1:5) B_parameters(6:10)];
+    end%switch I
+end%if length(G_parameters)==10
 
 function [fitted_y,residual,parameters]=fit_spectra_con(x0,freq_data,y_data,I,show_GB,lb,ub)%fit spectra to conductance curve
 %This function takes the starting guess values ('guess_values'_) and fits a
@@ -1774,7 +1875,6 @@ if nargin==5
     ub=[Inf Inf 90 100 100];
 end%if nargin==5
 options=optimset('display','off','tolfun',1e-10,'tolx',1e-10);
-run('Lorentz_eqns.m');%load the Lorentz anonymous functions into workspace
 [parameters, ~, ~]=lsqcurvefit(@lfun4c,x0,freq_data(I),y_data(I),lb,ub,options);%use lsqcurvefit function to fit the spectra data to a Lorentz curve
 fitted_y=lfun4c(parameters,freq_data);
 residual=fitted_y-y_data;
@@ -1799,7 +1899,6 @@ if nargin==5
     ub=[Inf Inf 90 100 100];
 end%if nargin==5
 options=optimset('display','off','tolfun',1e-10,'tolx',1e-10);
-run('Lorentz_eqns.m');%load the Lorentz anonymous functions into workspace
 [parameters, ~, ~]=lsqcurvefit(@lfun4s,x0,freq_data(I),susceptance_data(I),lb,ub,options);%use lsqcurvefit function to fit the spectra data to a Lorentz curve
 fitted_y=lfun4s(parameters,freq_data);
 residual=fitted_y-susceptance_data;
@@ -1818,40 +1917,87 @@ function [fitted_y,residual,parameters]=fit_spectra_both(x0,freq_data,conductanc
 %I: indices of conductance and susceptance that will be used for the fitting
 %lb: lower bound
 %ub: upper bound
-options=optimset('display','off','tolfun',1e-10,'tolx',1e-10,'MaxFunEvals',1e6,'maxiter',1e6);
-run('Lorentz_eqns.m');%load the Lorentz anonymous functions into workspace
+if nargin==7
+    lb=[.999*min(freq_data) 0 -180 -200 -200];
+    ub=[1.001*max(freq_data) 2*(max(freq_data)-min(freq_data)) 180 inf inf];
+end%if nargin==6
+options=optimset('display','off','tolfun',1e-10,'tolx',1e-10,'MaxFunEvals',3e4,'maxiter',3e3);
 if length(x0)==6%fitting code for one peak
-    if nargin==7
-        lb=[.999*min(freq_data)/1e6 0 -180*1e2 0 -1000 -1000];%lower bound
-        ub=[1.001*max(freq_data)/1e6 2*(max(freq_data)-min(freq_data))/1e4 180*1e2 1000 1000 1000];%upper bound
-    end
-    [parameters,resnorm,residual,exitflag,output,lambda,jacobian]=lsqcurvefit(lfun4_both_1,x0,freq_data,[conductance susceptance],lb,ub,options);
-    fitted_y=lfun4_both_1(parameters,freq_data);    
+    [parameters resnorm residual]=lsqcurvefit(@lfun4_both_1,x0,freq_data,[conductance susceptance],[lb,-100],[ub,100],options);
+    fitted_y=lfun4_both_1(parameters,freq_data);
+    residual=[fitted_y(:,1)-conductance,fitted_y(:,2)-susceptance];
     disp('Fitting 1 peak');
-elseif length(x0)==10%fitting code for two peaks
-    if nargin==7
-        lb=[.999*min(freq_data)/1e6 0 -180*1e2 -1000 -1000,...%1st peak
-            .999*min(freq_data)/1e6 0 -180*1e2 -1000 -1000];%2nd peak
-        ub=[1.001*max(freq_data)/1e6 2*(max(freq_data)-min(freq_data))/1e4 180*1e2 1000 1000,...%1st peak
-            1.001*max(freq_data)/1e6 2*(max(freq_data)-min(freq_data))/1e4 180*1e2 1000 1000];%2nd peak
-    end
-    [parameters resnorm residual]=lsqcurvefit(lfun4_both_2,x0,freq_data,[smooth(conductance,9) smooth(susceptance,9)],lb,ub,options);
+elseif length(x0)==12%fitting code for two peaks
+    [parameters resnorm residual]=lsqcurvefit(@lfun4_both_2,x0,freq_data,[smooth(conductance,9) smooth(susceptance,9)],[lb lb -100 -100],[ub ub 100 100],options);
     fitted_y=lfun4_both_2(parameters,freq_data);
+    residual=[fitted_y(:,1)-conductance,fitted_y(:,2)-susceptance];
     disp('Fitting 2 peaks');
-elseif length(x0)==14%fitting code for three peaks
-    if nargin==7
-        lb=[.999*min(freq_data/1e6) 0 -180*1e2 -1000 -1000,...%1st peak
-            .999*min(freq_data)/1e6 0 -180*1e2 -1000,...%2nd peak
-            .999*min(freq_data)/1e6 0 -180*1e2 -1000,-1000];%3rd peak
-        ub=[1.001*max(freq_data)/1e6 2*(max(freq_data)-min(freq_data))/1e4 180*1e2 1000 1000,...%1st peak
-            1.001*max(freq_data)/1e6 2*(max(freq_data)-min(freq_data))/1e4 180*1e2 1000,...%2nd peak
-            1.001*max(freq_data)/1e6 2*(max(freq_data)-min(freq_data))/1e4 180*1e2 1000 1000];%3rd peak
-    end
-    [parameters resnorm residual]=lsqcurvefit(lfun4_both_3,x0,freq_data,[smooth(conductance) smooth(susceptance)],lb,ub,options);
+elseif length(x0)==18%fitting code for three peaks
+    [parameters resnorm residual]=lsqcurvefit(@lfun4_both_3,x0,freq_data,[smooth(conductance) smooth(susceptance)],[lb lb lb -100 -100 -100],[ub ub ub 100 100 100],options);
     fitted_y=lfun4_both_3(parameters,freq_data);
+    residual=[fitted_y(:,1)-conductance,fitted_y(:,2)-susceptance];
     disp('Fitting 3 peaks');
 end% if numpeaks==1
-residual=[fitted_y(:,1)-conductance,fitted_y(:,2)-susceptance];
+
+function F_conductance = lfun4c(p,x)
+%Order of parameters in p is as follows
+%p(1): f0 maximum frequency
+%p(2): gamma0 dissipation
+%p(3): phi phse angle difference
+%p(4): Gmax maximum conductance
+%p(5): Offset value
+F_conductance= p(4).*((((x.^2).*((2.*p(2)).^2))./(((((p(1)).^2)-(x.^2)).^2)+...
+    ((x.^2).*((2.*p(2)).^2)))).*cosd(p(3))-((((p(1)).^2-x.^2)).*x.*(2.*p(2)))./...
+    (((((p(1)).^2)-(x.^2)).^2)+((x.^2).*((2.*p(2)).^2))).*sind(p(3)))+p(5);
+
+function F_susceptance = lfun4s(p,x)
+%Order of parameters in p is as follows
+%p(1): f0 maximum frequency
+%p(2): gamma0 dissipation
+%p(3): phi phase angle difference
+%p(4): Gmax maximum conductance
+%p(5): Offset value
+F_susceptance= -p(4).*(-(((x.^2).*((2.*p(2)).^2))./(((((p(1)).^2)-(x.^2)).^2)+...
+    ((x.^2).*((2.*p(2)).^2)))).*sind(p(3))-((((p(1)).^2-x.^2)).*x.*(2.*p(2)))./...
+    (((((p(1)).^2)-(x.^2)).^2)+((x.^2).*((2.*p(2)).^2))).*cosd(p(3)))+p(5);
+
+function F_conductance = lfun4c_2(p,x)%this equation fits 2 peaks
+F_conductance=lfun4c(p(1:5),x)+lfun4c(p(6:10),x);
+
+function F_susceptance = lfun4s_2(p,x)%this equation fits 2 peaks
+F_susceptance=lfun4s(p(1:5),x)+lfun4s(p(6:10),x);
+
+function F_conductance = lfun4c_3(p,x)%this equation fits 3 peaks
+F_conductance=lfun4c(p(1:5),x)+lfun4c(p(6:10),x)+lfun4c(p(11:15),x);
+
+function F_susceptance = lfun4s_3(p,x)%this equation fits 3 peaks
+F_susceptance=lfun4s(p(1:5),x)+lfun4s(p(6:10),x)+lfun4s(p(11:15),x);
+
+function fcns=lfun4_both_1(p,x)%this function fits 1 peak (cond and sus)
+%p(1): f0 maximum frequency (1)                 %p(4): Gmax maximum conductance (1)
+%p(2): gamma0 dissipation (1)                     %p(5): Offset value (conductance) (1)
+%p(3): phi phase angle difference (1)            %p(6): Offset value (susceptance) (1)
+fcns=[lfun4c(p(1:5),x),lfun4s([p(1:4),p(6)],x)];
+
+function fcns=lfun4_both_2(p,x)%this function fits 2 peaks (cond and sus)
+%p(1): f0 maximum frequency (1)          p(6): f0 maximum frequency (2)
+%p(2): gamma0 dissipation   (1)          p(7): gamma0 dissipation (2)
+%p(3): phi phase angle difference (1)    p(8): phi phase angle difference (2)
+%p(4): Gmax maximum conductance   (1)    p(9): Gmax maximum conductance (2)
+%p(5): Offset value (conductance) (1)    p(10): Offset value (conductance)(2)
+
+%p(11): Offset value (susceptance) (1) p(12): Offset value (susceptance)(2)
+fcns=[lfun4c_2(p(1:10),x),lfun4s_2([p(1:4),p(11),p(6:9),p(12)],x)];
+
+function fcns=lfun4_both_3(p,x)%this fucntion fits 3 peaks (cond and sus)
+%p(1): f0 maximum frequency (1)          p(6): f0 maximum frequency (2)           p(11): f0 maximum frequency (3)
+%p(2): gamma0 dissipation   (1)          p(7): gamma0 dissipation (2)             p(12): gamma0 dissipation (3)
+%p(3): phi phase angle difference (1)    p(8): phi phase angle difference(2)      p(13): phi phase angle difference (3)
+%p(4): Gmax maximum conductance   (1)    p(9): Gmax maximum conductance (2)       p(14): Gmax maximum conductance (3)
+%p(5): Offset value (conductance) (1)    p(10): Offset value (conductance)(2)     p(15): Offset value (conductance (3)
+
+%p(16): Offset value (susceptance) (1)   p(17): Offsetvalue(susceptance)(2)       p(18): offset value (susceptance) (3)
+fcns=[lfun4c_3(p(1:15),x),lfun4s_3([p(1:4),p(16),p(6:9),p(17),p(11:14),p(18)],x)];
 
 % --- Executes on button press in radio_chi.
 function radio_chi_Callback(~, ~, handles)
@@ -1871,14 +2017,36 @@ else
 end%if get(handles.dynamic_fit,'value')==1
 if get(handles.radio_chi,'value')==1%this ensures that the scans will do a lorentzian fit, othersie there will be an error
     set(handles.dynamic_fit,'value',1);
-end%if get(handles.radio_chi,'value')==1
+end%if get(handles.fit_B_radio,'value')==1
 
 % --- Executes on button press in dynamic_fit.
 function dynamic_fit_Callback(~, ~, handles)
+if get(handles.dynamic_fit,'value')==0
+    set(handles.fit_B_radio,'value',0);
+end%if get(handles.dynamic_fit,'value')==0
 
+% --- Executes on button press in fit_B_radio.
+function fit_B_radio_Callback(hObject, ~, handles)
+if get(handles.fit_B_radio,'value')==1%this ensures that the scans will do a Lorentzian fit, otherwise there will be an error
+    set(handles.dynamic_fit,'value',1);
+    if handles.prefs.simul_peak==0
+        handles.prefs.simul_peak=1;
+        disp('Simultaneous peak fitting has been turned on!');
+        set(handles.status,'string','Status: Simultaneous peak fitting has been turned on!',...
+            'backgroundcolor','y','foregroundcolor','r');
+    end%if handles.prefs.simul_peak==0
+else
+    if handles.prefs.simul_peak==1
+        handles.prefs.simul_peak=0;
+        disp('Simultaneous peak fitting has been turned off!');
+        set(handles.status,'string','Status: Simultaneous peak fitting has been turned off!',...
+            'backgroundcolor','y','foregroundcolor','r');
+    end%if handles.prefs.simul_peak==1
+end%if get(handles.fit_B_radio,'value')==1
+guidata(hObject,handles);
 %\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 %%Functions to fit a Lorentz curve to the spectra data ENDS HERE-----------
-%% \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+%\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 
 
@@ -2168,86 +2336,86 @@ figure(999);clf(figure(999));set(gcf,'numbertitle','off','name',['Polar plot, Ha
 temp=text(1,1,'Fitting...');set(temp,'parent',p(1),'units','normalized','position',[0.4 0.5],'fontsize',28,'fontweight','bold');drawnow;
 [freq,conductance,susceptance,handles]=read_scan(handles);%read the scanned data
 combine_spectra=[freq,conductance,susceptance];
-[combine_spectra,GB_parameters,handles,I]=Lorentzian_dynamic_fit(handles,freq,conductance,susceptance,combine_spectra);%fit curve
+fit_B_radio_state=get(handles.fit_B_radio,'value');%save the sate of the handles.fit_b_radio radio dial
+set(handles.fit_B_radio,'value',1);
+[G_fit,B_fit,G_l_sq,B_l_sq,~,G_parameters,B_parameters,handles,I]=Lorentzian_dynamic_fit(handles,freq,conductance,susceptance,combine_spectra);%fit curve
 delete(temp);
-if isempty(GB_parameters)
+if isempty(G_fit)
     delete(figure(999));delete(figure(998));
     return
 end%if isempty(G_fit)
-ave_f0=GB_parameters(1)*1e6;%resonance (Hz)
-ave_g0=GB_parameters(2)*1e4;%HMHW (Hz)
-GB_fit=combine_spectra(:,4:5);
-GB_residual=combine_spectra(:,6:7);
+ave_f0=mean([G_parameters(1) B_parameters(1)]);
+ave_g0=mean([G_parameters(2) B_parameters(2)]);
 %plot the raw data and the fitted data
 figure(harm);%plot the data in the corresponding figure associated with the current harmonic
 cla(p(1));cla(p(2));
 temp=text(1,1,'Plotting...');set(temp,'parent',p(1),'units','normalized','position',[0.4 0.5],'fontsize',28,'fontweight','bold');drawnow;
 plot(p(1),freq,conductance,'bx-','markersize',10,'linewidth',2);hold on;
-plot(p(1),freq(I),ones(size(I,1),1).*min(conductance),'-','linewidth',2,'color',[0.82031 0.410156 0.11718]);
-plot(p(1),freq,GB_fit(:,1),'k-','linewidth',2);
+plot(p(1),freq(I),ones(size(I,1)).*min(conductance),'-','linewidth',2,'color',[0.82031 0.410156 0.11718]);
+plot(p(1),freq,G_fit,'k-','linewidth',2);
 axes(p(2));
 plot(p(2),freq,susceptance,'rx-','markersize',10,'linewidth',2);hold on;
-plot(p(2),freq,GB_fit(:,2),'k-','linewidth',2);
+plot(p(2),freq,B_fit,'k-','linewidth',2);
 set(get(p(1),'ylabel'),'string','Conductance (mS)','fontweight','bold','fontsize',12);
 set(get(p(2),'ylabel'),'string','Susceptance (mS)','fontweight','bold','fontsize',12);
 axes(p(1));
 xlabel(['Harmonic ',num2str(harm),', Frequency (Hz)'],'fontsize',12,'fontweight','bold');
+L=legend(p(1),['f_0: ',num2str(ave_f0),' Hz'],['\Gamma_0: ',num2str(ave_g0),' Hz'],'location','best');
+set(L,'color','w');
 linkaxes(p,'x');
 %Calculate relevant statistics for the fit
-G_l_sq=(sum(GB_residual(:,1))*1e-3)/str2double(get(handles.num_datapoints,'string'));
-B_l_sq=(sum(GB_residual(:,2))*1e-3)/str2double(get(handles.num_datapoints,'string'));
+G_l_sq=(sum(G_l_sq)*1e-3)/str2double(get(handles.num_datapoints,'string'));
+B_l_sq=(sum(B_l_sq)*1e-3)/str2double(get(handles.num_datapoints,'string'));
 G_r_sq=1-G_l_sq/(norm(conductance-mean(conductance))^2);
 B_r_sq=1-B_l_sq/(norm(susceptance-mean(susceptance))^2);
 G_stats=['Conductance:     Lsq: ',num2str(G_l_sq,3)];
 B_stats=['Susceptance:     Lsq: ',num2str(B_l_sq,3)];
-parameters1=['f0:     ',num2str(ave_f0/1e6,10),' MHz'];%f0
-parameters2=['g0:     ',num2str(ave_g0*1e4,10), ' Hz'];%g0
-parameters3=['Gmax:     ',num2str(GB_parameters(4),10),' mS'];%Gmax
-parameters4=['phi:     ',num2str(GB_parameters(3),10),' degrees'];%phi
-run('Lorentz_eqns.m');
-if length(GB_parameters)==6
-    plot(p(1),ave_f0,sum(GB_parameters(4:5)),'o','color',[0 0.5 0],'markerfacecolor',[0 0.5 0],'markersize',10);
+parameters1=['f0:     ',num2str(ave_f0,10),' Hz'];%f0
+parameters2=['g0:     ',num2str(ave_g0,10), ' Hz'];%g0
+parameters3=['Gmax:     ',num2str(mean([G_parameters(4),B_parameters(4)]),10),' mS'];%Gmax
+parameters4=['phi:     ',num2str(mean([G_parameters(3),B_parameters(3)]),10),' degrees'];%phi
+if length(G_parameters)==5
+    plot(p(1),ave_f0,G_parameters(4)+G_parameters(5),'o','color',[0 0.5 0],'markerfacecolor',[0 0.5 0],'markersize',10);
     plot(p(1),[ave_f0+ave_g0 ave_f0-ave_g0],...
-    [0.5*GB_parameters(4)+GB_parameters(5),0.5*GB_parameters(4)+GB_parameters(5)],'mo','markerfacecolor','m','markersize',10);   
-    parameters5=['G_offset:     ',num2str(GB_parameters(5),10),' mS'];%G_offset
-    parameters6=['B_offset:     ',num2str(GB_parameters(6),10),' mS'];%B_offset
-elseif length(GB_parameters)==10
-    plot(p(1),ave_f0,sum(GB_parameters(4:5)),'o','color',[0 0.5 0],'markerfacecolor',[0 0.5 0],'markersize',10);
+    [0.5*G_parameters(4)+G_parameters(5),0.5*G_parameters(4)+G_parameters(5)],'mo','markerfacecolor','m','markersize',10);   
+    parameters5=['G_offset:     ',num2str(G_parameters(5),10),' mS'];%G_offset
+    parameters6=['B_offset:     ',num2str(B_parameters(5),10),' mS'];%B_offset
+elseif length(G_parameters)==10
+    plot(p(1),ave_f0,G_parameters(4)+G_parameters(5)+G_parameters(10),'o','color',[0 0.5 0],'markerfacecolor',[0 0.5 0],'markersize',10);
     plot(p(1),[ave_f0+ave_g0 ave_f0-ave_g0],...
-    [0.5*GB_parameters(4)+GB_parameters(5),0.5*GB_parameters(4)+GB_parameters(5)],'mo','markerfacecolor','m','markersize',10);   
-    plot(p(1),[GB_parameters(1),GB_parameters(6)].*1e6,[GB_parameters(4),GB_parameters(9)]+GB_parameters(5),'gx','linewidth',2,'markersize',10);
-    plot(p(1),freq,lfun4c(GB_parameters(1:5),freq)+GB_parameters(5),'g--');
-    plot(p(1),freq,lfun4c(GB_parameters(6:9),freq)+GB_parameters(5),'g--');    
-    parameters5=['G_offset:     ',num2str(GB_parameters(5),10),' mS'];%G_offset
-    parameters6=['B_offset:     ',num2str(GB_parameters(10),10),' mS'];%B_offset
-elseif length(GB_parameters)==14
-    plot(p(1),ave_f0,sum(GB_parameters(4:5)),'o','color',[0 0.5 0],'markerfacecolor',[0 0.5 0],'markersize',10);
+    [0.5*G_parameters(4)+G_parameters(5)+G_parameters(10),0.5*G_parameters(4)+G_parameters(5)+G_parameters(10)],'mo','markerfacecolor','m','markersize',10);   
+    plot(p(1),[G_parameters(1),G_parameters(6)],[G_parameters(4),G_parameters(9)]+G_parameters(5)+G_parameters(10),'gx','linewidth',2,'markersize',10);
+    plot(p(1),freq,lfun4c([G_parameters(1:4),G_parameters(5)+G_parameters(10)],freq),'g--');
+    plot(p(1),freq,lfun4c([G_parameters(6:9),G_parameters(5)+G_parameters(10)],freq),'g--');    
+    parameters5=['G_offset:     ',num2str(G_parameters(5)+G_parameters(10),10),' mS'];%G_offset
+    parameters6=['B_offset:     ',num2str(B_parameters(5)+B_parameters(10),10),' mS'];%B_offset
+elseif length(G_parameters)==15
+    plot(p(1),ave_f0,G_parameters(4)+G_parameters(5)+G_parameters(10)+G_parameters(15),'o','color',[0 0.5 0],'markerfacecolor',[0 0.5 0],'markersize',10);
     plot(p(1),[ave_f0+ave_g0 ave_f0-ave_g0],...
-    [0.5*GB_parameters(4)+GB_parameters(5),0.5*GB_parameters(4)+GB_parameters(5)],'mo','markerfacecolor','m','markersize',10);   
-    plot(p(1),freq,lfun4c(GB_parameters(1:4),freq)+GB_parameters(5),'g--');
-    plot(p(1),freq,lfun4c(GB_parameters(6:9),freq)+GB_parameters(5),'g--');
-    plot(p(1),freq,lfun4c(GB_parameters(10:13),freq)+GB_parameters(5),'g--');
-    plot(p(1),[GB_parameters(1),GB_parameters(6),GB_parameters(10)].*1e6,[GB_parameters(4),GB_parameters(9),GB_parameters(13)]+GB_parameters(5),'gx','linewidth',2,'markersize',10);
-    parameters5=['G_offset:     ',num2str(GB_parameters(5),10),' mS'];%G_offset
-    parameters6=['B_offset:     ',num2str(GB_parameters(14),10),' mS'];%B_offset
-end%if length(GB_parameters)==5
+    [0.5*G_parameters(4)+G_parameters(5)+G_parameters(10)+G_parameters(15),0.5*G_parameters(4)+G_parameters(5)+G_parameters(10)+G_parameters(15)],'mo','markerfacecolor','m','markersize',10);   
+    plot(p(1),freq,lfun4c([G_parameters(1:4),G_parameters(5)+G_parameters(10)+G_parameters(15)],freq),'g--');
+    plot(p(1),freq,lfun4c([G_parameters(6:9),G_parameters(5)+G_parameters(10)+G_parameters(15)],freq),'g--');
+    plot(p(1),freq,lfun4c([G_parameters(11:14),G_parameters(5)+G_parameters(10)+G_parameters(15)],freq),'g--');
+    plot(p(1),[G_parameters(1),G_parameters(6),G_parameters(11)],[G_parameters(4),G_parameters(9),G_parameters(14)]+G_parameters(5)+G_parameters(10)+G_parameters(15),'gx','linewidth',2,'markersize',10);
+    parameters5=['G_offset:     ',num2str(G_parameters(5)+G_parameters(10)+G_parameters(15),10),' mS'];%G_offset
+    parameters6=['B_offset:     ',num2str(B_parameters(5)+B_parameters(15)+B_parameters(15),10),' mS'];%B_offset
+end%if length(G_parameters)==5
 set(p(1),'box','off','color','none');
 set(p(2),'box','off','color','w','yaxislocation','right','ycolor','r','position',get(p(1),'position'),...
     'xlim',get(p(1),'xlim'),'xtick',get(p(1),'xtick'));
 set(statistics_txt,'string',[{G_stats};{B_stats};{parameters1};{parameters2};...
     {parameters3};{parameters4};{parameters5};{parameters6}],'horizontalalignment','left');
-L=legend(p(1),'conductance','fit range','fit',['f_0: ',num2str(ave_f0/1e6),' MHz'],['\Gamma_0: ',num2str(ave_g0),' Hz'],'location','best');
-set(L,'color','w');
 %Create a polar plot that shows the quality of the fit for both the
 %conductance and susceptance curves
 figure(999);
 plot(conductance,susceptance,'bx','linewidth',2,'markersize',6);hold on;
-plot(GB_fit(:,1),GB_fit(:,2),'-','color',[0 0.5 0],'linewidth',2.5);
-plot(GB_fit(I,1),GB_fit(I,2),'-','linewidth',2,'color',[0.82031 0.410156 0.11718]);
+plot(G_fit,B_fit,'-','color',[0 0.5 0],'linewidth',2.5);
+plot(G_fit(I),B_fit(I),'-','linewidth',2,'color',[0.82031 0.410156 0.11718]);
 title('Polar plot of susceptance vs. conductance','fontweight','bold','fontsize',12);
 xlabel('Conductance (mS)','fontsize',12,'fontweight','bold');
 ylabel('Susceptance (mS)','fontsize',12,'fontweight','bold');
 set(p(1),'ylimmode','auto','xlimmode','auto');
+set(handles.fit_B_radio,'value',fit_B_radio_state);%resent the sate of the handles.fit_b_radio radio dial to original state
 delete(temp);
 
 %this function runs when the refresh button is pressed
@@ -2597,47 +2765,65 @@ while get(handles.raw_fig,'value')==1&&get(handles.start,'value')==0
                 f1=figure(dum);  clf(figure(dum));   a=axes;
                 plot(a,conductance,susceptance,'x-','color',[0 0.5 0],'linewidth',1,'markersize',6);
                 axis tight;  hold on;
-                if get(handles.dynamic_fit,'value')==1
-                    [combine_spectra,GB_parameters,handles,I]=Lorentzian_dynamic_fit(handles,freq,conductance,susceptance,combine_spectra);
-                    GB_residual=combine_spectra(:,6:7);
-                    GB_fit=combine_spectra(:,4:5);
-                    G_l_sq=(sum(GB_residual(:,1))*1e-3)/str2double(get(handles.num_datapoints,'string'));
-                    B_l_sq=(sum(GB_residual(:,2))*1e-3)/str2double(get(handles.num_datapoints,'string'));
-                    plot(a,GB_fit(:,1),GB_fit(:,2),'k-','linewidth',2);
-                    plot(a,GB_fit(I,1),GB_fit(I,2),'-','linewidth',1,'color',[0.82031 0.410156 0.11718]);
-                end%if get(handles.dynamic_fit,'value')==1
+                if get(handles.dynamic_fit,'value')==1&&get(handles.fit_B_radio,'value')==1
+                    [G_fit,B_fit,G_l_sq,~,~,G_parameters,B_parameters,handles,I]=Lorentzian_dynamic_fit(handles,freq,conductance,susceptance,combine_spectra);
+                    plot(a,G_fit,B_fit,'k-','linewidth',2);
+                    plot(a,G_fit(I),B_fit(I),'-','linewidth',1,'color',[0.82031 0.410156 0.11718]);
+                end%if get(handles.dynamic_fit,'value')==1&&get(handles.fit_B_radio,'value')==1
                 ylabel(a,'Susceptance (mS)','fontweight','bold','fontsize',12);
                 xlabel(a,'Conductance (mS)','fontweight','bold','fontsize',12);
             elseif get(handles.polar_plot,'value')==0%otherwise, plot things in the frequency domain
                 if get(handles.dynamic_fit,'value')==1%this if statement will run the Lorentzian fitting function
-                    [combine_spectra,GB_parameters,handles,I]=Lorentzian_dynamic_fit(handles,freq,conductance,susceptance,combine_spectra);
-                    GB_residual=combine_spectra(:,6:7);
-                    GB_fit=combine_spectra(:,4:5);
-                    G_l_sq=(sum(GB_residual(:,1))*1e-3)/str2double(get(handles.num_datapoints,'string'));
-                    B_l_sq=(sum(GB_residual(:,2))*1e-3)/str2double(get(handles.num_datapoints,'string'));
+                      [G_fit,B_fit,G_l_sq,~,~,G_parameters,B_parameters,handles,I]=Lorentzian_dynamic_fit(handles,freq,conductance,susceptance,combine_spectra);
                 end%if get(handles.dynamic_fit,'value')==1   
                 f1=figure(dum);  clf(figure(dum));   a=axes;
                 plot(a,freq,conductance,'bx-','linewidth',1.5,'markersize',8);   hold on;
-                if get(handles.dynamic_fit,'value')==1
+                if get(handles.dynamic_fit,'value')==1&&get(handles.fit_B_radio,'value')==1
                     plot(a,freq(I),ones(size(I,1),1).*min(conductance),'-','linewidth',2,'color',[0.82031 0.410156 0.11718]);
-                    plot(a,freq,GB_fit(:,1),'k','linewidth',2);
-                    plot(a,GB_parameters(1)*1e6,GB_parameters(4)+GB_parameters(5),'mo','markerfacecolor','m','markersize',6);
-                    plot(a,[GB_parameters(1)*1e6-GB_parameters(2)*1e4,GB_parameters(1)*1e6+GB_parameters(2)*1e4],...
-                        [0.5*GB_parameters(4)+GB_parameters(5),0.5*GB_parameters(4)+GB_parameters(5)],...
-                        'o','color',[0 0.5 0],'markerfacecolor',[0 0.5 0],'markersize',6);                    
+                    plot(a,mean([G_parameters(1), B_parameters(1)]),...
+                        mean([G_parameters(4),B_parameters(4)])+G_parameters(5),'mo','markerfacecolor','m','markersize',6);
+                    plot(a,[mean([G_parameters(1),B_parameters(1)])-mean([G_parameters(2),B_parameters(2)]),...
+                        mean([G_parameters(1),B_parameters(1)])+mean([G_parameters(2),B_parameters(2)])+G_parameters(5)],...
+                        [mean([G_parameters(4),B_parameters(4)])/2+G_parameters(5),mean([G_parameters(4),B_parameters(4)])/2+G_parameters(5)],...
+                        'o','color',[0 0.5 0],'markerfacecolor',[0 0.5 0],'markersize',6);
+                    plot(a,freq,G_fit,'k','linewidth',2);
                     text('units','normalized','position',[.02 .92 1],'string',...
-                        {['Xsq = ',num2str(sum(G_l_sq))];['f = ',num2str(GB_parameters(1)),' MHz'];['\Gamma = ',num2str(GB_parameters(2)*1e4),' Hz']},...
+                        {['Xsq = ',num2str(sum(G_l_sq))];['f = ',num2str(G_parameters(1)),' Hz'];['\Gamma = ',num2str(G_parameters(2)),' Hz']},...
                     'fontweight','bold','backgroundcolor','none','edgecolor','k');
                     ylim_a=get(gca,'ylim');
                     b=axes('position',get(a,'position'));
                     plot(b,freq,susceptance,'rx-');   hold on;  
-                    plot(b,freq,GB_fit(:,2),'k','linewidth',2);
+                    plot(b,freq,B_fit,'k','linewidth',2);
                     set(a,'box','off','ylim',ylim_a);                      
                     set(b,'yaxislocation','right','ycolor','r','color','none','box','off');
                     xlabel(a,'Frequency (Hz)','fontweight','bold');
                     ylabel(a,'Conductance (mS)','fontweight','bold');
                     ylabel(b,'Susceptance (mS)','fontweight','bold');
                     set(get(b,'ylabel'),'rotation',-90,'units','normalized','position',[1.11 0.5 1]);
+                    set(b,'position',get(a,'position'));
+                    title(['Harmonic number: ',num2str(dum*2-1)],'fontweight','bold');
+                elseif get(handles.dynamic_fit,'value')==1&&get(handles.fit_B_radio,'value')==0
+                    xdata=freq(I);ydata=ones(size(I,1),1).*min(conductance);
+                    plot(a,xdata,ydata,'-','linewidth',2,'color',[0.82031 0.410156 0.11718]);
+                    plot(a,G_parameters(1),...
+                        G_parameters(4)+G_parameters(5),'mo','markerfacecolor','m','markersize',6);
+                    plot(a,[G_parameters(1)-G_parameters(2),...
+                        G_parameters(1)+G_parameters(2)+G_parameters(5)],...
+                        [(G_parameters(4))/2+G_parameters(5),(G_parameters(4))/2+G_parameters(5)],...
+                        'o','color',[0 0.5 0],'markerfacecolor',[0 0.5 0],'markersize',6);
+                    plot(a,freq,G_fit,'k','linewidth',2);
+                    text('units','normalized','position',[.02 .95 1],'string',['Xsq = ',num2str(sum(G_l_sq))],...
+                    'fontweight','bold','backgroundcolor','none','edgecolor','k');
+                    ylim_a=get(gca,'ylim');
+                    b=axes('position',get(a,'position'));
+                    plot(b,freq,susceptance,'rx-');
+                    set(a,'box','off','ylim',ylim_a);                    
+                    set(b,'yaxislocation','right','ycolor','r','color','none','box','off');
+                    xlabel(a,'Frequency (Hz)','fontweight','bold');
+                    ylabel(a,'Conductance (mS)','fontweight','bold');
+                    ylabel(b,'Susceptance (mS)','fontweight','bold');
+                    set(get(b,'ylabel'),'rotation',-90,'units','normalized',...
+                        'position',[1.2 0.5 1]);
                     set(b,'position',get(a,'position'));
                     title(['Harmonic number: ',num2str(dum*2-1)],'fontweight','bold');
                 end%if get(handles.c=dynamic_fit,'value')==1                        
@@ -2733,7 +2919,7 @@ peak_track=get(handles.(['peak_track',num2str(handles.din.harmonic)]),'userdata'
             set(handles.(['end_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(2),12));%set new end freq in MHz
         else
             thresh1=.05*current_span+current_xlim(1)*1e6;%Threshold frequency in Hz
-            thresh2=.03*current_span;%Threshold frequency span in Hz
+            thresh2=.02*current_span;%Threshold frequency span in Hz
             LB_peak=peak_f-halfg_freq*3;%lower bound of the resonance peak
             if LB_peak-thresh1>halfg_freq*8%if peak is to thin, zoom into the peak
                 new_xlim(1)=(current_xlim(1)*1e6+thresh2)*1e-6;%MHz
@@ -2813,6 +2999,7 @@ try
     settings.num_datapoints=get(handles.num_datapoints,'string');
     settings.record_time_increment=get(handles.record_time_increment,'string');
     settings.dynamic_fit=get(handles.dynamic_fit,'value');
+    settings.fit_B_radio=get(handles.fit_B_radio,'value');
     settings.radio_chi=get(handles.radio_chi,'value');
     settings.num_datapoints2=get(handles.num_datapoints,'userdata');
     settings.n=handles.din.n;%this setting was implmented in version 1.0c
@@ -2959,6 +3146,7 @@ try
     disp('Scan settings loaded!');
     set(handles.dynamic_fit,'value',settings.dynamic_fit);
     set(handles.radio_chi,'value',settings.radio_chi);
+    set(handles.fit_B_radio,'value',settings.fit_B_radio);
     disp('Fitting options loaded!');
     disp('handles.din stucture updated!');
     [~,temp,~]=fileparts(handles.din.output_filename);
@@ -2997,7 +3185,7 @@ try
     handles.din.output_filename=output_filename;
     handles.din.output_path=output_path;
     disp('Files saved to:');
-    disp([output_path,output_filename,'.mat']);
+    disp(output_path,output_filename);
 catch 
 end%try
 guidata(hObject, handles);
@@ -3115,10 +3303,13 @@ if isempty(dum)==0
             G_frequency_shifts= FG_frequency(:,active_plot_harmonics(1)+2)-handles.din.ref_diss((active_plot_harmonics(1)+1)./2);
             set(handles.primary_handles.(['phantom',num2str(dum),'a']),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n)./active_plot_harmonics,'visible','on');        
     end
+%     if (max(FG_frequency(:,1)))>=max(get(handles.primaryaxes1,'xlim'))&&strcmp(handles.del_mode.State,'off')==1
+%         set(handles.primaryaxes1,'xlim',[FG_frequency(1,1)-1, max(FG_frequency(:,1))*1.2]);
+%     end% if (max(FG_frequency(:,1)))>=get(gca,'xlim')(1,2)-10  
+    yt=get(handles.primaryaxes1,'ytick');
+    set(handles.ytick1,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
 else
 end%if isempty(dum)==0
-yt=get(handles.primaryaxes1,'ytick');    
-set(handles.ytick1,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
 
 
 
@@ -3156,19 +3347,20 @@ if isempty(dum)==0
         case 5%plot gamma shift/harmonic order versus time
             G_frequency_shifts= FG_frequency(:,active_plot_harmonics(1)+2)-handles.din.ref_diss((active_plot_harmonics(1)+1)./2);
             set(handles.primary_handles.(['phantom',num2str(dum),'b']),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n)./active_plot_harmonics,'visible','on');           
-    end        
+    end
+%     if (max(FG_frequency(:,1)))>=max(get(handles.primaryaxes2,'xlim'))
+%         set(handles.primaryaxes2,'xlim',[FG_frequency(1,1)-1, max(FG_frequency(:,1))*1.2]);
+%     end% if (max(FG_frequency(:,1)))>=get(gca,'xlim')(1,2)-10   
+    yt=get(handles.primaryaxes2,'ytick');
+    set(handles.ytick2,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
 else
 end%if isempty(dum)==0
-yt=get(handles.primaryaxes2,'ytick');
-set(handles.ytick2,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
 
-%This is the callback function for the plot1 radio dials (associated with
-%the top primary axes plot)
-function plot1_helper(handles)
+
+% --- Executes on button press in plot_1st.
+function plot_1_Callback(~, ~, handles)
 for dum=1:6%hide the plot handles
     set(handles.primary_handles.(['phantom',num2str(dum),'a']),'visible','off');
-    yt=get(handles.primaryaxes1,'ytick');    
-    set(handles.ytick1,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
 end%for dum1:6
 num_harms=primaryaxes_harm(handles);
 for dum=1:length(num_harms)
@@ -3176,13 +3368,120 @@ for dum=1:length(num_harms)
     plot_primaryaxes1(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
 end
 
-%This is the callback function for the plot2 radio dials (associated with
-%the bottom primary axes plot)
-function plot2_helper(handles)
+% --- Executes on button press in plot_3rd.
+function plot_3_Callback(~, ~, handles)
+for dum=1:6%hide the plot handles
+    set(handles.primary_handles.(['phantom',num2str(dum),'a']),'visible','off');
+end%for dum1:6
+num_harms=primaryaxes_harm(handles);
+for dum=1:length(num_harms)
+    handles.din.harmonic=num_harms(dum);
+    plot_primaryaxes1(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
+end
+
+% --- Executes on button press in plot_5th.
+function plot_5_Callback(~, ~, handles)
+for dum=1:6%hide the plot handles
+    set(handles.primary_handles.(['phantom',num2str(dum),'a']),'visible','off');
+end%for dum1:6
+num_harms=primaryaxes_harm(handles);
+for dum=1:length(num_harms)
+    handles.din.harmonic=num_harms(dum);
+    plot_primaryaxes1(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
+end
+
+% --- Executes on button press in plot_7th.
+function plot_7_Callback(~, ~, handles)
+for dum=1:6%hide the plot handles
+    set(handles.primary_handles.(['phantom',num2str(dum),'a']),'visible','off');
+end%for dum1:6
+num_harms=primaryaxes_harm(handles);
+for dum=1:length(num_harms)
+    handles.din.harmonic=num_harms(dum);
+    plot_primaryaxes1(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
+end
+
+% --- Executes on button press in plot_9th.
+function plot_9_Callback(~, ~, handles)
+for dum=1:6%hide the plot handles
+    set(handles.primary_handles.(['phantom',num2str(dum),'a']),'visible','off');
+end%for dum1:6
+num_harms=primaryaxes_harm(handles);
+for dum=1:length(num_harms)
+    handles.din.harmonic=num_harms(dum);
+    plot_primaryaxes1(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
+end
+
+% --- Executes on button press in plot_11th.
+function plot_11_Callback(~, ~, handles)
+for dum=1:6%hide the plot handles
+    set(handles.primary_handles.(['phantom',num2str(dum),'a']),'visible','off');
+end%for dum1:6
+num_harms=primaryaxes_harm(handles);
+for dum=1:length(num_harms)
+    handles.din.harmonic=num_harms(dum);
+    plot_primaryaxes1(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
+end
+
+% --- Executes on button press in plot2_1.
+function plot2_1_Callback(~, ~, handles)
 for dum=1:6%hide the plot handles
     set(handles.primary_handles.(['phantom',num2str(dum),'b']),'visible','off');
-    yt=get(handles.primaryaxes2,'ytick');
-    set(handles.ytick2,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
+end%for dum1:6
+num_harms=primaryaxes2_harm(handles);
+for dum=1:length(num_harms)
+    handles.din.harmonic=num_harms(dum);
+    plot_primaryaxes2(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
+end
+
+% --- Executes on button press in plot2_3.
+function plot2_3_Callback(~, ~, handles)
+for dum=1:6%hide the plot handles
+    set(handles.primary_handles.(['phantom',num2str(dum),'b']),'visible','off');
+end%for dum1:6
+num_harms=primaryaxes2_harm(handles);
+for dum=1:length(num_harms)
+    handles.din.harmonic=num_harms(dum);
+    plot_primaryaxes2(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
+end
+
+% --- Executes on button press in plot2_5.
+function plot2_5_Callback(~, ~, handles)
+for dum=1:6%hide the plot handles
+    set(handles.primary_handles.(['phantom',num2str(dum),'b']),'visible','off');
+end%for dum1:6
+num_harms=primaryaxes2_harm(handles);
+for dum=1:length(num_harms)
+    handles.din.harmonic=num_harms(dum);
+    plot_primaryaxes2(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
+end
+
+% --- Executes on button press in plot2_7.
+function plot2_7_Callback(~, ~, handles)
+for dum=1:6%hide the plot handles
+    set(handles.primary_handles.(['phantom',num2str(dum),'b']),'visible','off');
+end%for dum1:6
+num_harms=primaryaxes2_harm(handles);
+for dum=1:length(num_harms)
+    handles.din.harmonic=num_harms(dum);
+    plot_primaryaxes2(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
+end
+
+% --- Executes on button press in plot2_9.
+function plot2_9_Callback(~, ~, handles)
+for dum=1:6%hide the plot handles
+    set(handles.primary_handles.(['phantom',num2str(dum),'b']),'visible','off');
+end%for dum1:6
+num_harms=primaryaxes2_harm(handles);
+for dum=1:length(num_harms)
+    handles.din.harmonic=num_harms(dum);
+    plot_primaryaxes2(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
+end
+
+% --- Executes on button press in plot2_11.
+function plot2_11_Callback(~, ~, handles)
+for dum=1:6%hide the plot handles
+    set(handles.primary_handles.(['phantom',num2str(dum),'b']),'visible','off');
 end%for dum1:6
 num_harms=primaryaxes2_harm(handles);
 for dum=1:length(num_harms)
@@ -3394,6 +3693,7 @@ set(handles.del_mode,'visible','on');%display the del_mode toolbar button
 if strcmp(get(handles.del_mode,'state'),'on')
     set(handles.confirm_del,'visible','on');%display the confim_del toolbar button
 end%if get(handles.del_mode,'enable','on')
+set(handles.fit_B_radio,'value',1);
 set(handles.dynamic_fit,'value',1);
 set(handles.maintain_myVNA,'value',1);
 set(handles.start,'string','Record Scan','foregroundcolor','w','backgroundcolor',[0 0.5 0]);
@@ -3672,6 +3972,9 @@ radio_diary=uicontrol('style','radio','value',handles.prefs.output_diary,'toolti
     'string','Save the Command Window into a text file','parent',cwo_panel,'units','normalized','position',[0.03 0 0.5 0.2]);
 fit_option_panel=uipanel('title','Additional spectra fitting options','foregroundcolor','b','fontweight','bold',...
     'position',[0 0.6 1 0.2]);
+radio_simul_peak=uicontrol('style','radio','value',handles.prefs.simul_peak,'tooltipstring','Fit the conductance and susceptance simultaneously.',...
+    'units','normalized','position',[0.03 0.75 0.5 0.2],'backgroundcolor',get(fit_option_panel,'backgroundcolor'),...
+    'string','Fit G and B simultaneously','parent',fit_option_panel);
 fit_options_panel=uipanel('title','Fitting options','foregroundcolor','b','fontweight','bold','position',[0 0.4 1 0.2]);
 show_dfdg=uicontrol('style','radio','units','normalized','parent',fit_options_panel,'position',[0.03 .75 .5 .2],...
     'string','Show delf and delg','tooltipstring','Show frequency and bandwith shifts','value',handles.prefs.show_dfdg,...
@@ -3693,7 +3996,7 @@ del_row=uicontrol('style','pushbutton','string','Delete event','parent',schedule
     'fontweight','bold','foregroundcolor','r','visible','off','backgroundcolor',[.71 .71 .71],'tooltipstring','Delete the last event.');
 reset_row=uicontrol('style','pushbutton','string','Reset schedule','parent',schedule_panel,'units','normalized','position',[0.51 0.75 0.18 .12],...
     'fontweight','bold','foregroundcolor','k','visible','off','backgroundcolor',[.71 .71 .71]);
-set(set_pref,'callback',{@set_pref1,hObject,handles,set_pref,radio_GB_values,radio_clc_cw,radio_output_raw,...
+set(set_pref,'callback',{@set_pref1,hObject,handles,set_pref,radio_GB_values,radio_clc_cw,radio_output_raw,radio_simul_peak,...
     schedule_table,radio_on_off_schedule,show_dfdg,status,radio_diary});
 %Define the Callback functions for the objects in the figure window
 set(schedule_table,'celleditcallback',{@schedule_table_callback,handles,schedule_table});
@@ -3731,7 +4034,7 @@ try
         schedule{callbackdata.Indices(1),callbackdata.Indices(2)}=datestr(callbackdata.EditData,'yyyy-mm-dd HH:MM:SS');
     elseif callbackdata.Indices(2)==2  %check to see if the user has inputted the time b/w measurements correctly into the schedule
         if isnan(str2double(callbackdata.EditData))==1
-            disp('ERROR! Please check that date is inputted properly.');
+            USER IS NOT SO SMART
         else
             schedule(callbackdata.Indices(1),callbackdata.Indices(2))={str2double(callbackdata.EditData)};                  
         end%if isnan(str2double(callbackdata.EditData))==1
@@ -3826,12 +4129,13 @@ elseif get(radio_on_off_schedule,'value')==0&&flag==1%if the radio dial is off, 
 end%if get(hObject,'value')==1
 
 function set_pref1(~,~,hObject,handles,set_pref,radio_GB_values,radio_clc_cw,...
-    radio_output_raw,schedule_table,radio_on_off_schedule,...
+    radio_output_raw,radio_simul_peak,schedule_table,radio_on_off_schedule,...
     show_dfdg,status,radio_diary)
 %this sets the user preferences for the entire GUI (work in progress...)
 handles.prefs.show_GB=get(radio_GB_values,'value');
 handles.prefs.clc_cw=get(radio_clc_cw,'value');
 handles.prefs.output_raw=get(radio_output_raw,'value');
+handles.prefs.simul_peak=get(radio_simul_peak,'value');
 handles.prefs.measurement_schedule=get(schedule_table,'data');
 handles.prefs.schedule_toggle=get(radio_on_off_schedule,'value');
 handles.prefs.measurement_schedule_rnames=get(schedule_table,'rowname');
