@@ -125,11 +125,11 @@ status open
 
 \end_inset
 
-Version 2.0b 
+Version 2.0e 
 \begin_inset Quotes eld
 \end_inset
 
-bigfoot
+Eurynomos
 \begin_inset Quotes erd
 \end_inset
 
@@ -695,7 +695,7 @@ AccessMyVNAv0.7.exe
  to Windows 7
 \series default
 .
- Otherwise, the program will unexpectedly crash.
+ Otherwise, the program will unexpectedly crash or malfunction.
 \end_layout
 
 \begin_layout Subsubsection
@@ -766,7 +766,7 @@ The QCM MATLAB Program does not require any formal installation.
 \begin_inset Quotes eld
 \end_inset
 
-QCM_v002b_bigfoot.m
+QCM_v002e_Eurynomos.m
 \begin_inset Quotes erd
 \end_inset
 
@@ -777,7 +777,7 @@ QCM_v002b_bigfoot.m
 \begin_inset Quotes eld
 \end_inset
 
-QCM_v002b_bigfoot.fig
+QCM_v002e_Eurynomos.fig
 \begin_inset Quotes erd
 \end_inset
 
@@ -959,7 +959,8 @@ MyVNA
 \end_layout
 
 \begin_layout Standard
-To start up the QCM MATLAB program (and the other programs, a.k.a.
+<THIS SECTION IS DEPRECATED FOR VERSION 002e AND HIGHER> To start up the
+ QCM MATLAB program (and the other programs, a.k.a.
  MyVNA and AccessMyVNA), run the 
 \begin_inset Quotes eld
 \end_inset
@@ -997,8 +998,8 @@ reference "fig:AccessMyVNA Start Button"
 \end_layout
 
 \begin_layout Standard
-To have AccessMyVNA program to stop scanning, simply go to the radio dial
- labelled, 
+<THIS SECTION IS DEPRECATED FOR VERSION 002e AND HIGHER>To have AccessMyVNA
+ program to stop scanning, simply go to the radio dial labelled, 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1215,7 +1216,7 @@ status open
 \align center
 \begin_inset Graphics
 	filename Figures/choose harmonics.png
-	scale 60
+	scale 80
 
 \end_inset
 
@@ -1408,7 +1409,7 @@ Number of datapoints
 
 \begin_layout Standard
 The number of datapoints in each frequency scan can be adjusted.
- The default value is 200 datapoints.
+ The default value is 300 datapoints.
  Note that increasing the number of datapoints will require more time in
  between harmonics.
  Thus, the time in between haronics need to be adjusted accordingly.
@@ -1433,7 +1434,7 @@ The time interval in which the QCM MATLAB Program records the spectra measure
  can be set in this option.
  For experiments that last for days to weeks, it is more practical to increase
  the time interval in which the MATLAB program records the data.
- Currently, the MATLAB program allows for 1 million timepoints to be recorded.
+ Currently, the MATLAB program allows for 25000 timepoints to be recorded.
  If more than one million datapoints are collected, an error will appear
  and terminate the data collection process.
  The maximum number of datapoints to keep can be adjusted in the MATLAB
@@ -2335,6 +2336,28 @@ version
  was used to record the data
 \end_layout
 
+\begin_layout Enumerate
+
+\series bold
+\begin_inset Quotes eld
+\end_inset
+
+std_fit
+\begin_inset Quotes erd
+\end_inset
+
+:
+\series default
+ For versions 002e and higher, the estimated standard deviations of the
+ Lorentz fit (a measure of the error in the Lorentz fits based on the results
+ of the nlparci MATLAB function) are included.
+ The first column contains the timepoints.
+ Columns 2, 4, 6, 8, 10, and 12 contain the standard deviation of the resonance
+ frequency.
+ Columns 3, 5, 7, 9, 11, and 13 conatin the standard deviation of the dissipatio
+n data.
+\end_layout
+
 \end_deeper
 \end_deeper
 \begin_layout Enumerate
@@ -2389,6 +2412,72 @@ filename_t_<min>dot<fractional min>_iq_1_ih_<harmonic order>:
 \series default
  contains the frequency (first column), conductance (second column), and
  susceptance data (third column) at time <min>.<fractional min>.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+This format is deprecated for v002e and higher.
+ However, this format can still be used by selecting the radio dial for
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Save/read spectra using legacy format
+\begin_inset Quotes erd
+\end_inset
+
+ in the 
+\begin_inset Quotes eld
+\end_inset
+
+Set Preferences
+\begin_inset Quotes erd
+\end_inset
+
+ figure window.
+ See Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Set-preferences"
+
+\end_inset
+
+ for details.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+\begin_inset Quotes eld
+\end_inset
+
+raw_spectra_<harmonic mode>
+\begin_inset Quotes erd
+\end_inset
+
+: 
+\series default
+For versions 002e and higher, the way in which the raw spectras are saved
+ has been updated.
+ Raw spectras are saved in a 4-column cell format: 
+\begin_inset Quotes eld
+\end_inset
+
+raw_spectra_<harmonic mode>
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The first, second, third, and fourth column contain information of the
+ timepoints, base filename, the harmonic order, and a 7-column raw spectra
+ matrix, respectively.
+ The first, second, and third columns, of the raw spectra matrix represent
+ the frequency, raw conductance, and raw susceptance.
 \end_layout
 
 \end_deeper
@@ -2709,7 +2798,7 @@ The QCM MATLAB Program code is thoroughly commented and tested.
 \end_layout
 
 \begin_layout Part
-Comprehensive guide to the QCM MATLAB Program
+A (more) comprehensive guide to the QCM MATLAB Program
 \end_layout
 
 \begin_layout Section
@@ -2784,6 +2873,7 @@ status open
 \align center
 \begin_inset Graphics
 	filename Figures/figure toolbar.png
+	width 75text%
 
 \end_inset
 
@@ -2821,7 +2911,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="17" columns="3">
+<lyxtabular version="3" rows="18" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -2967,7 +3057,7 @@ data cursor
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2983,6 +3073,35 @@ select datapoints in an axes
 
 \begin_layout Plain Layout
 5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+select raw spectra (new in v002e)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+view raw spectra corresponding to selected datapoints
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
 \end_layout
 
 \end_inset
@@ -3019,7 +3138,7 @@ delete datapoints mode
 \begin_inset Text
 
 \begin_layout Plain Layout
-6
+7
 \end_layout
 
 \end_inset
@@ -3048,7 +3167,7 @@ load reference frequencies
 \begin_inset Text
 
 \begin_layout Plain Layout
-7
+8
 \end_layout
 
 \end_inset
@@ -3085,7 +3204,7 @@ refit mode
 \begin_inset Text
 
 \begin_layout Plain Layout
-8
+9
 \end_layout
 
 \end_inset
@@ -3114,7 +3233,7 @@ set multi-peak functions
 \begin_inset Text
 
 \begin_layout Plain Layout
-9
+10
 \end_layout
 
 \end_inset
@@ -3143,7 +3262,7 @@ save the frequency shift data
 \begin_inset Text
 
 \begin_layout Plain Layout
-10
+11
 \end_layout
 
 \end_inset
@@ -3172,7 +3291,7 @@ set-up email notifications
 \begin_inset Text
 
 \begin_layout Plain Layout
-11
+12
 \end_layout
 
 \end_inset
@@ -3201,7 +3320,7 @@ plot options for primaryaxes1 and primaryaxes2
 \begin_inset Text
 
 \begin_layout Plain Layout
-12
+13
 \end_layout
 
 \end_inset
@@ -3230,7 +3349,7 @@ set-up GUI preferences
 \begin_inset Text
 
 \begin_layout Plain Layout
-13
+14
 \end_layout
 
 \end_inset
@@ -3259,7 +3378,7 @@ revert GUI state back to the default state
 \begin_inset Text
 
 \begin_layout Plain Layout
-14
+15
 \end_layout
 
 \end_inset
@@ -3288,7 +3407,7 @@ execute AccessMyVNA.exe
 \begin_inset Text
 
 \begin_layout Plain Layout
-15
+16
 \end_layout
 
 \end_inset
@@ -3317,7 +3436,7 @@ enter into debugging mode (for advanced users only!)
 \begin_inset Text
 
 \begin_layout Plain Layout
-16
+17
 \end_layout
 
 \end_inset
@@ -3382,6 +3501,267 @@ Zoom in/out, pan, and data cursor tool
 \begin_layout Standard
 These tools have the same functionality as the default zoom in/out, pan,
  and data cursor tools on a standard figure window.
+\end_layout
+
+\begin_layout Subsubsection
+Select raw spectra (new in v002e Eurynomos) 
+\begin_inset Graphics
+	filename Figures/select_raw_spectra.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Clicking on this button will activate the data cursor mode with a customized
+ callback function (both the 
+\begin_inset Quotes eld
+\end_inset
+
+data cursor tool
+\begin_inset Quotes erd
+\end_inset
+
+ and the 
+\begin_inset Quotes eld
+\end_inset
+
+select raw spectra
+\begin_inset Quotes erd
+\end_inset
+
+ button will be enabled: 
+\begin_inset Graphics
+	filename Figures/select_raw_spectra_enabled.png
+
+\end_inset
+
+).
+ When a datapoint is selected in the primaryaxes1 and primaryaxes2, the
+ program will attempt to extract and display the associated raw spectra.
+ The user will be able to refit the spectra based on the user-selected guess
+ values by pushing the 
+\begin_inset Quotes eld
+\end_inset
+
+Fit
+\begin_inset Quotes erd
+\end_inset
+
+ push button (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Raw_spectra_refit"
+
+\end_inset
+
+).
+ The fitting process is the same as the fitting process introduced in the
+ 
+\begin_inset Quotes eld
+\end_inset
+
+peak centering mode
+\begin_inset Quotes erd
+\end_inset
+
+ (see 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+ for more details).
+ The user is also given the option to choose the range in which the fit
+ will be performed by selecting/deslecting the 
+\begin_inset Quotes eld
+\end_inset
+
+Only fit within axes span
+\begin_inset Quotes erd
+\end_inset
+
+ radio button.
+ When the fit is complete, information comparing the old and new Lorentz
+ fit will be shown as an annotated textbox (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Raw_spectra_refit_completed"
+
+\end_inset
+
+).
+ The user can choose to accept the new fit by pressing the 
+\begin_inset Quotes eld
+\end_inset
+
+Accept
+\begin_inset Quotes erd
+\end_inset
+
+ push button; this will update the selected datapoint to reflect the newly
+ accepted Lorentz fit.
+ However, the removal of the datapoint will not be reflected in the saved
+ <base_filename>.mat file, where the fitted 
+\begin_inset Formula $f$
+\end_inset
+
+ and 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+ values are stored.
+ To permanently save the changes to the <base_filename>.mat file, the user
+ must push the save button, 
+\begin_inset Graphics
+	filename Figures/save.png
+
+\end_inset
+
+ (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Save-pushbutton"
+
+\end_inset
+
+ for details).
+\end_layout
+
+\begin_layout Standard
+Alternatively, if the raw spectra is not useable, the user can choose to
+ delete the datapoint by pushing the 
+\begin_inset Quotes eld
+\end_inset
+
+Remove
+\begin_inset Quotes erd
+\end_inset
+
+ push button.
+ This will remove the datapoint from the data arrays stored in the handles
+ structure of the GUI program; the removal of the datapoint will not be
+ reflected in the saved <base_filename>.mat file, where the fitted 
+\begin_inset Formula $f$
+\end_inset
+
+ and 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+ values are stored.
+ To permanently save the changes to the <base_filename>.mat file, the user
+ must push the save button, 
+\begin_inset Graphics
+	filename Figures/save.png
+
+\end_inset
+
+ (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Save-pushbutton"
+
+\end_inset
+
+ for details).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/select_raw_spectra_refit.png
+	width 50text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The refitting window that allows the user to refit the selected raw spectra.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Raw_spectra_refit"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/select_raw_spectra_refit_complete.png
+	width 50text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+An example of what the refitting window looks like after a new Lorentz fit
+ of the selected datapoint.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Raw_spectra_refit_completed"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -3474,7 +3854,7 @@ trash can
 This functionality is particularly useful when an outlier (due to poor fitting,
  etc.) causes the frequency and/or dissipation plots to zoom out, making
  graphical interpretation of the measurement proccess difficult.
- This function is NOT to be used for data manipulation!
+ This function is NOT to be used for unethical data manipulation!
 \end_layout
 
 \begin_layout Subsubsection
@@ -3599,6 +3979,13 @@ Multi-peak fitting options
 \end_inset
 
 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Multi-peak-fitting-options"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3625,11 +4012,18 @@ Save frequency shift data
 \end_inset
 
 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Save-pushbutton"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 This button saves the current state of the frequency and dissipation shift
- data stored in the handles structure.
+ data stored in the handles structure of the GUI.
  If no filename has been designated, the data will be saved according to
  the default filenames (see Section 
 \begin_inset CommandInset ref
@@ -3919,6 +4313,13 @@ Set preferences
 \end_inset
 
 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Set-preferences"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3983,8 +4384,8 @@ Set Measurement Schedule
 \end_layout
 
 \begin_layout Standard
-Details of each option in the preferences can be found in associated the
- tooltip string.
+Details of each option in the preferences can be found in associated tooltip
+ string (hover the mouse pointer over the option).
 \end_layout
 
 \begin_layout Standard
@@ -4423,6 +4824,584 @@ Short description of each button on the GUI toolbar
 
 \end_layout
 
+\begin_layout Subsubsection
+Record Scan
+\end_layout
+
+\begin_layout Standard
+Pushing this button starts the data collection process.
+ Note that when the data acquisition process is ongoing, some of the features
+ are disabled; this is to prevent unwanted errors that can lead to loss
+ of data.
+\end_layout
+
+\begin_layout Subsubsection
+Peak Centering Mode
+\end_layout
+
+\begin_layout Standard
+Pushing this button sets the GUI into a 
+\begin_inset Quotes eld
+\end_inset
+
+peak centering
+\begin_inset Quotes erd
+\end_inset
+
+ mode, which allows the user to set the span for the program to scan for
+ each odd harmonic resonance.
+ When this mode is active, a 
+\begin_inset Quotes eld
+\end_inset
+
+Center Peak
+\begin_inset Quotes erd
+\end_inset
+
+ panel will display within the 
+\begin_inset Quotes eld
+\end_inset
+
+Settings Panel
+\begin_inset Quotes erd
+\end_inset
+
+ (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:center_peak_panel"
+
+\end_inset
+
+).
+ Selecting the odd harmonic radio dial will allow the user to view the current
+ live reading of the raw spectra, defined by the start and end frequency.
+ A new figure window will appear, displaying the conductance and susceptance
+ across the set frequency range (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:center_peak_fit_window"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/center_peak_panel.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The 
+\begin_inset Quotes eld
+\end_inset
+
+Center Peak
+\begin_inset Quotes erd
+\end_inset
+
+ panel appears within the 
+\begin_inset Quotes eld
+\end_inset
+
+Settings Panel
+\begin_inset Quotes erd
+\end_inset
+
+ when 
+\begin_inset Quotes eld
+\end_inset
+
+Peak Centering Mode
+\begin_inset Quotes erd
+\end_inset
+
+ is active.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:center_peak_panel"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/peak_center_fit.png
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+A figure window appears showing the electrical conductance and susceptance
+ scan for the selected harmonic resonance.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:center_peak_fit_window"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+On the right side of the figure window, as shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:center_peak_fit_window"
+
+\end_inset
+
+, the 
+\begin_inset Quotes eld
+\end_inset
+
+Span
+\begin_inset Quotes erd
+\end_inset
+
+ panel allows the user to adjust the start and end frequency of the electrical
+ admittance scan.
+ This can be done either by pushing the increase/decrease span push buttons
+ or manually inputting the width of the span in kHz (where the center of
+ the span remains unchanged).
+ Alternatively, the user can use the zoom in/out, data cursor
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+The data cursor allows the user to center at the corresponding frequecy
+ of the selected datapoint.
+ Once the datapoint is selected, click off of the datatip (but within the
+ plot axes) to refresh the spectra.
+\end_layout
+
+\end_inset
+
+, and pan tools to change the frequency scan range.
+ Due to the nature of how the MATLAB GUI communicates with myVNA, a refresh
+ toolbar button (
+\begin_inset Graphics
+	filename Figures/refresh.png
+
+\end_inset
+
+) was added in order to manually reload the electrical admittance frequency
+ scan.
+ If the spectra looks suspiciously incorrect, it is recommended to refresh
+ the spectra manually.
+ In addition to changing the start and end frequencies of the scan, the
+ number of datapoints measured in the spectra can also be changed.
+ The number of datapoints should at least be 100 (default is set to 300);
+ otherwise, the Lorentz fitting will likely be inaccurate.
+\end_layout
+
+\begin_layout Paragraph
+Methods for determining guess parameters
+\end_layout
+
+\begin_layout Standard
+While in this mode, the different methods for determining an initial estimate
+ of the Lorentz fitting parameters can be set.
+ Currently there are 5 options: 
+\begin_inset Quotes eld
+\end_inset
+
+Gmax
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+Derivative
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+Bmax
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+Previous values
+\begin_inset Quotes erd
+\end_inset
+
+, and 
+\begin_inset Quotes eld
+\end_inset
+
+User-defined
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+Gmax
+\begin_inset Quotes erd
+\end_inset
+
+: The guess parameters are based on examining the electrical conductance
+ spectra, where the maximum of the conductance response represents an estimate
+ of the resonance frequency.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+Derivative
+\begin_inset Quotes erd
+\end_inset
+
+: The guess parameters are based on the derivative of the complex electrical
+ admittance magnitude, where the maximum of the derivative is used as an
+ estimate for the resonance frequnecy.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+Bmax
+\begin_inset Quotes erd
+\end_inset
+
+: The guess parameters are determined from the electrical suscpetance spectra,
+ where the maximum of the susceptance reponse represents an estimate of
+ the resonance frequency.
+ This method is analogous to the 
+\begin_inset Quotes eld
+\end_inset
+
+Gmax
+\begin_inset Quotes erd
+\end_inset
+
+ guess method.
+ This is algorithm is useful when the VNA has a less-than perfect calibration,
+ where the resonance response undergoes a rotation in the complex admittance
+ polar plot.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+Previous values
+\begin_inset Quotes erd
+\end_inset
+
+: Guess parameters will be based on previously fitted parameters.
+ This is useful for most cases when the change in the harmonic resonances
+ occurs slowly.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+User-defined
+\begin_inset Quotes erd
+\end_inset
+
+: This prompts the user to manually set the guess parameters.
+ Generally, this algorithm is reserved for fitting complex resonance responses,
+ where multiple anharmonics are coupled with the primary harmonic mode.
+\end_layout
+
+\begin_layout Standard
+Once guess parameters are set, the spectra is ready to be fitted with a
+ Lorentz curve.
+ To do this, push the 
+\begin_inset Quotes eld
+\end_inset
+
+Fit
+\begin_inset Quotes erd
+\end_inset
+
+ toolbar button (
+\begin_inset Graphics
+	filename Figures/fit.png
+
+\end_inset
+
+).
+ The MATLAB program will attempt to fit the spectra using the defined guess
+ parameter method.
+ If the Lorentz fit fails, the MATLAB program will attempt to fit the spectra
+ again using another guess parameter method.
+\end_layout
+
+\begin_layout Paragraph
+Multiple anharmonic modes
+\end_layout
+
+\begin_layout Standard
+To mitigate the effects of anahrmonic modes that can couple with the primary
+ harmonic resonance, multiple Lorentz curves can be used to fit the primary
+ and anharmonic resonances.
+ To adjust how the MATLAB program detects the relevant resonance peaks,
+ the 
+\begin_inset Quotes eld
+\end_inset
+
+Peak finding options
+\begin_inset Quotes erd
+\end_inset
+
+ toolbar button can be pushed (
+\begin_inset Graphics
+	filename Figures/multi_fit.png
+
+\end_inset
+
+).
+ See Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Multi-peak-fitting-options"
+
+\end_inset
+
+ for more details.
+\end_layout
+
+\begin_layout Paragraph
+Peak tracking algorithm
+\end_layout
+
+\begin_layout Standard
+During the measurement process, the MATLAB GUI program relies on a peak
+ tracking algorithm to measure the resonance responses.
+ There are 3 radio dials that can be selected: 
+\begin_inset Quotes eld
+\end_inset
+
+Fix span
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+Fix center
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+Custom
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Only 
+\begin_inset Quotes eld
+\end_inset
+
+Fix span
+\begin_inset Quotes erd
+\end_inset
+
+ is selected: The program will adjust the start and end frequencies by dynamical
+ly changing the span center of the scan.
+ The range of the scan remains static.
+\end_layout
+
+\begin_layout Enumerate
+Only 
+\begin_inset Quotes eld
+\end_inset
+
+Fix center
+\begin_inset Quotes erd
+\end_inset
+
+ is selected: The program will adjust the start and end frequencies by dynamical
+ly chaning the scan span.
+ The span center remains static.
+\end_layout
+
+\begin_layout Enumerate
+Both 
+\begin_inset Quotes eld
+\end_inset
+
+Fix span
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+Fix center
+\begin_inset Quotes erd
+\end_inset
+
+ are selected: The program will not adjust the start and end frequencies.
+ Essentially, the program will not try to track the resonance peak.
+\end_layout
+
+\begin_layout Enumerate
+Only 
+\begin_inset Quotes eld
+\end_inset
+
+Custom
+\begin_inset Quotes erd
+\end_inset
+
+ is selected: This option allows for future developers or users to define
+ their own peak tracking algorithm.
+ To do this, open the m-script of the MATLAB GUI program and search for
+ (crtl+f) 
+\begin_inset Quotes eld
+\end_inset
+
+user-defined peak tracking
+\begin_inset Quotes erd
+\end_inset
+
+.
+ This should lead to the section in which users can insert their own code.
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename Figures/user_defined_peak_code.png
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Clear raw spectra
+\end_layout
+
+\begin_layout Standard
+Clicking this will clear all of the axes in the GUI.
+ Note that this does not delete any data; instead, it is useful when the
+ GUI is in an akward state and the axes need to be refreshed.
+\end_layout
+
+\begin_layout Subsubsection
+View raw figure mode
+\end_layout
+
+\begin_layout Standard
+The raw spectra of the selected harmonics will be displayed in separate
+ figure windows.
+ This is useful for quickly exporting the raw spectra.
+\end_layout
+
+\begin_layout Subsubsection
+Clear datapoints
+\end_layout
+
+\begin_layout Standard
+This will clear all of the datapoints that was collected.
+ Deleted datapoints can be manually recoved in the 
+\begin_inset Quotes eld
+\end_inset
+
+deleted data
+\begin_inset Quotes erd
+\end_inset
+
+ folder, which is located in the same directory as the MATLAB GUI program.
+ The name of the deleted data is based on the timepoint of deletion: 
+\begin_inset Quotes eld
+\end_inset
+
+<YYYYMMDD>T<hhmmss>_deleted_data.mat
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Subsection
 Settings panel
 \end_layout
@@ -4744,7 +5723,7 @@ When an error appears stating that MATLAB is unable to close or delete the
  This error occurs because a custom close request function for exiting the
  program was written; thus, MATLAB needs to be able to access this close
  request function.
- Alternatvely, the program can be forced-quit by using the 
+ Alternatvely, the program can be manually closed by using the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -4778,7 +5757,7 @@ findall
 \align center
 
 \family typewriter
-findall(0,'type','figure')
+findall(0,'type','figure','tag','primary1)
 \end_layout
 
 \begin_layout Part
@@ -5192,15 +6171,15 @@ Since the program heavily relies on the details on how the measurement process
 \end_layout
 
 \begin_layout Section
-List of functions
+Index of functions
 \end_layout
 
 \begin_layout Standard
 This section lists all of the functions that were written and used in the
  GUI code.
- The intent of this section is to provide a comprehensive list and brief
- description of each function.
+ The intent of this section is to provide a comprehensive list of each function.
  Function are group based on its type of function.
+ Also note that this list corresponds to the functions used in version 002e.
 \end_layout
 
 \begin_layout Subsection
@@ -5538,55 +6517,222 @@ I,handles,lb,ub)
 \begin_layout Itemize
 
 \series bold
-F_conductance = lfun4c(p,x)
+F_conductance = lfun4c(p,x) (No longer included in v002e
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Lorentz functions containing the code for the equations have been moved
+ to another m-script as anonymous functions (for easy access to the codes).
+ The functions can be accessed in the 
+\begin_inset Quotes eld
+\end_inset
+
+AccessMyVNAv0.7
+\backslash
+release
+\backslash
+Lorentz_eqns.m
+\begin_inset Quotes erd
+\end_inset
+
+ file.
+\begin_inset CommandInset label
+LatexCommand label
+name "fn:Lorentz-functions"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+)
 \end_layout
 
 \begin_layout Itemize
 
 \series bold
-F_susceptance = lfun4s(p,x)
+F_susceptance = lfun4s(p,x) (No longer included in v002e
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+
+\series bold
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fn:Lorentz-functions"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+)
 \end_layout
 
 \begin_layout Itemize
 
 \series bold
-F_conductance = lfun4c_2(p,x)
+F_conductance = lfun4c_2(p,x) (No longer included in v002e
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+
+\series bold
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fn:Lorentz-functions"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+)
 \end_layout
 
 \begin_layout Itemize
 
 \series bold
-F_susceptance = lfun4s_2(p,x)
+F_susceptance = lfun4s_2(p,x) (No longer included in v002e
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+
+\series bold
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fn:Lorentz-functions"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+)
 \end_layout
 
 \begin_layout Itemize
 
 \series bold
-F_conductance = lfun4c_3(p,x)
+F_conductance = lfun4c_3(p,x) (No longer included in v002e
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+
+\series bold
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fn:Lorentz-functions"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+)
 \end_layout
 
 \begin_layout Itemize
 
 \series bold
-F_susceptance = lfun4s_3(p,x)
+F_susceptance = lfun4s_3(p,x) (No longer included in v002e
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+
+\series bold
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fn:Lorentz-functions"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+)
 \end_layout
 
 \begin_layout Itemize
 
 \series bold
-fcns=lfun4_both_1(p,x)
+fcns=lfun4_both_1(p,x) (No longer included in v002e
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+
+\series bold
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fn:Lorentz-functions"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+)
 \end_layout
 
 \begin_layout Itemize
 
 \series bold
-fcns=lfun4_both_2(p,x)
+fcns=lfun4_both_2(p,x) (No longer included in v002e
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+
+\series bold
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fn:Lorentz-functions"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+)
 \end_layout
 
 \begin_layout Itemize
 
 \series bold
-fcns=lfun4_both_3(p,x)
+fcns=lfun4_both_3(p,x) (No longer included in v002e
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+
+\series bold
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fn:Lorentz-functions"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+)
 \end_layout
 
 \begin_layout Subsubsection
@@ -5637,6 +6783,76 @@ refit_inc_Callback(~, ~, handles)
 
 \series bold
 refit_end_Callback(hObject, ~, handles)
+\end_layout
+
+\begin_layout Subsubsection
+Refitting selected datapoints
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+output_txt=select_spectra_fcn(hObject,event_obj)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+refit_select_spectra(spectra,handles,harm,timepoint,index)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+guess_method_callback(hObject,~,harm,handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+rss_close(hObject,~)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+accept(hObject,~)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+select_spectra_fit(hObject,~,handles,f1,guess_method,spectra,harm)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+update_tick_display(~,~,handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+zoom_out_ClickedCallback(hObject, eventdata, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+zoom_in_ClickedCallback(hObject, eventdata, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+select_spectra_ClickedCallback(hObject, eventdata, handles)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+output_txt=default_dcm(hObject,event_obj)
 \end_layout
 
 \begin_layout Subsection
@@ -6248,6 +7464,8 @@ This program is heavily influenced by the many features in the QTZ.exe written
  Further, many thanks to the members of the Shull Research Group, Northwestern
  University, and Professor Kenneth Shull for his guidance and design into
  the developement of this QCM MATLAB program.
+ Also, special thanks to the N2PK VNA community for the hardware development
+ of the VNA device.
  Any comments or suggestions are welcome! CHJoshuaYeh@u.northwestern.edu
 \end_layout
 
