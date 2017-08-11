@@ -40,7 +40,7 @@ function varargout = QCM_v002e_Eurynomos(varargin)
 
 % Edit the above text to modify the response to help QCM_v002e_Eurynomos
 
-% Last Modified by GUIDE v2.5 11-Aug-2017 15:28:16
+% Last Modified by GUIDE v2.5 11-Aug-2017 15:44:51
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -3244,7 +3244,7 @@ set(handles.ytick2,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
 
 %This is the callback function for the plot1 radio dials (associated with
 %the top primary axes plot)
-function plot1_helper(handles)
+function plot1_helper(~,~,handles)
 for dum=1:6%hide the plot handles
     set(handles.primary_handles.(['phantom',num2str(dum),'a']),'visible','off');
     yt=get(handles.primaryaxes1,'ytick');    
@@ -3258,7 +3258,7 @@ end
 
 %This is the callback function for the plot2 radio dials (associated with
 %the bottom primary axes plot)
-function plot2_helper(handles)
+function plot2_helper(~,~,handles)
 for dum=1:6%hide the plot handles
     set(handles.primary_handles.(['phantom',num2str(dum),'b']),'visible','off');
     yt=get(handles.primaryaxes2,'ytick');
@@ -4747,3 +4747,21 @@ set(findall(f1.f,'tag','accept'),'visible','on',...
     'userdata',[index,del_f_new,del_g_new,abs_f*1e6,abs_g*1e4]);
 
 
+
+
+% --- Executes on button press in plot_1.
+function plot_1_Callback(hObject, eventdata, handles)
+% hObject    handle to plot_1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of plot_1
+
+
+% --- Executes on button press in plot_3.
+function plot_3_Callback(hObject, eventdata, handles)
+% hObject    handle to plot_3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of plot_3
