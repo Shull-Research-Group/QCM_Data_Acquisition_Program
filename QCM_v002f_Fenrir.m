@@ -185,7 +185,7 @@ disp('Preallocated MATLAB arrays...');
 figure(h);
 %set reference frequency shifts and dissipation shifts
 handles.din.ref_freq=[5 15 25 35 45 55].*1e6;%units in Hz
-handles.din.ref_diss=[100 100 100 100 100 100];%units in Hz
+handles.din.ref_diss=[0 0 0 0 0 0];%units in Hz
 waitbar(0.15,h,'Reference values set...');
 %inital formating of axes and buttons, etc.
 waitbar(0.2,h,'Formatting plots and legend boxes...');
@@ -315,17 +315,16 @@ set(handles.text2,'userdata',0);
 set(handles.confirm_del,'userdata',0);
 set(handles.email_push,'userdata',0);
 write_settings(handles,handles.din.harmonic);%this function writes out the settings text file
-plot1_choice_Callback(hObject, eventdata, handles);%refresh primaryaxes1
-plot2_choice_Callback(hObject, eventdata, handles);%refresh primaryaxes2
+plot_choice_Callback(handles.plot1_choice, eventdata, handles);%refresh primaryaxes1
+plot_choice_Callback(handles.plot2_choice, eventdata, handles);%refresh primaryaxes2
 handles.default_settings=handles.din;%define a default handles.din state
 waitbar(1,h,'MATLAB GUI initiatlized!');
 figure(h);
 disp('MATLAB GUI initialized!');
 guidata(hObject, handles);
-figure(h);delete(h);
+delete(h);
 warning('off','MATLAB:DELETE:FileNotFound');%suppress this warning message
 try delete('qcm_diary.txt');catch;end;
-
 % UIWAIT makes QCM_v002f_Fenrir wait for user response (see UIRESUME)
 % uiwait(handles.primary1);
 
@@ -340,8 +339,9 @@ function varargout = QCM_v002f_Fenrir_OutputFcn(~, ~, handles)
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
-% --- Executes on button press in start.
+%% Measurement process
 function start_Callback(hObject, ~, handles)
+% --- Executes on button press in start.
 handles=cla_raw_Callback(hObject, 1, handles);
 tic
 err_counter=0;
@@ -809,8 +809,8 @@ while get(handles.start,'value')==1&&handles.din.refit_flag==0||...
                                     end%if length(G_parameters)==5
                                     set(handles.(ax1),'ylimmode','auto');
                                 end%if get(handles.show_susceptance,'value')==1
-                                plot_primaryaxes1(handles,handles.din.FG_frequency,harm_tot,n);
-                                plot_primaryaxes2(handles,handles.din.FG_frequency,harm_tot,n);
+                                plot_primaryaxes(handles,handles.din.FG_frequency,harm_tot,n,'a');
+                                plot_primaryaxes(handles,handles.din.FG_frequency,harm_tot,n,'b');
                             end%if get(handles.dynamic_fit,'value')==1
                             ylabel(handles.(ax1),'mSiemans (mS)','fontsize',6);
                             xlabel(handles.(ax1),'Frequency (Hz)','fontsize',6);
@@ -828,8 +828,8 @@ while get(handles.start,'value')==1&&handles.din.refit_flag==0||...
                                 set(handles.(ax1),'xlim',[min(G_fit) max(G_fit)],'ylim',[min(B_fit) max(B_fit)])
                             end%if get(handles.dynamic_fit,'value')==1
                             if get(handles.dynamic_fit,'value')==1
-                                plot_primaryaxes1(handles,handles.din.FG_frequency,harm_tot,n);
-                                plot_primaryaxes2(handles,handles.din.FG_frequency,harm_tot,n);
+                                plot_primaryaxes(handles,handles.din.FG_frequency,harm_tot,n,'a');
+                                plot_primaryaxes(handles,handles.din.FG_frequency,harm_tot,n,'b');
                             end%if get(handles.dynamic_fit,'value')==1
                             xlabel(handles.(ax1),'Conductance (mS)','fontsize',6);
                             ylabel(handles.(ax1),'Susceptance (mS)','fontsize',6);
@@ -1054,93 +1054,11 @@ end%if get(handles.del_mode,'enable','on')
 cla(handles.wb);set(handles.wb,'color','k','box','off','ytick',[]);
 %refresh the primary axes plots
 handles=cla_raw_Callback(hObject,1, handles);
-plot1_choice_Callback(hObject, 1, handles);
-plot2_choice_Callback(hObject, 1, handles);
+plot_choice_Callback(handles.plot1_choice, 1, handles);
+plot_choice_Callback(handles.plot2_choice, 1, handles);
 guidata(hObject, handles);
-
-function save_shifts(handles,fg_values)
-fg_values.abs_freq=handles.din.FG_frequency;%save f0 and gamma0 fit data to fg_values.mat
-fg_values.freq_shift=handles.din.FG_freq_shifts;
-fg_values.freq_shift_ref=[handles.din.ref_freq;handles.din.ref_diss];
-fg_values.chisq_values=handles.din.chi_sqr_value;
-fg_values.std_fit=handles.din.std_fit;
-
-%Keep this function!
-function pause_func(~,~,handles)
-set(handles.start,'value',0);
-start_Callback(handles.start, 1, handles);
-
-%This function finds the total number of harmonics the user has set to
-%measure and record.
-function harm_tot=find_num_harms(handles)
-harm_tot=[];
-for dum=1:1:6
-    harmname=['harm',num2str(handles.din.avail_harms(dum))];
-    if get(handles.(harmname),'value')==1
-        harm_tot=[harm_tot;handles.din.avail_harms(dum)];
-    end%if get(handles.(harmname),'value')==1
-end%for dum=1:1:6
-
-% --- Executes on button press in maintain_myVNA.
-function maintain_myVNA_Callback(~, ~, handles)
-harm_tot=find_num_harms(handles);%find the total numbe of harmonics
-for dum=1:length(harm_tot)
-    write_settings(handles,harm_tot(dum));%update the settings text file associated with each harmonic defined by the dum variable
-end%for dum=1:length(harm_tot)
-set(handles.status,'string','Status: Settings.txt file succesfully refreshed! Ready...','backgroundcolor','k','foregroundcolor','r');
-disp('Settings.txt file sucessfully refreshed! Ready...');
-
-% --- Executes on button press in set_settings.
-function set_settings_Callback(~, ~, handles)
-%find active harmonics
-harm_tot=find_num_harms(handles);
-for dum=1:length(harm_tot)
-    write_settings(handles,harm_tot(dum))
-end%for dum=1:size(harm_tot,1)
-set(handles.status,'string','Status: Settings have been set! Ready...','backgroundcolor','k','foregroundcolor','r');
-disp('Settings have been set! Ready...');
-
-function write_settings(handles,harm_num)
-% This if statement writes out the setting.txt file for the selected harmonic harmonic
-% (settings01.txt, settings03.txt, etc.)
-if harm_num<11
-    filename=['AccessMyVNAv0.7\release\settings0',num2str(harm_num),'.txt'];
-else
-    filename=['AccessMyVNAv0.7\release\settings',num2str(harm_num),'.txt'];
-end%if harm_num<11
-fileID=fopen(filename,'w');%write settings value into the settings.txt file
-harmname=['harm',num2str(harm_num)];
-startname=['start_f',num2str(harm_num)];
-endname=['end_f',num2str(harm_num)];
-num_pts=get(handles.num_datapoints,'userdata');
-try
-    if get(handles.(harmname),'value')==1
-        fprintf(fileID,'%10.12f\r\n',str2double(get(handles.(startname),'string')));%write start frequency of <dum> harmonic
-        fprintf(fileID,'%10.12f\r\n',str2double(get(handles.(endname),'string')));%write out end frequency of <dum> harmonic
-        fprintf(fileID,'%10.12f\r\n',handles.din.freq_range((harm_num+1)./2,1));%write out lowerbound of frequency range for the harmonic
-        fprintf(fileID,'%10.12f\r\n',handles.din.freq_range((harm_num+1)./2,2));%write out upperbound of frequency range for the harmonic
-        fprintf(fileID,'%i\r\n',num_pts(harm_num,1));%write out the number of datapoints
-    end%if get(handles.(harmname),'value')==1
-    fclose(fileID);
-catch
-    disp('Could not write the settings file!')
-end
-%write out the settings.txt
-try
-    fileID1=fopen('AccessMyVNAv0.7\release\settings.txt','w');
-    fprintf(fileID1,'%i\r\n',get(handles.maintain_myVNA,'value'));%write the toggle state of the maintain)myVNA radio dial
-    fprintf(fileID1,'%i\r\n',str2double(get(handles.wait_time,'string')));%writes the wait time between measurements
-    numberofharms=size(find_num_harms(handles),1);%finds the total number of harmonics
-    fprintf(fileID1,'%i\r\n',numberofharms);%write out the total number of harmonics that are active
-    fprintf(fileID1,'%i\r\n',find_num_harms(handles));%write the value of the harmonics
-    fclose(fileID1);
-catch err_message
-    assignin('base','err_message',err_message);
-    set(handles.status,'string','Status: Error in writing the settings.txt file!','foregroundcolor','k','backgroundcolor','r');
-end
-
-%this function obtains the scan data taken from the VB C++ AccessMyVNAv0.7 program
 function [freq,conductance,susceptance,handles]=read_scan(handles)
+%this function obtains the scan data taken from the VB C++ AccessMyVNAv0.7 program
 if handles.din.refit_flag==0%run this if collecting live data
     flag=0;
     start1=str2double(get(handles.(['start_f',num2str(handles.din.harmonic)]),'string'))*1e6;%start frequency
@@ -1288,40 +1206,27 @@ try
         assignin('base','susceptance',susceptance);
     end%if handles.prefs.output_raw==1
 end%try
-function refreshing(handles,harm,flag)
-refresh_name=['refreshing',num2str(harm)];
 
-if flag==1
-    set(handles.(refresh_name),'visible','on');
-else
-    set(handles.(refresh_name),'visible','off');
-end %if flag==1
-
-% --- Executes on button press in harm1.
 function harm1_Callback(~,~,handles)
+% --- Executes on button press in harm1.
 set(handles.raw_fig,'userdata',1+get(handles.raw_fig,'userdata'));
-% --- Executes on button press in harm3.
 function harm3_Callback(~,~,handles)
+% --- Executes on button press in harm3.
 set(handles.raw_fig,'userdata',3+get(handles.raw_fig,'userdata'));
-% --- Executes on button press in harm5.
 function harm5_Callback(~,~,handles)
+% --- Executes on button press in harm5.
 set(handles.raw_fig,'userdata',5+get(handles.raw_fig,'userdata'));
-% --- Executes on button press in harm7.
 function harm7_Callback(~,~,handles)
+% --- Executes on button press in harm7.
 set(handles.raw_fig,'userdata',7+get(handles.raw_fig,'userdata'));
-% --- Executes on button press in harm9.
 function harm9_Callback(~,~,handles)
+% --- Executes on button press in harm9.
 set(handles.raw_fig,'userdata',9+get(handles.raw_fig,'userdata'));
-% --- Executes on button press in harm11.
 function harm11_Callback(~,~,handles)
+% --- Executes on button press in harm11.
 set(handles.raw_fig,'userdata',11+get(handles.raw_fig,'userdata'));
 
-
-%\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-%this block of code deals with checking whether or not the frequency range
-%set by the user is valid. If not, it will revert back to the set default
-%min and max freq. of the harmonic.
-
+%% Check frequency range functions
 %FIRST HARMONIC
 function start_f1_Callback(~, ~, handles)
 check_freq_range(1, handles.din.freq_range(1,1), handles.din.freq_range(1,2), handles);
@@ -1357,9 +1262,7 @@ function start_f11_Callback(~, ~, handles)
 check_freq_range(11, handles.din.freq_range(6,1), handles.din.freq_range(6,2), handles);
 function end_f11_Callback(~, ~, handles)
 check_freq_range(11, handles.din.freq_range(6,1), handles.din.freq_range(6,2), handles);
-% --- Executes during object creation, after setting all properties.
 
-%this function does the actual check range of the frequencies
 function check_freq_range(harm, min_range, max_range, handles)
 startname=['start_f',num2str(harm)];
 endname=['end_f',num2str(harm)];
@@ -1397,20 +1300,9 @@ if str2double(get(handles.(endname),'string'))<=str2double(get(handles.(startnam
         set(handles.(endname),'string',max_range-.9);
     end%str2num(get(handles.(startname),'string'))==min_range
 end%str2num(get(handles.(startname),'string'))>=str2num(get(handles.(endname),'string'))
-%END OF FREQUENCY RANGE CHECK\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-%\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 
-% --- Executes on button press in set_reference_time.
-function set_reference_time_Callback(~, ~, handles)
-if get(handles.set_reference_time,'value')==1                        
-    set(handles.reference_time,'string',datestr(clock,'yy:mm:dd:HH:MM:SS:FFF'));%automatically sets reference time when button is clicked
-end%if get(handles.set_reference_time,'value')==1   
-
-
-
-% Functions to fit a Lorentz curve to the spectra data BEGINS HERE----------------------------------------
-
+%% Functions to fit a Lorentz curve to the spectra data
 function [combine_spectra,GB_parameters,handles,I,std_fit]=Lorentzian_dynamic_fit(handles,freq,conductance,susceptance,combine_spectra)
 factor_range_fit=handles.din.fit_factor_range;
 %make sure to change user-defined values to previous values if the user is
@@ -1659,7 +1551,6 @@ if handles.prefs.show_GB==1
     disp(['G_l_sq: ',num2str(sum(GB_residual(:,1)))]);
     disp(['B_l_sq: ',num2str(sum(GB_residual(:,2)))]);
 end%if handles.prefs.show_GB==1
-
 function GB_parameters=par_check(GB_parameters)
 %this function checks to see that the first 5 values in the parmeters
 %variable is the most left one, representing the harmonic peak
@@ -1677,12 +1568,6 @@ elseif length(GB_parameters)==14
             GB_parameters=[GB_parameters(10:14) GB_parameters(5) GB_parameters(1:4) GB_parameters(6:9) GB_parameters(15)];
     end%switch I
 end%if length(G_parameters)==10
-
-function ud_values(hObject,event,handles)
-
-function ud_confirm_callback(hObject,~)
-set(hObject,'userdata',randi(10));
-
 function [guess,f0,gamma0]=G_guess(freq,conductance,susceptance,handles,ylab)
 %this function finds the guess values based on the max conductance value of
 %the raw spectra
@@ -1717,7 +1602,6 @@ if peak_sens((handles.din.harmonic+1)/2,3)>=3&&size(peak_detect,1)>2
         freq(index(2))/1e6 gamma0/2/1e4 phi*1e2 peak_detect(2)...
         freq(index(3))/1e6 gamma0/2/1e4 phi*1e2 peak_detect(3) offset];
 end%if peak_sens((handles.din.harmonic+1)/2,3)>=3&&size(peak_detect,1)>2
-
 function [guess,freq_mod,modulus,f0,gamma0]=deriv_guess(freq,conductance,susceptance,handles)
 %this function finds the guess values based on the derivative of the raw
 %spectra
@@ -1762,7 +1646,6 @@ if peak_sens((handles.din.harmonic+1)/2,3)>=3&&size(peak_detect,1)>2
         freq(index(2)) gamma0/2/1e4 phi*1e2 peak_detect(2) offset...
         freq(index(3)) gamma0/2/1e4 phi*1e2 peak_detect(3) offset];
 end%if peak_sens((handles.din.harmonic+1)/2,3)>=3&&size(peak_detect,1)>2
-
 function flag=preview_peak_identification(freq,ydata,index,ylabel_str,handles)
 %This function shows what peaks were identified and asks for confirmation
 %whether the peaks have been properly identified.
@@ -1788,7 +1671,6 @@ if (get(handles.start,'value')==0&&get(handles.peak_centering,'value')==1)||...
             disp('Peak fitting canceled!');
     end
 end%et(handles.start,'value')==0
-
 function [GB_fit,GB_residual,GB_parameters,std_fit]=fit_spectra(handles,raw_data,guess,I)
 %This function tries to fit the raw spectra using the provided guess values
 freq=raw_data(:,1);
@@ -1797,7 +1679,6 @@ susceptance=raw_data(:,3);
 tic
 [GB_fit,GB_residual,GB_parameters,std_fit]=fit_spectra_both(guess,freq,conductance,susceptance,handles.prefs.num_peaks,I,handles);
 toc
-
 function [fitted_y,residual,parameters,std_fit]=fit_spectra_con(x0,freq_data,y_data,I,show_GB,lb,ub)%fit spectra to conductance curve
 %This function takes the starting guess values ('guess_values'_) and fits a
 %Lorentz curve to the the x_data and y_data. The variable 'guess_values' 
@@ -1825,7 +1706,6 @@ end%if handles.prefs.show_GB==1
 ci=nlparci(parameters,residual,'jacobian',jacobian);%calculate 95% confidence interval
 std_fit0=diff(ci,1,2)./4;%Assume that 1/4th of ci represents the std
 std_fit=[std_fit0(1)*1e6 std_fit0(2)*1e4];%calculated std for Df and Dg
-
 function [fitted_y,residual,parameters,std_fit]=fit_spectra_sus(x0,freq_data,susceptance_data,I,show_GB,lb,ub)%fit spectra to susceptance curve
 %This function takes the starting guess values ('guess_values'_) and fits a
 %Lorentz curve to the the x_data and y_data. The variable 'guess_values' 
@@ -1853,7 +1733,6 @@ end%if handles.prefs.show_GB==1
 ci=nlparci(parameters,residual,'jacobian',jacobian);%calculate 95% confidence interval
 std_fit0=diff(ci,1,2)./4;%Assume that 1/4th of ci represents the std
 std_fit=[std_fit0(1)*1e6 std_fit0(2)*1e4];%calculated std for Df and Dg
-
 function [fitted_y,residual,parameters,std_fit]=fit_spectra_both(x0,freq_data,conductance,susceptance,num_peaks,I,handles,lb,ub)
 %This function fits both the conductance and susceptance curves simultaneously.
 %x0: fitted parameters (see lfun4_both)
@@ -1901,9 +1780,8 @@ residual=[fitted_y(:,1)-conductance,fitted_y(:,2)-susceptance];
 ci=nlparci(parameters,residual,'jacobian',jacobian);%calculate 95% confidence interval
 std_fit0=diff(ci,1,2)./4;%Assume that 1/4th of ci represents the std
 std_fit=[std_fit0(1)*1e6 std_fit0(2)*1e4];%calculated std for Df and Dg
-
-% --- Executes on button press in radio_chi.
 function radio_chi_Callback(~, ~, handles)
+% --- Executes on button press in radio_chi.
 if get(handles.dynamic_fit,'value')==1
     if get(handles.radio_chi,'value')==1
         for dum=1:6
@@ -1921,19 +1799,12 @@ end%if get(handles.dynamic_fit,'value')==1
 if get(handles.radio_chi,'value')==1%this ensures that the scans will do a lorentzian fit, othersie there will be an error
     set(handles.dynamic_fit,'value',1);
 end%if get(handles.radio_chi,'value')==1
-
-% --- Executes on button press in dynamic_fit.
-function dynamic_fit_Callback(~, ~, handles)
-
-%\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-%%Functions to fit a Lorentz curve to the spectra data ENDS HERE-----------
-%% \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+function ud_values(hObject,event,handles)
+function ud_confirm_callback(hObject,~)
+set(hObject,'userdata',randi(10));
 
 
-
-%//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-%PEAK CENTERING FUNCTIONS BEGINS HERE//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-%//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+%% Peak centering and peak tracking functions
 function peak_centering_Callback(hObject, ~, handles)
 set_settings_Callback(1, 1, handles);%write out the settings files
 set(handles.peak_centering,'userdata',[]);
@@ -1986,7 +1857,6 @@ else%if peak centering button is turned off
 end%if get(handles.peak_centering,'value')==1
 guidata(hObject, handles);
 set_settings_Callback(handles.set_settings, 1, handles);
-
 function center_peak_function(handles,harm,hObject)
 %This function creates a figure containing buttons and text boxes that will
 %be used in locating the resonance peaks.
@@ -2134,10 +2004,8 @@ catch err_message
     set(handles.status,'string','Status: ERROR in peak centering mode!','foregroundcolor','k','backgroundcolor','r');
 end%try
 guidata(hObject, handles);
-
-
-% --- Executes when selected object is changed in peak_center.
 function peak_center_SelectionChangeFcn(hObject, eventdata, handles)
+% --- Executes when selected object is changed in peak_center.
 current_harm=get(hObject,'userdata');
 handles.din.harmonic=current_harm;%store current harmonic (from peak centering panel) in handles structure
 %Turn off all active radio dials except for the harmonic that is being
@@ -2160,7 +2028,6 @@ end%if get(handles.start,'value',1)
 handles.din.harmonic=current_harm;
 center_peak_function(handles,current_harm,hObject);%center the peak of the selected harmonic fromthe peak centering panel
 guidata(hObject, handles);
-
 function output_txt = myupdatefcn(~,event_obj,handles,set_span,p)
 % This is the function that runs when datacursormode is employed. The
 % output output-txt is what appears in the box.
@@ -2183,8 +2050,8 @@ disp(['frequency span: ',num2str(freq_range)]);
 set(handles.(['start_f',num2str(harm)]),'string',num2str(new_start,10));
 set(handles.(['end_f',num2str(harm)]),'string',num2str(new_end,10));
 datacursormode off;
-
-function store_num_data(hObject,~,handles,p)%store the number of datapoints to record for that particular harmonic
+function store_num_data(hObject,~,handles,p)
+%store the number of datapoints to record for that particular harmonic
 harm=get(get(p(1),'parent'),'number');%get the harmonic associated with the figure window
 num_pts=get(handles.num_datapoints,'userdata');
 num_pts(harm,1)=str2double(get(hObject,'string'));
@@ -2192,11 +2059,9 @@ set(handles.num_datapoints,'userdata',num_pts);
 disp(['# of datapoints for harmonic ',num2str(harm),': ',num2str(num_pts(harm,1))]);
 name=['num_pts',num2str(harm)];
 set(handles.(name),'string',['# pts: ',num2str(num_pts(harm,1))]);
-
-
+function my_closereq(~,~,handles,freq,radio_handles,guess_values_options,f1,p)
 %this function that runs when the user exsits out of the
 %peak_centering figure window
-function my_closereq(~,~,handles,freq,radio_handles,guess_values_options,f1,p)
 harm=get(get(p(1),'parent'),'number');%get the harmonic associated with the figure window
 peak_tracking_flag(0,0,handles,radio_handles,2,p);
 custom_peak_track_flag(0,0,handles,radio_handles,p);
@@ -2211,11 +2076,9 @@ delete(f1)
 harm_name=['center',num2str(harm)];
 set(handles.(harm_name),'value',0);
 try delete(figure(999));delete(figure(998));delete(figure(996));delete(figure(997)); catch; end;%try
-
-
+function myL_fit(~,~,handles,p,statistics_txt)
 %This function that runs when the user clicks on the "Fit"
 %button in the figure toolbar of the peak_centering window
-function myL_fit(~,~,handles,p,statistics_txt)
 harm=get(get(p(1),'parent'),'number');%get the harmonic associated with the figure window
 handles=confirm_peak_finding(handles.peak_finding, 1, handles);%ask the user whether or not the peak(s) is/are the right one
 figure(999);clf(figure(999));
@@ -2311,11 +2174,10 @@ xlabel('Conductance (mS)','fontsize',12,'fontweight','bold');
 ylabel('Susceptance (mS)','fontsize',12,'fontweight','bold');
 set(p(1),'ylimmode','auto','xlimmode','auto');
 delete(temp);
-
+function refresh_button(~,~,handles,p)
 %this function runs when the refresh button is pressed
 %in the toolbar of the peak_centering figure window (this refreshes the raw
 %conductance spectra)
-function refresh_button(~,~,handles,p)
 pause on;
 harm=get(get(p(1),'parent'),'number');%get the harmonic associated with the figure window
 for dum=1:2:11%turn off all active harmonics
@@ -2366,7 +2228,6 @@ set(get(p(2),'ylabel'),'string','Susceptance (mS)','fontweight','bold','fontsize
 linkaxes(p,'x');%link the axes
 uistack(p(1),'top');
 drawnow;
-
 function pause_func1(~,~,handles)
 try set(handles.text2,'userdata',1); catch; end;
 function refresh_button2(~,~,handles,p)       
@@ -2375,11 +2236,10 @@ if get(handles.peak_centering,'userdata')==1
     refresh_button(0,0,handles,p);
     set(handles.peak_centering,'userdata',0);
 end
-
-%         This function that increases or decreases the span of the raw
-%         conductance spectra so that a larger range of frequency values is
-%         measured.
 function span_adjust(~,~,handles,p,factor,set_span)
+% This function that increases or decreases the span of the raw
+% conductance spectra so that a larger range of frequency values is
+% measured.
 harm=get(get(p(1),'parent'),'number');%get the harmonic associated with the figure window
 txt=text('units','normalized','position',[.1 .9 1],'string','Refreshing...','color','r','edgecolor','r');
 [freq,~,~,handles]=read_scan(handles);
@@ -2400,10 +2260,9 @@ set(handles.(['end_f',num2str(harm)]),'string',num2str(new_end1,10));
 set(set_span,'string',(new_end1-new_start1)*1e3);
 check_freq_range(handles.din.harmonic, handles.din.freq_range(0.5*(handles.din.harmonic+1),1), handles.din.freq_range(0.5*(handles.din.harmonic+1),2), handles);
 refresh_button(0,0,handles,p);
-        
+function myzoomfcn(~,~,handles,set_span,p)
 %this function will calculate what the current span of the axes is and
 %update the set_span edit text box
-function myzoomfcn(~,~,handles,set_span,p)
 harm=get(get(p(1),'parent'),'number');%get the harmonic associated with the figure window
 current_span=get(p(1),'xlim');%extract out the start and end values of the frequency in the figure window
 span_calc=abs(current_span(2)-current_span(1))*1e-3;%calculate the span of the figure window (kHz)
@@ -2412,7 +2271,6 @@ set(handles.(['start_f',num2str(harm)]),'string',num2str(current_span(1)*1e-6,10
 set(handles.(['end_f',num2str(harm)]),'string',num2str(current_span(2)*1e-6,10));%adjust the end frequency value
 check_freq_range(handles.din.harmonic, handles.din.freq_range(0.5*(handles.din.harmonic+1),1), handles.din.freq_range(0.5*(handles.din.harmonic+1),2), handles);
 refresh_button(0,0,handles,p);%refresh the graph by rescanning with the new end and start frequencies
-
 function manual_set_span(~,~,handles,p,set_span)
 harm=get(get(p(1),'parent'),'number');%get the harmonic associated with the figure window
 user_defined_span=str2double(get(set_span,'string'))*1e3;%extract the user defined span (Hz)
@@ -2423,7 +2281,6 @@ set(handles.(['start_f',num2str(harm)]),'string',num2str(new_xlim(1),10));
 set(handles.(['end_f',num2str(harm)]),'string',num2str(new_xlim(2),10));
 check_freq_range(handles.din.harmonic, handles.din.freq_range(0.5*(handles.din.harmonic+1),1), handles.din.freq_range(0.5*(handles.din.harmonic+1),2), handles);
 refresh_button(0,0,handles,p);%refresh spectra
-
 function peak_tracking_flag(~,~,handles,radio_handles,flag,p)
 harm=get(get(p(1),'parent'),'number');%get the harmonic associated with the figure window
 harm_name=['peak_track',num2str(harm)];%determine which handle to extract information based on harmonic
@@ -2444,7 +2301,6 @@ elseif peak_track(1)==0&&peak_track(2)==1
 elseif peak_track(1)==0&&peak_track(2)==0
     set(handles.(harm_name),'string','Default peak tracking','value',peak_track);
 end%if peak_track(1)==1&&peak_track(2)==0
-
 function custom_peak_track_flag(~,~,handles,radio_handles,p)
 harm=get(get(p(1),'parent'),'number');%get the harmonic associated with the figure window
 harm_name=['peak_track',num2str(harm)];%determine which handle to extract information based on harmonic
@@ -2458,7 +2314,6 @@ if custom_track==1
         set(handles.(harm_name),'userdata',[0 0],'string','Default peak tracking algorithm');%update the userdata of the handle
     end%if custom_track==1
 end%if custom_track==1
-
 function store_guess_options(~,~,handles,guess_handle,p)
 harm=get(get(p(1),'parent'),'number');%get the harmonic associated with the figure window
 fit_name=['fit',num2str(harm)];
@@ -2476,15 +2331,162 @@ switch guess_option
         set(handles.(fit_name),'string','User-defined','userdata',guess_option);
 end%switch guess_option
 set(handles.(fit_name),'userdata',guess_option);
-%////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-%PEAK CENTERING FUNCTIONS ENDS HERE//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-%///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function handles=confirm_peak_finding(~, ~, handles)
+%store the preferences for finding the peak
+data=get(handles.peak_finding,'userdata');
+for dum=1:2:11
+    handles.prefs.sensitivity(dum)=data(0.5*(dum+1),1);
+    handles.prefs.peak_min(dum)=data(0.5*(dum+1),2);
+    handles.prefs.num_peaks(dum)=data(0.5*(dum+1),3);
+end%for dum=1:2:11
+guidata(handles.primary1,handles);
+function [handles]=peak_finding_ClickedCallback(~, ~, handles)
+%This function creates a figure containing a table displaying the
+%preferences for finding the resonance peaks
+close(figure(996)); figure(996);
+pos=get(figure(996),'position');
+set(figure(996),'position',[pos(1)/2 pos(2)/15 pos(3)/1 pos(4)/2]);
+set(figure(996),'menubar','none','toolbar','none','numbertitle','off','name','Peak finding options');
+%names of columns and rows of table
+rnames={'1st','3rd','5th','7th','9th','11th'};
+cnames={'peak prominence sensitivity factor','peak minimum threshold','Max # peaks'};
+handles=guidata(handles.primary1);
+data=[handles.prefs.sensitivity(1:2:11);handles.prefs.peak_min(1:2:11);handles.prefs.num_peaks(1:2:11)];
+find_peak_options=uitable('units','normalized','position',[0.05 0.15 .9 .8],...
+    'columnname',cnames,'rowname',rnames,'data',data','fontsize',10,...
+    'columneditable',logical([1 1 1]),'celleditcallback',{@fpo,handles});%create the table
+uicontrol('style','pushbutton','string','table properties','units','normalized',...
+    'position',[0.7 0.02 .25 .1],'callback',{@ins});
+set(figure(996),'closerequestfcn',{@fp_close,handles,find_peak_options});
+function fpo(hObject,~,handles)
+data=get(hObject,'data');
+set(handles.peak_finding,'userdata',data);
+confirm_peak_finding(hObject,1,handles);
+disp('Peak sensitivity options set!');
+function ins(hObject,~)
+inspect(hObject);
+function fp_close(hObject,~,handles,find_peak_options)
+data=get(find_peak_options,'data');
+set(handles.peak_finding,'userdata',data);
+delete(hObject);
+disp('Peak sensitivity options are set!');
+function [handles]=smart_peak_tracker(handles,freq,conductance,susceptance,G_parameters)
+try
+    f0=G_parameters(1);
+    gamma0=G_parameters(2);
+catch
+end%try
+%Determine whether to use the conducatnace or array or susceptance array to
+%track the peak.
+name=['fit',num2str(handles.din.harmonic)];%determine the structure field that should be used to extract out the initial-guessing method
+%This if-statement checks to see if the initial guess values are based on
+%"BMax" option (for fitting the Lorentz curve). Usually when "BMax" is
+%turned on, the susceptance plots will be more accurate to track the
+%resonance peak instead of the conductance peak.
+if get(handles.(name),'userdata')==3%If BMax is turned on
+    resonance=susceptance;
+else
+    resonance=conductance;
+end%if get(handles.(name),'userdata')==3
+[~,index]=findpeaks(resonance,'sortstr','descend');
+peak_f=freq(index(1));
+Gmax=resonance(index(1));%determine the estimated associated conductance (or susceptance) value at the resonance peak
+halfg=(Gmax-min(resonance))./2+min(resonance);%determine the estimated half-max conductance (or susceptance) of the resonance peak
+halfg_freq=abs(freq(find(abs(halfg-resonance)==min(abs((halfg-resonance))),1))-peak_f);
+peak_track=get(handles.(['peak_track',num2str(handles.din.harmonic)]),'userdata');%extract out the peak tracking conditions
+    if peak_track(1)==1&&peak_track(2)==0%adjust window based on fixed span
+        current_span=(str2double(get(handles.(['end_f',num2str(handles.din.harmonic)]),'string'))-...
+            str2double(get(handles.(['start_f',num2str(handles.din.harmonic)]),'string')))*1e6;%get the current span of the data in Hz
+        if abs(mean([freq(1),freq(end)])-peak_f)>handles.din.set_span_factor_sensitivity*current_span
+            new_xlim=[(peak_f-.5*current_span),(peak_f+.5*current_span)].*1e-6;%new start and end frequencies in MHz
+            set(handles.(['start_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(1),12));%set new start freq in MHz
+            set(handles.(['end_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(2),12));%set new end freq in MHz
+        end%if abs(mean([freq(1),freq(end)])-f0)>0.25*current_span
+    elseif peak_track(1)==0&&peak_track(2)==1%adjust window based on fixed center
+        current_xlim=[str2double(get(handles.(['start_f',num2str(handles.din.harmonic)]),'string')),...
+            str2double(get(handles.(['end_f',num2str(handles.din.harmonic)]),'string'))].*1e6;%get current start and end frequencies of the data in Hz
+        current_center=((str2double(get(handles.(['start_f',num2str(handles.din.harmonic)]),'string'))+...
+            str2double(get(handles.(['end_f',num2str(handles.din.harmonic)]),'string')))*1e6)/2;%get the current center of the data in Hz
+        peak_xlim=[peak_f-halfg_freq*3,peak_f+halfg_freq*3];%find the starting and ending frequency of only the peak in Hz
+            if sum(abs(current_xlim-([current_center-3*halfg_freq,current_center+3*halfg_freq])))>3e3
+                new_xlim=[current_center-3*halfg_freq,current_center+3*halfg_freq].*1e-6;%set new start and end freq based on the location of the peak in MHz
+                set(handles.(['start_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(1),10));%set new start freq in MHz
+                set(handles.(['end_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(2),10));%set new end freq in MHz
+            end
+    elseif peak_track(1)==1&&peak_track(2)==1%adjust window based on fixed span and fixed center
+        %do not adjust the start and end freq. this is not idea esp. if the
+        %resonance peaks is shifting over a function of time.
+    elseif peak_track(1)==0&&peak_track(2)==0%adjust window if neither span or center is fixed (default)
+        current_xlim=[str2double(get(handles.(['start_f',num2str(handles.din.harmonic)]),'string')),...
+            str2double(get(handles.(['end_f',num2str(handles.din.harmonic)]),'string'))];%get current start and end frequencies of the data in MHz        
+        current_span=(str2double(get(handles.(['end_f',num2str(handles.din.harmonic)]),'string'))-...
+            str2double(get(handles.(['start_f',num2str(handles.din.harmonic)]),'string')))*1e6;%get the current span of the data in Hz
+        if (mean(current_xlim)*1e6-peak_f)>1*current_span/12
+            new_xlim=(current_xlim*1e6-current_span/15)*1e-6;%new start and end frequencies in MHz
+            set(handles.(['start_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(1),12));%set new start freq in MHz
+            set(handles.(['end_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(2),12));%set new end freq in MHz
+        elseif (mean(current_xlim)*1e6-peak_f)<-1*current_span/12
+            new_xlim=(current_xlim*1e6+current_span/15)*1e-6;%new start and end frequencies in MHz
+            set(handles.(['start_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(1),12));%set new start freq in MHz
+            set(handles.(['end_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(2),12));%set new end freq in MHz
+        else
+            thresh1=.05*current_span+current_xlim(1)*1e6;%Threshold frequency in Hz
+            thresh2=.03*current_span;%Threshold frequency span in Hz
+            LB_peak=peak_f-halfg_freq*3;%lower bound of the resonance peak
+            if LB_peak-thresh1>halfg_freq*8%if peak is to thin, zoom into the peak
+                new_xlim(1)=(current_xlim(1)*1e6+thresh2)*1e-6;%MHz
+                new_xlim(2)=(current_xlim(2)*1e6-thresh2)*1e-6;%MHz
+                set(handles.(['start_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(1),12));%set new start freq in MHz
+                set(handles.(['end_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(2),12));%set new end freq in M
+            elseif thresh1-LB_peak>-halfg_freq*5%if the peak is too fat, zoom out of the peak
+                new_xlim(1)=(current_xlim(1)*1e6-thresh2)*1e-6;%MHz
+                new_xlim(2)=(current_xlim(2)*1e6+thresh2)*1e-6;%MHz
+                set(handles.(['start_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(1),12));%set new start freq in MHz
+                set(handles.(['end_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(2),12));%set new end freq in M
+            end%if LB_peak-thresh1>halfg_freq*6*1.5            
+        end% if abs(set_xlim(1)-current_xlim(1))*1e6>1e3||abs(current_xlim(2)-set_xlim(2))*1e6>1e3
+    elseif peak_track(1)==2&&peak_track(2)==0%run custom, 	 tracking algorithm
+        %%%%%%%CUSTOM, USER-DEFINED
+        %%%%%%%CUSTOM, USER-DEFINED
+        %%%%%%%CUSTOM, USER-DEFINED
+        %%%%%%%CUSTOM, USER-DEFINED
+    end%if fix_span==1&&fix_center==0
+    check_freq_range(handles.din.harmonic, handles.din.freq_range(0.5*(handles.din.harmonic+1),1), handles.din.freq_range(0.5*(handles.din.harmonic+1),2), handles);
+function center1_Callback(hObject, eventdata, handles)
+% --- Executes on button press in center1.
+if get(hObject,'value')==1
+    peak_center_SelectionChangeFcn(hObject, eventdata, handles)
+end%if get(hObject,'value')==1
+function center3_Callback(hObject, eventdata, handles)
+% --- Executes on button press in center3.
+if get(hObject,'value')==1
+    peak_center_SelectionChangeFcn(hObject, eventdata, handles)
+end%if get(hObject,'value')==1
+function center5_Callback(hObject, eventdata, handles)
+% --- Executes on button press in center5.
+if get(hObject,'value')==1
+    peak_center_SelectionChangeFcn(hObject, eventdata, handles)
+end%if get(hObject,'value')==1
+function center7_Callback(hObject, eventdata, handles)
+% --- Executes on button press in center7.
+if get(hObject,'value')==1
+    peak_center_SelectionChangeFcn(hObject, eventdata, handles)
+end%if get(hObject,'value')==1
+function center9_Callback(hObject, eventdata, handles)
+% --- Executes on button press in center9.
+if get(hObject,'value')==1
+    peak_center_SelectionChangeFcn(hObject, eventdata, handles)
+end%if get(hObject,'value')==1
+function center11_Callback(hObject, eventdata, handles)
+% --- Executes on button press in center11.
+if get(hObject,'value')==1
+    peak_center_SelectionChangeFcn(hObject, eventdata, handles)
+end%if get(hObject,'value')==1
 
 
-
+function handles=cla_raw_Callback(hObject, ~, handles)
 % --- Executes on button press in cla_raw.
 %This function clears all raw spectra
-function handles=cla_raw_Callback(hObject, ~, handles)
 marker_color={[0 0 0],[0 0 1],[1 0 0],[0 0.5 0],[1 .8398 0],[.25 .875 .8125]};
 cla(handles.primaryaxes1);cla(handles.primaryaxes2);
 if ishold(handles.primaryaxes1)==0
@@ -2625,16 +2627,9 @@ set(handles.num_datapoints,'string',round_num_datapoints);
 set(handles.status,'string','Status: WARNING: CHANGING THE # OF DATAPOINTS CAN CAUSE SYNC PROBLEMS! Ready...',...
     'backgroundcolor','y','foregroundcolor','r');
 
-
-% --- Executes on button press in show_susceptance.
-function show_susceptance_Callback(~, ~, handles)
-if get(handles.show_susceptance,'value')==0
-    set(handles.polar_plot,'value',0);
-end%if get(handles.show_susceptance,'value')==0
-
-%this function creates a new figure showing the selected raw conductance
-%spectra (this is still a work in progress...)
 function handles=raw_fig_Callback(hObject, ~, handles)
+%this function creates a new figure showing the selected raw conductance
+%spectra
 set(handles.home_push,'visible','on');
 if get(handles.raw_fig,'value')==0%add if statement related to recording process
     harm_tot=find_num_harms(handles);
@@ -2740,102 +2735,61 @@ set(handles.raw_fig,'fontweight','normal','foregroundcolor','k');
 delete([figure(1),figure(2),figure(3),figure(4),figure(5),figure(6)]);
 %refresh the primary axes plots
 set(handles.status,'string','Status: Ready...','backgroundcolor','k','foregroundcolor','r');drawnow;
-plot1_choice_Callback(hObject, 1, handles);
-plot2_choice_Callback(hObject, 1, handles);
+plot_choice_Callback(handles.plot1_choice, 1, handles);
+plot_choice_Callback(handles.plot2_choice, 1, handles);
 guidata(hObject, handles);
 
 
-%/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-%PEAK TRACKING CODE BEGINS HERE
-%/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function [handles]=smart_peak_tracker(handles,freq,conductance,susceptance,G_parameters)
-try
-    f0=G_parameters(1);
-    gamma0=G_parameters(2);
-catch
-end%try
-%Determine whether to use the conducatnace or array or susceptance array to
-%track the peak.
-name=['fit',num2str(handles.din.harmonic)];%determine the structure field that should be used to extract out the initial-guessing method
-%This if-statement checks to see if the initial guess values are based on
-%"BMax" option (for fitting the Lorentz curve). Usually when "BMax" is
-%turned on, the susceptance plots will be more accurate to track the
-%resonance peak instead of the conductance peak.
-if get(handles.(name),'userdata')==3%If BMax is turned on
-    resonance=susceptance;
+%% Functions related to loading and saving settings and data
+function set_settings_Callback(~, ~, handles)
+% --- Executes on button press in set_settings.
+%find active harmonics
+harm_tot=find_num_harms(handles);
+for dum=1:length(harm_tot)
+    write_settings(handles,harm_tot(dum))
+end%for dum=1:size(harm_tot,1)
+set(handles.status,'string','Status: Settings have been set! Ready...','backgroundcolor','k','foregroundcolor','r');
+disp('Settings have been set! Ready...');
+function write_settings(handles,harm_num)
+% This if statement writes out the setting.txt file for the selected harmonic harmonic
+% (settings01.txt, settings03.txt, etc.)
+if harm_num<11
+    filename=['AccessMyVNAv0.7\release\settings0',num2str(harm_num),'.txt'];
 else
-    resonance=conductance;
-end%if get(handles.(name),'userdata')==3
-[~,index]=findpeaks(resonance,'sortstr','descend');
-peak_f=freq(index(1));
-Gmax=resonance(index(1));%determine the estimated associated conductance (or susceptance) value at the resonance peak
-halfg=(Gmax-min(resonance))./2+min(resonance);%determine the estimated half-max conductance (or susceptance) of the resonance peak
-halfg_freq=abs(freq(find(abs(halfg-resonance)==min(abs((halfg-resonance))),1))-peak_f);
-peak_track=get(handles.(['peak_track',num2str(handles.din.harmonic)]),'userdata');%extract out the peak tracking conditions
-    if peak_track(1)==1&&peak_track(2)==0%adjust window based on fixed span
-        current_span=(str2double(get(handles.(['end_f',num2str(handles.din.harmonic)]),'string'))-...
-            str2double(get(handles.(['start_f',num2str(handles.din.harmonic)]),'string')))*1e6;%get the current span of the data in Hz
-        if abs(mean([freq(1),freq(end)])-peak_f)>handles.din.set_span_factor_sensitivity*current_span
-            new_xlim=[(peak_f-.5*current_span),(peak_f+.5*current_span)].*1e-6;%new start and end frequencies in MHz
-            set(handles.(['start_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(1),12));%set new start freq in MHz
-            set(handles.(['end_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(2),12));%set new end freq in MHz
-        end%if abs(mean([freq(1),freq(end)])-f0)>0.25*current_span
-    elseif peak_track(1)==0&&peak_track(2)==1%adjust window based on fixed center
-        current_xlim=[str2double(get(handles.(['start_f',num2str(handles.din.harmonic)]),'string')),...
-            str2double(get(handles.(['end_f',num2str(handles.din.harmonic)]),'string'))].*1e6;%get current start and end frequencies of the data in Hz
-        current_center=((str2double(get(handles.(['start_f',num2str(handles.din.harmonic)]),'string'))+...
-            str2double(get(handles.(['end_f',num2str(handles.din.harmonic)]),'string')))*1e6)/2;%get the current center of the data in Hz
-        peak_xlim=[peak_f-halfg_freq*3,peak_f+halfg_freq*3];%find the starting and ending frequency of only the peak in Hz
-            if sum(abs(current_xlim-([current_center-3*halfg_freq,current_center+3*halfg_freq])))>3e3
-                new_xlim=[current_center-3*halfg_freq,current_center+3*halfg_freq].*1e-6;%set new start and end freq based on the location of the peak in MHz
-                set(handles.(['start_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(1),10));%set new start freq in MHz
-                set(handles.(['end_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(2),10));%set new end freq in MHz
-            end
-    elseif peak_track(1)==1&&peak_track(2)==1%adjust window based on fixed span and fixed center
-        %do not adjust the start and end freq. this is not idea esp. if the
-        %resonance peaks is shifting over a function of time.
-    elseif peak_track(1)==0&&peak_track(2)==0%adjust window if neither span or center is fixed (default)
-        current_xlim=[str2double(get(handles.(['start_f',num2str(handles.din.harmonic)]),'string')),...
-            str2double(get(handles.(['end_f',num2str(handles.din.harmonic)]),'string'))];%get current start and end frequencies of the data in MHz        
-        current_span=(str2double(get(handles.(['end_f',num2str(handles.din.harmonic)]),'string'))-...
-            str2double(get(handles.(['start_f',num2str(handles.din.harmonic)]),'string')))*1e6;%get the current span of the data in Hz
-        if (mean(current_xlim)*1e6-peak_f)>1*current_span/12
-            new_xlim=(current_xlim*1e6-current_span/15)*1e-6;%new start and end frequencies in MHz
-            set(handles.(['start_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(1),12));%set new start freq in MHz
-            set(handles.(['end_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(2),12));%set new end freq in MHz
-        elseif (mean(current_xlim)*1e6-peak_f)<-1*current_span/12
-            new_xlim=(current_xlim*1e6+current_span/15)*1e-6;%new start and end frequencies in MHz
-            set(handles.(['start_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(1),12));%set new start freq in MHz
-            set(handles.(['end_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(2),12));%set new end freq in MHz
-        else
-            thresh1=.05*current_span+current_xlim(1)*1e6;%Threshold frequency in Hz
-            thresh2=.03*current_span;%Threshold frequency span in Hz
-            LB_peak=peak_f-halfg_freq*3;%lower bound of the resonance peak
-            if LB_peak-thresh1>halfg_freq*8%if peak is to thin, zoom into the peak
-                new_xlim(1)=(current_xlim(1)*1e6+thresh2)*1e-6;%MHz
-                new_xlim(2)=(current_xlim(2)*1e6-thresh2)*1e-6;%MHz
-                set(handles.(['start_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(1),12));%set new start freq in MHz
-                set(handles.(['end_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(2),12));%set new end freq in M
-            elseif thresh1-LB_peak>-halfg_freq*5%if the peak is too fat, zoom out of the peak
-                new_xlim(1)=(current_xlim(1)*1e6-thresh2)*1e-6;%MHz
-                new_xlim(2)=(current_xlim(2)*1e6+thresh2)*1e-6;%MHz
-                set(handles.(['start_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(1),12));%set new start freq in MHz
-                set(handles.(['end_f',num2str(handles.din.harmonic)]),'string',num2str(new_xlim(2),12));%set new end freq in M
-            end%if LB_peak-thresh1>halfg_freq*6*1.5            
-        end% if abs(set_xlim(1)-current_xlim(1))*1e6>1e3||abs(current_xlim(2)-set_xlim(2))*1e6>1e3
-    elseif peak_track(1)==2&&peak_track(2)==0%run custom, 	 tracking algorithm
-        %%%%%%%CUSTOM, USER-DEFINED
-        %%%%%%%CUSTOM, USER-DEFINED
-        %%%%%%%CUSTOM, USER-DEFINED
-        %%%%%%%CUSTOM, USER-DEFINED
-    end%if fix_span==1&&fix_center==0
-    check_freq_range(handles.din.harmonic, handles.din.freq_range(0.5*(handles.din.harmonic+1),1), handles.din.freq_range(0.5*(handles.din.harmonic+1),2), handles);
-%/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-% PEAK TRACKING CODE ENDS HERE
-%/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-%this function saves settings into an output file
+    filename=['AccessMyVNAv0.7\release\settings',num2str(harm_num),'.txt'];
+end%if harm_num<11
+fileID=fopen(filename,'w');%write settings value into the settings.txt file
+harmname=['harm',num2str(harm_num)];
+startname=['start_f',num2str(harm_num)];
+endname=['end_f',num2str(harm_num)];
+num_pts=get(handles.num_datapoints,'userdata');
+try
+    if get(handles.(harmname),'value')==1
+        fprintf(fileID,'%10.12f\r\n',str2double(get(handles.(startname),'string')));%write start frequency of <dum> harmonic
+        fprintf(fileID,'%10.12f\r\n',str2double(get(handles.(endname),'string')));%write out end frequency of <dum> harmonic
+        fprintf(fileID,'%10.12f\r\n',handles.din.freq_range((harm_num+1)./2,1));%write out lowerbound of frequency range for the harmonic
+        fprintf(fileID,'%10.12f\r\n',handles.din.freq_range((harm_num+1)./2,2));%write out upperbound of frequency range for the harmonic
+        fprintf(fileID,'%i\r\n',num_pts(harm_num,1));%write out the number of datapoints
+    end%if get(handles.(harmname),'value')==1
+    fclose(fileID);
+catch
+    disp('Could not write the settings file!')
+end
+%write out the settings.txt
+try
+    fileID1=fopen('AccessMyVNAv0.7\release\settings.txt','w');
+    fprintf(fileID1,'%i\r\n',get(handles.maintain_myVNA,'value'));%write the toggle state of the maintain)myVNA radio dial
+    fprintf(fileID1,'%i\r\n',str2double(get(handles.wait_time,'string')));%writes the wait time between measurements
+    numberofharms=size(find_num_harms(handles),1);%finds the total number of harmonics
+    fprintf(fileID1,'%i\r\n',numberofharms);%write out the total number of harmonics that are active
+    fprintf(fileID1,'%i\r\n',find_num_harms(handles));%write the value of the harmonics
+    fclose(fileID1);
+catch err_message
+    assignin('base','err_message',err_message);
+    set(handles.status,'string','Status: Error in writing the settings.txt file!','foregroundcolor','k','backgroundcolor','r');
+end
 function save_settings_Callback(~, ~, handles)
+%this function saves settings into an output file
 try
     set(handles.status,'string','Status: Saving settings...please wait','backgroundcolor','k','foregroundcolor','r');drawnow;
     disp('Saving settings...please wait');
@@ -2914,8 +2868,6 @@ waitbar(1,h);drawnow;
 delete(h);
 set(handles.status,'string',['Status: Settings succesfully saved! ',settings.output_filename,'_settings.mat']);
 disp('Settings succesfully saved! ');
-
-
 function load_settings_Callback(hObject, ~, handles)
 %This function loads the settings that were saved
 disp('   ');
@@ -3062,12 +3014,9 @@ catch err_msg
 end%try
 disp(' ');
 guidata(hObject, handles);
-
-
-
+function handles=save_data_Callback(hObject, ~, handles)
 %This functions will output the data into a user specified filename and
 %path
-function handles=save_data_Callback(hObject, ~, handles)
 try
     [output_filename,output_path]=uiputfile('*.mat','Designate output file name and location',handles.din.output_path);
     [~, output_filename, ~] = fileparts(output_filename);
@@ -3081,95 +3030,108 @@ try
 catch 
 end%try
 guidata(hObject, handles);
+function append_data_Callback(hObject, eventdata, handles)
+%this function asks the user to load the file inwhich the new data will be
+%appended to
+[append_filename,append_path,~]=uigetfile('*.mat','Select existing freq shift data',handles.din.output_path);
+load([append_path,append_filename]);
+%clear out the store FG shifts and absolute values by replacing all the
+%values as nan
+handles.din.FG_frequency=NaN(handles.din.max_datapts,13);
+handles.din.FG_freq_shifts=NaN(handles.din.max_datapts,13);
+handles.din.chi_sqr_value=NaN(handles.din.max_datapts,13);
+nan_location=find(isnan(abs_freq(:,1)),1,'first');%find the first nan datapoint from the time column of the abs_freq variable
+if isempty(nan_location)==1
+    nan_location=size(abs_freq,1);
+end%if isempty(nan_location)==1
+%import in the data from the file to-be-appended to the current handles structure
+handles.din.FG_frequency(1:nan_location,:)=abs_freq(1:nan_location,:);
+handles.din.chi_sqr_value(1:nan_location,:)=chisq_values(1:nan_location,:);
+handles.din.FG_freq_shifts(1:nan_location,:)=freq_shift(1:nan_location,:);
+handles.din.ref_freq=freq_shift_ref(1,:);
+handles.din.ref_diss=freq_shift_ref(2,:);
+handles.din.n=find(isnan(abs_freq(:,1)),1,'first');
+if isempty(handles.din.n)==1
+    handles.din.n=nan_location+1;
+end%if isempty(handles.din.n)==1
+set(handles.reference_time,'string',reference(1,:));%redefine the reference time to the reference time from the file being appended
+[~, append_filename, ~] = fileparts(append_filename);
+handles.din.output_filename=append_filename;
+handles.din.output_path=append_path;
+set(handles.filename_txt,'string',[append_path(1:8),'...',append_filename],'tooltipstring',['<html>Filename: ',append_filename,'.mat<br />Filepath: ',append_path,'</html>']);
+load_settings_Callback(hObject, eventdata, handles)%this will load the settings associated with the file being appended
+plot_primaryaxes(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n,'a');
+plot_primaryaxes(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n,'b');
+guidata(hObject,handles);
 
 
-% --- Executes on selection change in plot1_choice.
-function plot1_choice_Callback(~, ~, handles)
+%% Functions related to plotting in primaryaxes1 and primaryaxes2
+function plot_choice_Callback(hObject,~,handles)
 choice=get(handles.plot1_choice,'value');
 font_size=8;
 font_weight='bold';
+if strcmp(hObject.Tag,'plot1_choice')||strcmp(hObject.Tag,'primary1')
+    pa1='primaryaxes1';
+    pa2='a';    
+elseif strcmp(hObject.Tag,'plot2_choice')||strcmp(hObject.Tag,'primary2')
+    pa1='primaryaxes2';
+    pa2='b';    
+end
+num_harms=primaryaxes_harm(handles,pa2);
 switch choice
     case 1
-        xlabel(handles.primaryaxes1,'');
-        ylabel(handles.primaryaxes1,'');
-        set(handles.primaryaxes1,'fontsize',font_size);
+        xlabel(handles.(pa1),'');
+        ylabel(handles.(pa1),'');
     case 2
-        xlabel(handles.primaryaxes1,'Time (min.)','fontsize',font_size,'fontweight',font_weight);
-        ylabel(handles.primaryaxes1,'\Deltaf (Hz)','fontsize',font_size,'fontweight',font_weight);
-        set(handles.primaryaxes1,'fontsize',font_size);
+        xlabel(handles.(pa1),'Time (min.)');
+        ylabel(handles.(pa1),'\Deltaf (Hz)');
     case 3
-        xlabel(handles.primaryaxes1,'Time (min.)','fontsize',font_size,'fontweight',font_weight);
-        ylabel(handles.primaryaxes1,'\Deltaf/n (Hz)','fontsize',font_size,'fontweight',font_weight);
-        set(handles.primaryaxes1,'fontsize',font_size);
+        xlabel(handles.(pa1),'Time (min.)');
+        ylabel(handles.(pa1),'\Deltaf/n (Hz)');
     case 4
-        xlabel(handles.primaryaxes1,'Time (min.)','fontsize',font_size,'fontweight',font_weight);
-        ylabel(handles.primaryaxes1,'\Delta\Gamma (Hz)','fontsize',font_size,'fontweight',font_weight);
-        set(handles.primaryaxes1,'fontsize',font_size);        
-    case 5
-        xlabel(handles.primaryaxes1,'Time (min.)','fontsize',font_size,'fontweight',font_weight);
-        ylabel(handles.primaryaxes1,'\Delta\Gamma/n (Hz)','fontsize',font_size,'fontweight',font_weight);
-        set(handles.primaryaxes1,'fontsize',font_size);        
+        xlabel(handles.(pa1),'Time (min.)');
+        ylabel(handles.(pa1),'\Delta\Gamma (Hz)');       
+    case 5 %bulk calculations of viscelastic phase angle, phi
+        xlabel(handles.(pa1),'Time (min.)');
+        ylabel(handles.(pa1),'\phi (deg.)');  
+    case 6
+        xlabel(handles.(pa1),'Time (min.)');
+        ylabel(handles.(pa1),'|G^*_n|\rho (Pa\cdotg/cm^3)');  
 end%switch choice
+set(handles.(pa1),'fontsize',font_size);  
+set(findall(handles.(pa1),'type','text'),'fontweight',font_weight,'fontsize',font_size);
 for dum=1:6%hide the plot handles
     try
-        set(handles.primary_handles.(['phantom',num2str(dum),'a']),'visible','off');
+        set(handles.primary_handles.(['phantom',num2str(dum),pa2]),'visible','off');
     catch
         handles=cla_raw_Callback(handles.cla_raw,1,handles);
     end%try
 end%for dum1:6
-num_harms=primaryaxes_harm(handles);
 for dum=1:length(num_harms)
     handles.din.harmonic=num_harms(dum);
-    plot_primaryaxes1(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
+    if strcmp(hObject.Tag,'plot1_choice')||strcmp(hObject.Tag,'primary1')
+        plot_primaryaxes(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n,'a');
+    elseif strcmp(hObject.Tag,'plot2_choice')||strcmp(hObject.Tag,'primary2')
+        plot_primaryaxes(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n,'b');
+    end
 end
-
-% --- Executes on selection change in plot2_choice.
-function plot2_choice_Callback(~, ~, handles)
-choice=get(handles.plot2_choice,'value');
-font_size=8;
-font_weight='bold';
-switch choice
-    case 1
-        xlabel(handles.primaryaxes2,'');
-        ylabel(handles.primaryaxes2,'');
-        set(handles.primaryaxes2,'fontsize',font_size);
-    case 2
-        xlabel(handles.primaryaxes2,'Time (min.)','fontsize',font_size,'fontweight',font_weight);
-        ylabel(handles.primaryaxes2,'\Deltaf (Hz)','fontsize',font_size,'fontweight',font_weight);
-        set(handles.primaryaxes2,'fontsize',font_size);
-    case 3
-        xlabel(handles.primaryaxes2,'Time (min.)','fontsize',font_size,'fontweight',font_weight);
-        ylabel(handles.primaryaxes2,'\Deltaf/n (Hz)','fontsize',font_size,'fontweight',font_weight);
-        set(handles.primaryaxes2,'fontsize',font_size);
-    case 4
-        xlabel(handles.primaryaxes2,'Time (min.)','fontsize',font_size,'fontweight',font_weight);
-        ylabel(handles.primaryaxes2,'\Delta\Gamma (Hz)','fontsize',font_size,'fontweight',font_weight);
-        set(handles.primaryaxes2,'fontsize',font_size);        
-    case 5
-        xlabel(handles.primaryaxes2,'Time (min.)','fontsize',font_size,'fontweight',font_weight);
-        ylabel(handles.primaryaxes2,'\Delta\Gamma/n (Hz)','fontsize',font_size,'fontweight',font_weight);
-        set(handles.primaryaxes2,'fontsize',font_size);        
-end%switch choice
-for dum=1:6%hide the plot handles
-    set(handles.primary_handles.(['phantom',num2str(dum),'b']),'visible','off');
-end%for dum1:6
-num_harms=primaryaxes2_harm(handles);
-for dum=1:length(num_harms)
-    handles.din.harmonic=num_harms(dum);
-    plot_primaryaxes2(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
-end
-
-
-function plot_primaryaxes1(handles,FG_frequency,harm_tot,n)
+function plot_primaryaxes(handles,FG_frequency,harm_tot,n,pa2)
 hold on;
 active_plot_harmonics=[];
 flag=1;
 current_harm=handles.din.harmonic;
+if strcmp(pa2,'a')
+    plot_choice='plot1_choice';
+    pa1='plot_';
+elseif strcmp(pa2,'b')
+    plot_choice='plot2_choice';
+    pa1='plot2_';
+end
 if handles.prefs.plot_dynamic_refresh==1
     handles=guidata(handles.primary1);
 end%if handles.prefs.plot_dynamic_refresh==1
 for dum=1:2:11
-    plot_name_dial=['plot_',num2str(dum)];
+    plot_name_dial=[pa1,num2str(dum)];
     if get(handles.(plot_name_dial),'value')==1&&sum(harm_tot==dum)==1&&dum==current_harm
         active_plot_harmonics=[active_plot_harmonics,dum];
         flag=flag+1;
@@ -3177,144 +3139,82 @@ for dum=1:2:11
 end%dum=1:2:11
 dum=(active_plot_harmonics+1)/2;
 if isempty(dum)==0
-    switch get(handles.plot1_choice,'value')
+    switch get(handles.(plot_choice),'value')
         case 1
             for pdum=1:6%hide the plot handles
-                set(handles.primary_handles.(['phantom',num2str(pdum),'a']),'visible','off');
+                set(handles.primary_handles.(['phantom',num2str(pdum),pa2]),'visible','off');
             end%for dum1:6
         case 2%plot frequency shift versus time
             F_frequency_shifts=FG_frequency(1:n,active_plot_harmonics(1)+1)-handles.din.ref_freq((active_plot_harmonics(1)+1)./2);
-            set(handles.primary_handles.(['phantom',num2str(dum),'a']),'xdata',FG_frequency(1:n,1),'ydata',F_frequency_shifts(1:n),'visible','on');            
+            set(handles.primary_handles.(['phantom',num2str(dum),pa2]),'xdata',FG_frequency(1:n,1),'ydata',F_frequency_shifts(1:n),'visible','on');            
         case 3%plot frequency shift/harmonic order versus time
             F_frequency_shifts=FG_frequency(1:n,active_plot_harmonics(1)+1)-handles.din.ref_freq((active_plot_harmonics(1)+1)./2);
-            set(handles.primary_handles.(['phantom',num2str(dum),'a']),'xdata',FG_frequency(1:n,1),'ydata',F_frequency_shifts(1:n)./active_plot_harmonics,'visible','on');
+            set(handles.primary_handles.(['phantom',num2str(dum),pa2]),'xdata',FG_frequency(1:n,1),'ydata',F_frequency_shifts(1:n)./active_plot_harmonics,'visible','on');
         case 4%plot gamma shift versus time
             G_frequency_shifts= FG_frequency(:,active_plot_harmonics(1)+2)-handles.din.ref_diss((active_plot_harmonics(1)+1)./2);
-            set(handles.primary_handles.(['phantom',num2str(dum),'a']),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n),'visible','on');      
-        case 5%plot gamma shift/harmonic order versus time
-            G_frequency_shifts= FG_frequency(:,active_plot_harmonics(1)+2)-handles.din.ref_diss((active_plot_harmonics(1)+1)./2);
-            set(handles.primary_handles.(['phantom',num2str(dum),'a']),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n)./active_plot_harmonics,'visible','on');        
+            set(handles.primary_handles.(['phantom',num2str(dum),pa2]),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n),'visible','on');      
+        case 5%plot viscoelastic phase angle (phi) versus time
+            F_frequency_shifts=FG_frequency(1:n,active_plot_harmonics(1)+1)-handles.din.ref_freq((active_plot_harmonics(1)+1)./2);
+            G_frequency_shifts= FG_frequency(:,active_plot_harmonics(1)+2)-handles.din.ref_diss((active_plot_harmonics(1)+1)./2);            
+            set(handles.primary_handles.(['phantom',num2str(dum),pa2]),'xdata',FG_frequency(1:n,1),...
+                'ydata',-2.*atand(F_frequency_shifts(1:n)./G_frequency_shifts(1:n)),'visible','on');        
+        case 6
+            F_frequency_shifts=FG_frequency(1:n,active_plot_harmonics(1)+1)-handles.din.ref_freq((active_plot_harmonics(1)+1)./2);
+            G_frequency_shifts= FG_frequency(:,active_plot_harmonics(1)+2)-handles.din.ref_diss((active_plot_harmonics(1)+1)./2);            
+            phi=-2.*atand(F_frequency_shifts(1:n)./G_frequency_shifts(1:n));
+            zq=8.84e6;
+            f1=5e6;
+            
     end
 else
 end%if isempty(dum)==0
 yt=get(handles.primaryaxes1,'ytick');    
 set(handles.ytick1,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
-
-
-
-function plot_primaryaxes2(handles,FG_frequency,harm_tot,n)
-hold on;
-active_plot_harmonics=[];
-flag=1;
-current_harm=handles.din.harmonic;
-if handles.prefs.plot_dynamic_refresh==1
-    handles=guidata(handles.primary1);
-end%if handles.prefs.plot_dynamic_refresh==1
-for dum=1:2:11
-    plot_name_dial=['plot2_',num2str(dum)];
-    if get(handles.(plot_name_dial),'value')==1&&sum(harm_tot==dum)==1&&dum==current_harm
-        active_plot_harmonics=[active_plot_harmonics,dum];
-        flag=flag+1;
-    end%if get(handles.(plot_name_dial),'value')==1
-end%dum=1:2:11
-dum=(active_plot_harmonics+1)/2;
-if isempty(dum)==0
-    switch get(handles.plot2_choice,'value')
-        case 1
-            for pdum=1:6%hide the plot handles
-                set(handles.primary_handles.(['phantom',num2str(pdum),'b']),'visible','off');
-            end%for dum1:6
-        case 2%plot frequency shift versus time
-            F_frequency_shifts=FG_frequency(1:n,active_plot_harmonics(1)+1)-handles.din.ref_freq((active_plot_harmonics(1)+1)./2);
-            set(handles.primary_handles.(['phantom',num2str(dum),'b']),'xdata',FG_frequency(1:n,1),'ydata',F_frequency_shifts(1:n),'visible','on');
-        case 3%plot frequency shift/harmonic order versus time
-            F_frequency_shifts=FG_frequency(1:n,active_plot_harmonics(1)+1)-handles.din.ref_freq((active_plot_harmonics(1)+1)./2);
-            set(handles.primary_handles.(['phantom',num2str(dum),'b']),'xdata',FG_frequency(1:n,1),'ydata',F_frequency_shifts(1:n)./active_plot_harmonics,'visible','on');    
-        case 4%plot gamma shift versus time
-            G_frequency_shifts= FG_frequency(:,active_plot_harmonics(1)+2)-handles.din.ref_diss((active_plot_harmonics(1)+1)./2);
-            set(handles.primary_handles.(['phantom',num2str(dum),'b']),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n),'visible','on');          
-        case 5%plot gamma shift/harmonic order versus time
-            G_frequency_shifts= FG_frequency(:,active_plot_harmonics(1)+2)-handles.din.ref_diss((active_plot_harmonics(1)+1)./2);
-            set(handles.primary_handles.(['phantom',num2str(dum),'b']),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n)./active_plot_harmonics,'visible','on');           
-    end        
-else
-end%if isempty(dum)==0
-yt=get(handles.primaryaxes2,'ytick');
-set(handles.ytick2,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
-
+function plot_helper(hObject,~,handles)
 %This is the callback function for the plot1 radio dials (associated with
-%the top primary axes plot)
-function plot1_helper(~,~,handles)
+%the top primary axes plot). This function is used as a callback function
+%for the radial dials associated with primaryaxes1 and primaryaxes2.
+if length(hObject.Tag)==6%if the radial dials associated with primaryaxes1
+    pa='primaryaxes1';
+    pa2='a';
+elseif length(hObject.Tag)==7%if the radial dials associated with primaryaxes2
+    pa='primaryaxes2';
+    pa2='b';
+end
 for dum=1:6%hide the plot handles
-    set(handles.primary_handles.(['phantom',num2str(dum),'a']),'visible','off');
+    set(handles.primary_handles.(['phantom',num2str(dum),pa2]),'visible','off');
     yt=get(handles.primaryaxes1,'ytick');    
     set(handles.ytick1,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
 end%for dum1:6
-num_harms=primaryaxes_harm(handles);
+num_harms=primaryaxes_harm(handles,pa2);
 for dum=1:length(num_harms)
     handles.din.harmonic=num_harms(dum);
-    plot_primaryaxes1(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
+    plot_primaryaxes(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n,pa2);
 end
-
-%This is the callback function for the plot2 radio dials (associated with
-%the bottom primary axes plot)
-function plot2_helper(~,~,handles)
-for dum=1:6%hide the plot handles
-    set(handles.primary_handles.(['phantom',num2str(dum),'b']),'visible','off');
-    yt=get(handles.primaryaxes2,'ytick');
-    set(handles.ytick2,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
-end%for dum1:6
-num_harms=primaryaxes2_harm(handles);
-for dum=1:length(num_harms)
-    handles.din.harmonic=num_harms(dum);
-    plot_primaryaxes2(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
-end
-
-function num_harms=primaryaxes_harm(handles)
+function num_harms=primaryaxes_harm(handles,pa2)
 %this function provides the number active harmonics that are being plotted
 %in handles.primaryaxes1
 num_harms=[];
 for dum=1:2:11
-    harm_name=['plot_',num2str(dum)];
+    if strcmp(pa2,'a')
+        harm_name=['plot_',num2str(dum)];
+    elseif strcmp(pa2,'b')
+        harm_name=['plot2_',num2str(dum)];
+    end    
     if get(handles.(harm_name),'value')==1 
         num_harms=[num_harms, dum];
     end%if get(handles.(harm_name),'value')==1
 end%for dum=1:2:11
+function uipushtool6_ClickedCallback(~, ~, handles)
+% Modifying primaryaxes properties toolbar button
+%these function allows the user to manipulate the plot properties manually
+inspect(handles.primaryaxes1);
+function uipushtool7_ClickedCallback(~, ~, handles)
+% Modifying primaryaxes properties toolbar button
+%these function allows the user to manipulate the plot properties manually
+inspect(handles.primaryaxes2);
 
-function num_harms=primaryaxes2_harm(handles)
-%this function provides the number active harmonics that are being plotted
-%in handles.primaryaxes2
-num_harms=[];
-for dum=1:2:11
-    harm_name=['plot2_',num2str(dum)];
-    if get(handles.(harm_name),'value')==1
-        num_harms=[num_harms, dum];
-    end%if get(handles.(harm_name),'value')==1
-end%for dum=1:2:11    
-
-% --- Executes when user attempts to close primary1.
-function primary1_CloseRequestFcn(hObject, ~, handles)
-%This try block attempts to kill the AccessMyVNA program through the Windows Command program, 
-%this will prevent multiple instances of the same program
-
-%This adds an extra layer of redundancy
-try 
-    [~,~]=system('taskkill /im "AccessMyVNA.exe" /T /F');
-    [~,~]=system('taskkill /im "MyVNA.exe"');
-catch
-    disp('Error in running commands in Windows Command line');
-end%try
-filename='AccessMyVNAv0.7\release\state_matlab.txt';
-fileID=fopen(filename,'w');
-fprintf(fileID,'%i\r\n',0);
-fclose(fileID);
-set(handles.wait_time,'string',1);
-set(handles.maintain_myVNA,'value',0);
-write_settings(handles,handles.din.harmonic);
-delete(hObject);
-
-
-% --- Executes on button press in email_notification.
+%% Functions related to email notifications
 function email_notification_Callback(~, ~, handles)
 %this function creates a figure window that asks the user to input an email
 %adress to send the smail notifications to
@@ -3393,11 +3293,9 @@ else
     set(handles.email_push,'userdata',0);
     guidata(handles.primary1,handles);
 end%if get(hObject,'value')==1
-
 function email_push_ClickedCallback(hObject, eventdata, handles)
 email_notification_Callback(hObject, eventdata, handles)
 guidata(hObject,handles);
-
 function email_send(handles,message)
 try
     drawnow; pause(1);
@@ -3429,24 +3327,11 @@ catch
 end%try
 
 
-% --- Executes on button press in polar_plot.
-function polar_plot_Callback(~, ~, handles)
-if get(handles.polar_plot,'value')==1
-    set(handles.show_susceptance,'value',1);
-end%if get(handles.polar_plot,'value')==1
-
-%This function redefines the fit_factor range for the Lorentz fitting
-%process
-function fit_factor_Callback(hObject, ~, handles)
-handles.din.fit_factor_range=str2double(get(handles.fit_factor,'string'));
-set(handles.status,'string','Status: Fit factor range sucessfully updated!','backgroundcolor','k','foregroundcolor','r');
-disp('Fit factor range sucessfully updated!');
-guidata(hObject, handles);
-
+%% Reset the GUI state to default settings
+function handles=reset_fcn(hObject,eventdata,handles)
 %this function reset the gui back to its original default state
 %Note that this function will not reset the preferences that were set or
 %changed!!!
-function handles=reset_fcn(hObject,eventdata,handles)
 backup=matfile(['deleted data\',datestr(clock,30),'_deleted_data'],'writable',true);%output the deleted data in the deleted data folder with the filename containing the time in 'yyymmddThhmmss' format (iso 8601)
 backup.FG_frequency=handles.din.FG_frequency;
 backup.FG_freq_shifts=handles.din.FG_freq_shifts;
@@ -3561,8 +3446,8 @@ set(handles.refit_start,'visible','off','string',1,'tooltipstring','Starting dat
 set(handles.refit_inc,'visible','off');
 set(handles.refit_end,'visible','off','string',100,'tooltipstring','Ending datapoint');
 write_settings(handles,handles.din.harmonic);%this function writes out the settings text file
-plot1_choice_Callback(hObject, eventdata, handles);%refresh primaryaxes1
-plot2_choice_Callback(hObject, eventdata, handles);%refresh primaryaxes2
+plot_choice_Callback(handles.plot1_choice, eventdata, handles);%refresh primaryaxes1
+plot_choice_Callback(handles.plot2_choice, eventdata, handles);%refresh primaryaxes2
 cla(handles.wb);
 set(handles.wb,'color','k','box','off','ytick',[]);
 %if the peak_centering toggle button is turned on, turn it off
@@ -3570,14 +3455,13 @@ if get(handles.peak_centering,'value')==1
     peak_centering_Callback(hObject, 1, handles);
     set(handles.peak_centering,'value',0,'foregroundcolor','k','fontweight','normal');%toggle the peak centering button back to 0
 end
-
 function home_push_ClickedCallback(hObject, eventdata, handles)
 handles=reset_fcn(hObject,eventdata,handles);
 set(handles.status,'string','Status: GUI state resetted! Ready...','backgroundcolor','k','foregroundcolor','r');
 guidata(hObject,handles);
 
 
-% --------------------------------------------------------------------
+%% Functions related to deleting datapoints
 function del_mode_ClickedCallback(hObject, ~, handles)
 if strcmp(get(hObject,'state'),'on')%Run this code if the delete points mode has been turned on
     set(handles.confirm_del,'visible','on','separator','on');%if delete points mode is turned on, turn the delete confirmation button to visible
@@ -3590,8 +3474,8 @@ if strcmp(get(hObject,'state'),'on')%Run this code if the delete points mode has
     harm_tot=find_num_harms(handles);%determine the total number of harmonics
     for dum2=1:length(harm_tot)
         handles.din.harmonic=harm_tot(dum2);%define current active harmonic
-        plot_primaryaxes1(handles,handles.din.FG_frequency,harm_tot,handles.din.n);%refresh/replot the primaryaxes1
-        plot_primaryaxes2(handles,handles.din.FG_frequency,harm_tot,handles.din.n);%refresh/replot the primaryaxes2
+        plot_primaryaxes(handles,handles.din.FG_frequency,harm_tot,handles.din.n,'a');%refresh/replot the primaryaxes1
+        plot_primaryaxes(handles,handles.din.FG_frequency,harm_tot,handles.din.n,'b');%refresh/replot the primaryaxes2
     end
 else%Rune this code is the delete points mode has been turned off
     set(handles.confirm_del,'visible','off','separator','off');
@@ -3602,12 +3486,10 @@ else%Rune this code is the delete points mode has been turned off
     handles=cla_raw_Callback(hObject,1,handles);%clear the axes
     for dum2=1:length(harm_tot)
         handles.din.harmonic=harm_tot(dum2);        
-        plot_primaryaxes1(handles,handles.din.FG_frequency,harm_tot,handles.din.n);%refresh/replot the primaryaxes1
-        plot_primaryaxes2(handles,handles.din.FG_frequency,harm_tot,handles.din.n);%refresh/replot the primaryaxes2
+        plot_primaryaxes(handles,handles.din.FG_frequency,harm_tot,handles.din.n,'a');%refresh/replot the primaryaxes1
+        plot_primaryaxes(handles,handles.din.FG_frequency,harm_tot,handles.din.n,'b');%refresh/replot the primaryaxes2
     end
 end%if get(hObject,'value')==1
-
-
 function confirm_del_ClickedCallback(hObject, ~, handles)
 current_axes=[{'primaryaxes1'},{'primaryaxes2'}];
 for dum0=1:2
@@ -3645,16 +3527,16 @@ if isempty(nan_location)==0%create a message prompting user to confirm deletion 
             harm_tot=find_num_harms(handles);
             for dum2=1:length(harm_tot)
                 handles.din.harmonic=harm_tot(dum2);
-                plot_primaryaxes1(handles,handles.din.FG_frequency,harm_tot,handles.din.n);%refresh/replot the primaryaxes1
-                plot_primaryaxes2(handles,handles.din.FG_frequency,harm_tot,handles.din.n);%refresh/replot the primaryaxes2
+                plot_primaryaxes(handles,handles.din.FG_frequency,harm_tot,handles.din.n,'a');%refresh/replot the primaryaxes1
+                plot_primaryaxes(handles,handles.din.FG_frequency,harm_tot,handles.din.n,'b');%refresh/replot the primaryaxes2
             end
         case 'No'
         case 'Undo'%replot the original datapoints
             harm_tot=find_num_harms(handles);
             for dum2=1:length(harm_tot)
                 handles.din.harmonic=harm_tot(dum2);
-                plot_primaryaxes1(handles,handles.din.FG_frequency,harm_tot,handles.din.n);
-                plot_primaryaxes2(handles,handles.din.FG_frequency,harm_tot,handles.din.n);
+                plot_primaryaxes(handles,handles.din.FG_frequency,harm_tot,handles.din.n,'a');
+                plot_primaryaxes(handles,handles.din.FG_frequency,harm_tot,handles.din.n,'b');
             end
     end%switch choice
 end%if isempty(nan_location)
@@ -3683,55 +3565,13 @@ uiresume;
 guidata(hObject,handles);
 
 
-function append_data_Callback(hObject, eventdata, handles)
-%this function asks the user to load the file inwhich the new data will be
-%appended to
-[append_filename,append_path,~]=uigetfile('*.mat','Select existing freq shift data',handles.din.output_path);
-load([append_path,append_filename]);
-%clear out the store FG shifts and absolute values by replacing all the
-%values as nan
-handles.din.FG_frequency=NaN(handles.din.max_datapts,13);
-handles.din.FG_freq_shifts=NaN(handles.din.max_datapts,13);
-handles.din.chi_sqr_value=NaN(handles.din.max_datapts,13);
-nan_location=find(isnan(abs_freq(:,1)),1,'first');%find the first nan datapoint from the time column of the abs_freq variable
-if isempty(nan_location)==1
-    nan_location=size(abs_freq,1);
-end%if isempty(nan_location)==1
-%import in the data from the file to-be-appended to the current handles structure
-handles.din.FG_frequency(1:nan_location,:)=abs_freq(1:nan_location,:);
-handles.din.chi_sqr_value(1:nan_location,:)=chisq_values(1:nan_location,:);
-handles.din.FG_freq_shifts(1:nan_location,:)=freq_shift(1:nan_location,:);
-handles.din.ref_freq=freq_shift_ref(1,:);
-handles.din.ref_diss=freq_shift_ref(2,:);
-handles.din.n=find(isnan(abs_freq(:,1)),1,'first');
-if isempty(handles.din.n)==1
-    handles.din.n=nan_location+1;
-end%if isempty(handles.din.n)==1
-set(handles.reference_time,'string',reference(1,:));%redefine the reference time to the reference time from the file being appended
-[~, append_filename, ~] = fileparts(append_filename);
-handles.din.output_filename=append_filename;
-handles.din.output_path=append_path;
-set(handles.filename_txt,'string',[append_path(1:8),'...',append_filename],'tooltipstring',['<html>Filename: ',append_filename,'.mat<br />Filepath: ',append_path,'</html>']);
-load_settings_Callback(hObject, eventdata, handles)%this will load the settings associated with the file being appended
-plot_primaryaxes1(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
-plot_primaryaxes2(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
-guidata(hObject,handles);
-
-% --------------------------------------------------------------------
+%% Debugging toolbar button
 function debug_ClickedCallback(~, ~, handles)%for debugging purposes
 assignin('base','handles',handles);
 keyboard;
 
 
-% --------------------------------------------------------------------
-%these function allows the user to manipulate the plot properties manually
-function uipushtool6_ClickedCallback(~, ~, handles)
-inspect(handles.primaryaxes1);
-function uipushtool7_ClickedCallback(~, ~, handles)
-inspect(handles.primaryaxes2);
-
-
-% --------------------------------------------------------------------
+%% Help toolbar button
 function uipushtool8_ClickedCallback(~, ~, ~)
 try
     open('QCM MATLAB manual/QCM MATLAB manual v. 2.0e.pdf');
@@ -3740,8 +3580,9 @@ catch
 end
 
 
-% --------------------------------------------------------------------
-function pref_ClickedCallback(hObject, ~, handles)%the purpose of this function is to provide a gui to set preferences for the program
+%% Preferences toolbar button and supporting functions
+function pref_ClickedCallback(hObject, ~, handles)
+%the purpose of this function is to provide a gui to set preferences for the program
 pref=figure(998);clf(figure(998));%create the figure
 %Create the relevant objects in the preferences
 set(pref,'dockcontrols','off','name','Set Preferences','toolbar','none','menubar','none','numbertitle','off','color','w','position',[680 300 590 500]);
@@ -3795,9 +3636,8 @@ if get(handles.start,'value')==1%if the measurement is ongoing, prevent the user
     set(schedule_table,'columneditable',logical([0 0]));
 end%if get(handles.start,'value')==1
 handles.prefs.show_GB=get(radio_GB_values,'value');
-scheduler_onoff(1,1,hObject,handles,radio_on_off_schedule,schedule_table,add_row,del_row,reset_row,status,0);
+scheduler_onoff(1,1,hObject,handles,radio_on_off_schedule,schedule_table,add_row,del_row,reset_row,status,1);
 guidata(hObject,handles);
-
 function show_dfdg_callback(~,~,handles,show_dfdg,status)
 if get(show_dfdg,'value')==1%if this option is enabled
     set(handles.status,'string','Status: Enabling show_dfdg will disable the option to show Xsq values!',...
@@ -3810,8 +3650,6 @@ else
     disp('Disabling show_dfdg will enable the option to show Xsq values!');
     set(status,'string','Disabling show_dfdg will enable the option to show Xsq values!');
 end%if get(show_dfdg,'value')==1
-
-
 function schedule_table_callback(~,callbackdata,handles,schedule_table)
 schedule=get(schedule_table,'data');
 try
@@ -3846,7 +3684,6 @@ catch
     schedule(callbackdata.Indices(1),callbackdata.Indices(2))={callbackdata.PreviousData};
     set(schedule_table,'data',schedule,'columneditable',logical([1 1]));
 end
-
 function reset_row_callback(~,~,handles,reset_row,schedule_table)
 %determine the current time in this format: 'yyyy-mm-dd HH:MM:SS'
 current_time=datevec(now);%determine the current time
@@ -3857,7 +3694,6 @@ current_time3=[num2str(end_time(1)),'-',num2str(end_time(2)),'-',num2str(end_tim
     ' ',num2str(end_time(4)),':',num2str(end_time(5)),':',num2str(end_time(6),2)];
 schedule={current_time2,get(handles.record_time_increment,'string');current_time3,get(handles.record_time_increment,'string')};        
 set(schedule_table,'data',schedule,'rowname',{'Start','End'});
-
 function del_row_callback(~,~,handles,del_row,schedule_table)
 schedule=get(schedule_table,'data');%get the data from the table
 num_rows=size(schedule,1);%get the number of rows in the table
@@ -3867,7 +3703,6 @@ if num_rows>2
     rnames=[rnames(1:end-2,:);rnames(end,:)];%take out the last event
     set(schedule_table,'data',schedule,'rowname',rnames);%update the schedule table with the new changes
 end%if num_rows>2
-
 function add_row_callback(~,~,handles,add_row,schedule_table)
 schedule=get(schedule_table,'data');%get the data from the table
 num_rows=size(schedule,1);%get the number of rows in the table
@@ -3880,7 +3715,6 @@ else%if the table already contains more than 2 rows
     rnames=[rnames(1:end-1);['Event ',num2str(num_rows-1)];rnames(end)];
 end%if num_row==2
 set(schedule_table,'data',new_schedule,'rowname',rnames);%update the schedule table
-
 function scheduler_onoff(~,~,hObject,handles,radio_on_off_schedule,schedule_table,add_row,del_row,reset_row,status,flag)
 if size(flag,1)~=1%this flag variable determines when it is necessary to display the state of the scheduler
     flag=1;
@@ -3913,7 +3747,6 @@ elseif get(radio_on_off_schedule,'value')==0&&flag==1%if the radio dial is off, 
     set(status,'string','Status: Measurement Scheduler is disabled!');
     disp('Measurement Scheduler has been disabled!');
 end%if get(hObject,'value')==1
-
 function set_pref1(~,~,hObject,handles,set_pref,radio_GB_values,radio_clc_cw,...
     radio_output_raw,schedule_table,radio_on_off_schedule,...
     show_dfdg,status,radio_diary,save_spectra)
@@ -3938,15 +3771,8 @@ disp('Preferences updated!');%show in the command window that the preferences ha
 set(status,'string','Status: Preferences updated!');
 guidata(hObject,handles);%save/update the handles structure
 
-%This function checks to see if the maximum number of peaks to fit is from
-%1 to 3.
-function num_peaks_check(~,~,num_peaks_edit)
-value=str2double(get(num_peaks_edit,'string'));
-if mod(value,1)~=0 || value>3 || value<1
-    set(num_peaks_edit,'string',2);
-end%if mod(value,1)~=0 || value>3 || value<1
 
-% --------------------------------------------------------------------
+%% Load bare crystal data toolbar button
 function load_bare_ClickedCallback(hObject, ~, handles)
 disp('Importing bare .mat file');
 set(handles.status,'string','Status: Importing bare crystal .mat file',...
@@ -3986,8 +3812,8 @@ try
     handles.din.bare_flag=1;%turn on the flag, showing that a bare crystal was loaded
     handles.din.bare_path=pathfile;
     set(hObject,'tooltipstring',['<html>Bare crystal loaded on ',datestr(clock),'<br />Filename: ',filename,'<br />Filepath: ',pathfile,'</html>']);
-    plot_primaryaxes1(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
-    plot_primaryaxes2(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n);
+    plot_primaryaxes(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n,'a');
+    plot_primaryaxes(handles,handles.din.FG_frequency,find_num_harms(handles),handles.din.n,'b');
     save_shifts_ClickedCallback(handles.save_shifts,1,handles);%autpmatically save the data after loading the bare crystal data
     guidata(hObject, handles);
 catch err_message
@@ -3998,8 +3824,7 @@ catch err_message
     return
 end%try
 
-
-% --------------------------------------------------------------------
+%% Refit raw spectra toolbar button
 function refit_ClickedCallback(hObject, eventdata, handles)
 %this function allows the use to take take data and have it be "refitted"
 bare_flag=handles.din.bare_flag;
@@ -4168,31 +3993,7 @@ catch err_message
         'foregroundcolor','k','backgroundcolor','r');
 end%try
 
-function flag=check_version(version)
-%This function checks the version of the loaded raw spectra
-flag=1;
-disp('Checking raw spectra version...');
-switch version
-    case 'QCM Version 1.0b, Shull Research Group'
-        flag=0;
-    case 'QCM Version 1.0c, Shull Research Group'
-        flag=0;
-    case 'QCM Version 2.0a, Shull Research Group'
-        flag=0;
-    case 'QCM Version 2.0b_Bigfoot, Shull Research Group'
-        flag=0;
-    case 'QCM Version 2.0c_Cthulhu, Shull Research Group'
-        flag=0;
-    case 'QCM Version 2.0d_Drakon, Shull Research Group'
-        flag=0;
-    case 'QCM Version 2.0d_Eurynomos, Shull Research Group'
-        flag=0;
-end
-if flag==0
-    disp('Legacy format detected for the raw spectra file!')
-end
-
-% --------------------------------------------------------------------
+%% Save the frequency and dissiaption shifts toolbar button
 function save_shifts_ClickedCallback(~, ~, handles)
 %This function saves the frequency shifts to the designated file
 try
@@ -4231,20 +4032,7 @@ catch err_msg
         'backgroundcolor','r','foregroundcolor','k');
 end%try
 
-function my_disp(msg,color)
-%This function was created to help simplify the code. Specifically it deals
-%with how things are outputted into the command window. This code relies on
-%undocumented MATLAB code. Thus, it is placed in a try block.
-%msg: message to output into command window
-%color of the output text
-try
-    cprintf(color,msg);
-catch
-    disp(msg);
-end%try
-
-
-% --------------------------------------------------------------------
+%% Run AccessMyVNA.exe toolbar button
 function exe_vna_ClickedCallback(hObject, ~, handles)
 %internally execute the AccessMyVNA program
 %This is a toglle button callback
@@ -4264,121 +4052,8 @@ else
         disp('Error in running commands in Windows Command line');
     end%try
 end%if get(hObject,'value')==1
-    
-% --------------------------------------------------------------------
-function handles=confirm_peak_finding(~, ~, handles)
-%store the preferences for finding the peak
-data=get(handles.peak_finding,'userdata');
-for dum=1:2:11
-    handles.prefs.sensitivity(dum)=data(0.5*(dum+1),1);
-    handles.prefs.peak_min(dum)=data(0.5*(dum+1),2);
-    handles.prefs.num_peaks(dum)=data(0.5*(dum+1),3);
-end%for dum=1:2:11
-guidata(handles.primary1,handles);
 
-
-% --------------------------------------------------------------------
-function [handles]=peak_finding_ClickedCallback(~, ~, handles)
-%This function creates a figure containing a table displaying the
-%preferences for finding the resonance peaks
-close(figure(996)); figure(996);
-pos=get(figure(996),'position');
-set(figure(996),'position',[pos(1)/2 pos(2)/15 pos(3)/1 pos(4)/2]);
-set(figure(996),'menubar','none','toolbar','none','numbertitle','off','name','Peak finding options');
-%names of columns and rows of table
-rnames={'1st','3rd','5th','7th','9th','11th'};
-cnames={'peak prominence sensitivity factor','peak minimum threshold','Max # peaks'};
-handles=guidata(handles.primary1);
-data=[handles.prefs.sensitivity(1:2:11);handles.prefs.peak_min(1:2:11);handles.prefs.num_peaks(1:2:11)];
-find_peak_options=uitable('units','normalized','position',[0.05 0.15 .9 .8],...
-    'columnname',cnames,'rowname',rnames,'data',data','fontsize',10,...
-    'columneditable',logical([1 1 1]),'celleditcallback',{@fpo,handles});%create the table
-uicontrol('style','pushbutton','string','table properties','units','normalized',...
-    'position',[0.7 0.02 .25 .1],'callback',{@ins});
-set(figure(996),'closerequestfcn',{@fp_close,handles,find_peak_options});
-function fpo(hObject,~,handles)
-data=get(hObject,'data');
-set(handles.peak_finding,'userdata',data);
-confirm_peak_finding(hObject,1,handles);
-disp('Peak sensitivity options set!');
-function ins(hObject,~)
-inspect(hObject);
-function fp_close(hObject,~,handles,find_peak_options)
-data=get(find_peak_options,'data');
-set(handles.peak_finding,'userdata',data);
-delete(hObject);
-disp('Peak sensitivity options are set!');
-
-
-
-function refit_start_Callback(hObject, ~, handles)
-if str2double(get(hObject,'string'))<1||str2double(get(hObject,'string'))>str2double(get(handles.refit_end,'string'))
-    set(hObject,'string',1);
-end%if str2double(get(hObject,'string'))<1||str2double(get(hObject,'string'))>str2double(get(handles.refit_end,'string'))
-handles.din.refit.counter=str2double(get(handles.refit_start,'string'));
-disp(['Reftting process will begin at datapoint: ',num2str(handles.din.refit.counter)]);
-%reset the finish counter for each harmonic
-for dum=1:11
-    name=['refit_finish',num2str(dum)];
-    handles.din.(name)=0;
-end%for dum=1:11
-set(handles.refit_start,'tooltipstring',['Starting datapoint: ',num2str(handles.din.refit_timepoints(handles.din.refit.counter),4),' min']);
-guidata(handles.start,handles);
-
-function refit_inc_Callback(~, ~, handles)
-
-function refit_end_Callback(hObject, ~, handles)
-if str2double(get(hObject,'string'))>length(handles.din.refit_timepoints)||str2double(get(hObject,'string'))<str2double(get(handles.refit_start,'string'))
-    set(hObject,'string',length(handles.din.refit_timepoints));
-end%if str2double(get(hObject,'string'))>length(handles.din.refit_timepoints)
-try
-    set(handles.refit_end,'tooltipstring',['Ending datapoint: ',num2str(handles.din.refit_timepoints(str2double(get(hObject,'string'))),4),' min']);
-catch
-end
-
-
-% --- Executes on button press in center1.
-function center1_Callback(hObject, eventdata, handles)
-if get(hObject,'value')==1
-    peak_center_SelectionChangeFcn(hObject, eventdata, handles)
-end%if get(hObject,'value')==1
-% --- Executes on button press in center3.
-function center3_Callback(hObject, eventdata, handles)
-if get(hObject,'value')==1
-    peak_center_SelectionChangeFcn(hObject, eventdata, handles)
-end%if get(hObject,'value')==1
-% --- Executes on button press in center5.
-function center5_Callback(hObject, eventdata, handles)
-if get(hObject,'value')==1
-    peak_center_SelectionChangeFcn(hObject, eventdata, handles)
-end%if get(hObject,'value')==1
-% --- Executes on button press in center7.
-function center7_Callback(hObject, eventdata, handles)
-if get(hObject,'value')==1
-    peak_center_SelectionChangeFcn(hObject, eventdata, handles)
-end%if get(hObject,'value')==1
-% --- Executes on button press in center9.
-function center9_Callback(hObject, eventdata, handles)
-if get(hObject,'value')==1
-    peak_center_SelectionChangeFcn(hObject, eventdata, handles)
-end%if get(hObject,'value')==1
-% --- Executes on button press in center11.
-function center11_Callback(hObject, eventdata, handles)
-if get(hObject,'value')==1
-    peak_center_SelectionChangeFcn(hObject, eventdata, handles)
-end%if get(hObject,'value')==1
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HANDLES.PRIMARY1 TOOLBAR CALLBACK FUNCTIONS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% --------------------------------------------------------------------    
-function update_tick_display(~,~,handles)
-yt1=get(handles.primaryaxes1,'ytick');
-yt2=get(handles.primaryaxes2,'ytick');    
-handles.ytick1.String=[num2str(abs(yt1(1)-yt1(2))),' Hz'];
-handles.ytick2.String=[num2str(abs(yt2(1)-yt2(2))),' Hz'];
-
+%% Zoom in/out toolbar button
 function zoom_out_ClickedCallback(hObject, eventdata, handles)
 if strcmp(hObject.State,'on')
     my_zoom=zoom(handles.primary1);
@@ -4386,7 +4061,6 @@ if strcmp(hObject.State,'on')
 else    
     zoom off;
 end
-
 function zoom_in_ClickedCallback(hObject, eventdata, handles)
 if strcmp(hObject.State,'on')
     my_zoom=zoom(handles.primary1);
@@ -4395,7 +4069,7 @@ else
     zoom off;
 end
 
-
+%% Raw spectra of selected datapoints toolbar button
 function select_spectra_ClickedCallback(hObject, eventdata, handles)
 if strcmp(hObject.State,'on')==1
     dcm_obj=datacursormode(handles.primary1);
@@ -4412,6 +4086,7 @@ else
     delete(figure(998));
 end
 
+%% Data cursor mode toolbar button
 function output_txt=default_dcm(hObject,event_obj)
 pos = get(event_obj,'Position');
 line_h=event_obj.Target;%line handle associeated with the selected datapoint
@@ -4428,8 +4103,162 @@ output_txt={['Time (min): ',num2str(pos(1))];...
         ['Harmonic: ',num2str(harm)];...
         ['Index: ',num2str(index)]};
 
-%%%%%%%%%%%%%%%%%%%%%%%%
-%THIS SECTION CONTAINS CODE FOR REFITTING SELECTED DATAPOINTS
+
+%% Function related to refitting raw spectras
+function refit_start_Callback(hObject, ~, handles)
+if str2double(get(hObject,'string'))<1||str2double(get(hObject,'string'))>str2double(get(handles.refit_end,'string'))
+    set(hObject,'string',1);
+end%if str2double(get(hObject,'string'))<1||str2double(get(hObject,'string'))>str2double(get(handles.refit_end,'string'))
+handles.din.refit.counter=str2double(get(handles.refit_start,'string'));
+disp(['Reftting process will begin at datapoint: ',num2str(handles.din.refit.counter)]);
+%reset the finish counter for each harmonic
+for dum=1:11
+    name=['refit_finish',num2str(dum)];
+    handles.din.(name)=0;
+end%for dum=1:11
+set(handles.refit_start,'tooltipstring',['Starting datapoint: ',num2str(handles.din.refit_timepoints(handles.din.refit.counter),4),' min']);
+guidata(handles.start,handles);
+function refit_inc_Callback(~, ~, handles)
+function refit_end_Callback(hObject, ~, handles)
+if str2double(get(hObject,'string'))>length(handles.din.refit_timepoints)||str2double(get(hObject,'string'))<str2double(get(handles.refit_start,'string'))
+    set(hObject,'string',length(handles.din.refit_timepoints));
+end%if str2double(get(hObject,'string'))>length(handles.din.refit_timepoints)
+try
+    set(handles.refit_end,'tooltipstring',['Ending datapoint: ',num2str(handles.din.refit_timepoints(str2double(get(hObject,'string'))),4),' min']);
+catch
+end
+
+%% Misc. functions
+%This function checks to see if the maximum number of peaks to fit is from
+%1 to 3.
+function harm_tot=find_num_harms(handles)
+%This function finds the total number of harmonics the user has set to
+%measure and record.
+harm_tot=[];
+for dum=1:1:6
+    harmname=['harm',num2str(handles.din.avail_harms(dum))];
+    if get(handles.(harmname),'value')==1
+        harm_tot=[harm_tot;handles.din.avail_harms(dum)];
+    end%if get(handles.(harmname),'value')==1
+end%for dum=1:1:6
+function num_peaks_check(~,~,num_peaks_edit)
+value=str2double(get(num_peaks_edit,'string'));
+if mod(value,1)~=0 || value>3 || value<1
+    set(num_peaks_edit,'string',2);
+end%if mod(value,1)~=0 || value>3 || value<1
+function flag=check_version(version)
+%This function checks the version of the loaded raw spectra
+flag=1;
+disp('Checking raw spectra version...');
+switch version
+    case 'QCM Version 1.0b, Shull Research Group'
+        flag=0;
+    case 'QCM Version 1.0c, Shull Research Group'
+        flag=0;
+    case 'QCM Version 2.0a, Shull Research Group'
+        flag=0;
+    case 'QCM Version 2.0b_Bigfoot, Shull Research Group'
+        flag=0;
+    case 'QCM Version 2.0c_Cthulhu, Shull Research Group'
+        flag=0;
+    case 'QCM Version 2.0d_Drakon, Shull Research Group'
+        flag=0;
+    case 'QCM Version 2.0d_Eurynomos, Shull Research Group'
+        flag=0;
+end
+if flag==0
+    disp('Legacy format detected for the raw spectra file!')
+end
+function my_disp(msg,color)
+%This function was created to help simplify the code. Specifically it deals
+%with how things are outputted into the command window. This code relies on
+%undocumented MATLAB code. Thus, it is placed in a try block.
+%msg: message to output into command window
+%color of the output text
+try
+    cprintf(color,msg);
+catch
+    disp(msg);
+end%try
+function update_tick_display(~,~,handles)
+%This function determines the y-tik values of primaryaxes1 and primaryaxes2
+%and displays it on the GUI (in order to aid interpreting plots)
+yt1=get(handles.primaryaxes1,'ytick');
+yt2=get(handles.primaryaxes2,'ytick');    
+handles.ytick1.String=[num2str(abs(yt1(1)-yt1(2))),' Hz'];
+handles.ytick2.String=[num2str(abs(yt2(1)-yt2(2))),' Hz'];
+function refreshing(handles,harm,flag)
+refresh_name=['refreshing',num2str(harm)];
+
+if flag==1
+    set(handles.(refresh_name),'visible','on');
+else
+    set(handles.(refresh_name),'visible','off');
+end %if flag==1
+function save_shifts(handles,fg_values)
+fg_values.abs_freq=handles.din.FG_frequency;%save f0 and gamma0 fit data to fg_values.mat
+fg_values.freq_shift=handles.din.FG_freq_shifts;
+fg_values.freq_shift_ref=[handles.din.ref_freq;handles.din.ref_diss];
+fg_values.chisq_values=handles.din.chi_sqr_value;
+fg_values.std_fit=handles.din.std_fit;
+function pause_func(~,~,handles)
+%Keep this function!
+set(handles.start,'value',0);
+start_Callback(handles.start, 1, handles);
+function maintain_myVNA_Callback(~, ~, handles)
+% --- Executes on button press in maintain_myVNA.
+% This radial dial is hidden from the user
+harm_tot=find_num_harms(handles);%find the total numbe of harmonics
+for dum=1:length(harm_tot)
+    write_settings(handles,harm_tot(dum));%update the settings text file associated with each harmonic defined by the dum variable
+end%for dum=1:length(harm_tot)
+set(handles.status,'string','Status: Settings.txt file succesfully refreshed! Ready...','backgroundcolor','k','foregroundcolor','r');
+disp('Settings.txt file sucessfully refreshed! Ready...');
+
+function primary1_CloseRequestFcn(hObject, ~, handles)
+% --- Executes when user attempts to close primary1.
+%This try block attempts to kill the AccessMyVNA program through the Windows Command program, 
+%this will prevent multiple instances of the same program
+
+%This adds an extra layer of redundancy
+try %try to run code in Windows cmd (force quitting exe files)
+    [~,~]=system('taskkill /im "AccessMyVNA.exe" /T /F');
+    [~,~]=system('taskkill /im "MyVNA.exe"');
+catch
+    disp('Error in running commands in Windows Command line');
+end%try
+filename='AccessMyVNAv0.7\release\state_matlab.txt';
+fileID=fopen(filename,'w');
+fprintf(fileID,'%i\r\n',0);
+fclose(fileID);
+set(handles.wait_time,'string',1);
+set(handles.maintain_myVNA,'value',0);
+write_settings(handles,handles.din.harmonic);
+delete(hObject);
+function polar_plot_Callback(~, ~, handles)
+% --- Executes on button press in polar_plot.
+if get(handles.polar_plot,'value')==1
+    set(handles.show_susceptance,'value',1);
+end%if get(handles.polar_plot,'value')==1
+function fit_factor_Callback(hObject, ~, handles)
+%This function redefines the fit_factor range for the Lorentz fitting
+%process
+handles.din.fit_factor_range=str2double(get(handles.fit_factor,'string'));
+set(handles.status,'string','Status: Fit factor range sucessfully updated!','backgroundcolor','k','foregroundcolor','r');
+disp('Fit factor range sucessfully updated!');
+guidata(hObject, handles);
+function show_susceptance_Callback(~, ~, handles)
+% --- Executes on button press in show_susceptance.
+if get(handles.show_susceptance,'value')==0
+    set(handles.polar_plot,'value',0);
+end%if get(handles.show_susceptance,'value')==0
+function set_reference_time_Callback(~, ~, handles)
+% --- Executes on button press in set_reference_time.
+if get(handles.set_reference_time,'value')==1                        
+    set(handles.reference_time,'string',datestr(clock,'yy:mm:dd:HH:MM:SS:FFF'));%automatically sets reference time when button is clicked
+end%if get(handles.set_reference_time,'value')==1   
+
+%% Refitting selected datapoints and related functions
 function output_txt=select_spectra_fcn(hObject,event_obj)
 pos=get(event_obj,'Position');%get position of the datacursor point
 handles=guidata(findall(0,'tag','primary1','type','figure'));
@@ -4498,7 +4327,6 @@ try%look for raw_spectras file based on base name of file
 catch
     disp('Error in loading raw spectra file.');
 end
-
 function refit_select_spectra(spectra,handles,harm,timepoint,index)
 %Plot the raw spectra data
 f1.f=figure(harm); clf(f1.f);
@@ -4547,17 +4375,12 @@ tbh=findall(f1.f,'type','uitoolbar');
 uipushtool(tbh,'cdata',get(handles.peak_finding,'cdata'),'tooltipstring','Peak finding options.',...
     'ClickedCallback',{@peak_finding_ClickedCallback,handles},'tag','find_peaks');
 guess_method_callback(guess_method,1,harm,handles);
-
 function guess_method_callback(hObject,~,harm,handles)
 set(handles.(['fit',num2str(harm)]),'userdata',hObject.Value);
-
-    
 function rss_close(hObject,~)%custom close figure function
 delete(hObject);
 delete(figure(999));
 delete(figure(998));
-
-
 function accept(hObject,~)
 handles=guidata(findall(0,'type','figure','tag','primary1'));%get handles structure
 Target0=handles.din.dcm_obj_target;
@@ -4630,7 +4453,6 @@ end
 guidata(handles.primary1,handles);
 disp('Accepted new fit!');
 set(handles.status,'string','Status: Accepted new fit!');
-    
 function select_spectra_fit(hObject,~,handles,f1,guess_method,spectra,harm)
 %clean up the axes
 delete(findall(f1.f,'type','line','linestyle','-','marker','none'));
@@ -4745,23 +4567,3 @@ set(info,'string',str,'tag','info','backgroundcolor','w','edgecolor','k',...
     'facealpha',0.65,'edgecolor','none','fitboxtotext','on','margin',0);%show info in text box in plot axes
 set(findall(f1.f,'tag','accept'),'visible','on',...
     'userdata',[index,del_f_new,del_g_new,abs_f*1e6,abs_g*1e4]);
-
-
-
-
-% --- Executes on button press in plot_1.
-function plot_1_Callback(hObject, eventdata, handles)
-% hObject    handle to plot_1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of plot_1
-
-
-% --- Executes on button press in plot_3.
-function plot_3_Callback(hObject, eventdata, handles)
-% hObject    handle to plot_3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of plot_3
