@@ -1,0 +1,1 @@
+This is needed so that the folder structure is preserved for "deleted data" on the git repo.
