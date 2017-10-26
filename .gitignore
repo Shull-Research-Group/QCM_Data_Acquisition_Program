@@ -46,6 +46,8 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Do not include the following files explicitly
 AccessMyVNAv0.7/release/myVNAdata01.csv
 AccessMyVNAv0.7/release/myVNAdata03.csv
 AccessMyVNAv0.7/release/myVNAdata05.csv
@@ -66,3 +68,6 @@ raw_spectras.mat
 
 QCM_v002d_Drakon.m
 QCM_v002d_Drakon.fig
+
+#Do not include deleted data archive files
+deleted data/*.mat

@@ -40,7 +40,7 @@ function varargout = QCM_v002f_Fenrir(varargin)
 
 % Edit the above text to modify the response to help QCM_v002f_Fenrir
 
-% Last Modified by GUIDE v2.5 11-Aug-2017 16:11:55
+% Last Modified by GUIDE v2.5 18-Aug-2017 15:28:00
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -122,7 +122,7 @@ handles.din.output_path=pwd;%set default path directory to current path working 
 handles.din.refit_flag=0;%create a flag that keeps track whether or not raw spectra data has been uploaded (0: no data loaded) (1: loaded)
 handles.din.refit.loaded_var=[];%create a dummy variable that will hold any raw spectra data information for refitting processes
 handles.din.bare_flag=0;%create a flag that keeps track whether or not a bare crystal data that redefines the reference freq and diss has been loaded (0=unloaded) (1=loaded)
-handles.prefs.show_GB=0;%set the default option to show fitted parameters to on
+handles.prefs.show_GB=1;%set the default option to show fitted parameters to on
 handles.prefs.schedule_toggle=0;%This is the default toggle state of whether or not to run on a measurement schedule or not (1 for yes and 0 for no)
 handles.prefs.clc_cw=0;%set default option to clear the command window before recording data
 handles.prefs.output_diary=0;%set default option to not save a log of the comman window into a text file
@@ -144,7 +144,7 @@ handles.prefs.peak_min(11)=.2;%min. peak finding threshold for the 11th harmonic
 handles.prefs.measurement_schedule=[];%set the default measurement schedule
 handles.prefs.measurement_schedule_rnames={'Start','End'};%row names associated with the measurement scheduler
 handles.prefs.schedule_toggle=0;%toggle state of the measurement schedule
-handles.prefs.show_dfdg=0;%default state of whether or not to show the freq and bandwidth shifts
+handles.prefs.show_dfdg=1;%default state of whether or not to show the freq and bandwidth shifts
 handles.prefs.email_recipient=[];%prealloate empty field that will be used to store a recipient email address for the email notfication functionality
 handles.prefs.email_host=[];%preallocate empty field that will be used to store the host email address for the email notification functionality
 handles.prefs.email_pw=[];%preallocate empty field that will be used to store the password of the host mail address for the email notification functionality
@@ -1303,7 +1303,8 @@ end%str2num(get(handles.(startname),'string'))>=str2num(get(handles.(endname),'s
 
 
 %% Functions to fit a Lorentz curve to the spectra data
-function [combine_spectra,GB_parameters,handles,I,std_fit]=Lorentzian_dynamic_fit(handles,freq,conductance,susceptance,combine_spectra)
+function [combine_spectra,GB_parameters,handles,I,std_fit]=...
+    Lorentzian_dynamic_fit(handles,freq,conductance,susceptance,combine_spectra)
 factor_range_fit=handles.din.fit_factor_range;
 %make sure to change user-defined values to previous values if the user is
 %conducting the measurements. This prevents the program from pausing and
@@ -3034,6 +3035,10 @@ function append_data_Callback(hObject, eventdata, handles)
 %this function asks the user to load the file inwhich the new data will be
 %appended to
 [append_filename,append_path,~]=uigetfile('*.mat','Select existing freq shift data',handles.din.output_path);
+if ischar(append_filename)==0
+    disp('Loading/appending file canceled');
+    return
+end
 load([append_path,append_filename]);
 %clear out the store FG shifts and absolute values by replacing all the
 %values as nan
@@ -3065,17 +3070,18 @@ plot_primaryaxes(handles,handles.din.FG_frequency,find_num_harms(handles),handle
 guidata(hObject,handles);
 
 
-%% Functions related to plotting in primaryaxes1 and primaryaxes2
+%% Plotting in primaryaxes1 and primaryaxes2
 function plot_choice_Callback(hObject,~,handles)
-choice=get(handles.plot1_choice,'value');
 font_size=8;
 font_weight='bold';
 if strcmp(hObject.Tag,'plot1_choice')||strcmp(hObject.Tag,'primary1')
     pa1='primaryaxes1';
-    pa2='a';    
+    pa2='a';
+    choice=get(handles.plot1_choice,'value');
 elseif strcmp(hObject.Tag,'plot2_choice')||strcmp(hObject.Tag,'primary2')
     pa1='primaryaxes2';
     pa2='b';    
+    choice=get(handles.plot2_choice,'value');
 end
 num_harms=primaryaxes_harm(handles,pa2);
 switch choice
@@ -3096,7 +3102,10 @@ switch choice
         ylabel(handles.(pa1),'\phi (deg.)');  
     case 6
         xlabel(handles.(pa1),'Time (min.)');
-        ylabel(handles.(pa1),'|G^*_n|\rho (Pa\cdotg/cm^3)');  
+        ylabel(handles.(pa1),'|G^*_n|\rho (Pa\cdotg/cm^3)');
+    case 7
+        xlabel(handles.(pa1),'Time (min.)');
+        ylabel(handles.(pa1),'\DeltaM (g/m^2)');
 end%switch choice
 set(handles.(pa1),'fontsize',font_size);  
 set(findall(handles.(pa1),'type','text'),'fontweight',font_weight,'fontsize',font_size);
@@ -3123,9 +3132,13 @@ current_harm=handles.din.harmonic;
 if strcmp(pa2,'a')
     plot_choice='plot1_choice';
     pa1='plot_';
+    pa3='primaryaxes1';
+    yt1='ytick1';
 elseif strcmp(pa2,'b')
     plot_choice='plot2_choice';
     pa1='plot2_';
+    pa3='primaryaxes2';
+    yt1='ytick2';
 end
 if handles.prefs.plot_dynamic_refresh==1
     handles=guidata(handles.primary1);
@@ -3138,38 +3151,46 @@ for dum=1:2:11
     end%if get(handles.(plot_name_dial),'value')==1
 end%dum=1:2:11
 dum=(active_plot_harmonics+1)/2;
+zq=8.84e6;
+f1=5e6;
 if isempty(dum)==0
+    F_frequency_shifts=FG_frequency(1:n,active_plot_harmonics(1)+1)-handles.din.ref_freq((active_plot_harmonics(1)+1)./2);
+    G_frequency_shifts=FG_frequency(:,active_plot_harmonics(1)+2)-handles.din.ref_diss((active_plot_harmonics(1)+1)./2);
     switch get(handles.(plot_choice),'value')
         case 1
             for pdum=1:6%hide the plot handles
                 set(handles.primary_handles.(['phantom',num2str(pdum),pa2]),'visible','off');
             end%for dum1:6
-        case 2%plot frequency shift versus time
-            F_frequency_shifts=FG_frequency(1:n,active_plot_harmonics(1)+1)-handles.din.ref_freq((active_plot_harmonics(1)+1)./2);
-            set(handles.primary_handles.(['phantom',num2str(dum),pa2]),'xdata',FG_frequency(1:n,1),'ydata',F_frequency_shifts(1:n),'visible','on');            
-        case 3%plot frequency shift/harmonic order versus time
-            F_frequency_shifts=FG_frequency(1:n,active_plot_harmonics(1)+1)-handles.din.ref_freq((active_plot_harmonics(1)+1)./2);
+            units=[];
+        case 2%plot frequency shift versus time            
+            set(handles.primary_handles.(['phantom',num2str(dum),pa2]),'xdata',FG_frequency(1:n,1),'ydata',F_frequency_shifts(1:n),'visible','on');
+            units='Hz';
+        case 3%plot frequency shift/harmonic order versus time            
             set(handles.primary_handles.(['phantom',num2str(dum),pa2]),'xdata',FG_frequency(1:n,1),'ydata',F_frequency_shifts(1:n)./active_plot_harmonics,'visible','on');
-        case 4%plot gamma shift versus time
-            G_frequency_shifts= FG_frequency(:,active_plot_harmonics(1)+2)-handles.din.ref_diss((active_plot_harmonics(1)+1)./2);
-            set(handles.primary_handles.(['phantom',num2str(dum),pa2]),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n),'visible','on');      
-        case 5%plot viscoelastic phase angle (phi) versus time
-            F_frequency_shifts=FG_frequency(1:n,active_plot_harmonics(1)+1)-handles.din.ref_freq((active_plot_harmonics(1)+1)./2);
-            G_frequency_shifts= FG_frequency(:,active_plot_harmonics(1)+2)-handles.din.ref_diss((active_plot_harmonics(1)+1)./2);            
+            units='Hz';
+        case 4%plot gamma shift versus time            
+            set(handles.primary_handles.(['phantom',num2str(dum),pa2]),'xdata',FG_frequency(1:n,1),'ydata',G_frequency_shifts(1:n),'visible','on');
+            units='Hz';
+        case 5%plot viscoelastic phase angle (phi) versus time          
             set(handles.primary_handles.(['phantom',num2str(dum),pa2]),'xdata',FG_frequency(1:n,1),...
-                'ydata',-2.*atand(F_frequency_shifts(1:n)./G_frequency_shifts(1:n)),'visible','on');        
-        case 6
-            F_frequency_shifts=FG_frequency(1:n,active_plot_harmonics(1)+1)-handles.din.ref_freq((active_plot_harmonics(1)+1)./2);
-            G_frequency_shifts= FG_frequency(:,active_plot_harmonics(1)+2)-handles.din.ref_diss((active_plot_harmonics(1)+1)./2);            
-            phi=-2.*atand(F_frequency_shifts(1:n)./G_frequency_shifts(1:n));
-            zq=8.84e6;
-            f1=5e6;
-            
+                'ydata',-2.*atand(F_frequency_shifts(1:n)./G_frequency_shifts(1:n)),'visible','on');
+            units='deg.';
+        case 6           
+            phi=-2.*atand(F_frequency_shifts(1:n)./G_frequency_shifts(1:n));            
+            grho=(pi.*zq.*G_frequency_shifts(1:n)./f1./cosd(phi./2)).^2./1000;%i units of Pa.g/cc
+            set(handles.primary_handles.(['phantom',num2str(dum),pa2]),'xdata',FG_frequency(1:n,1),...
+                'ydata',grho,'visible','on');
+            units=['Pa',char(183),'g/cc'];
+        case 7%plot Sauerbrey mass
+            M=-F_frequency_shifts.*zq./2./f1.^2./2./active_plot_harmonics.*1000;%Areal mass in g/m^2
+            set(handles.primary_handles.(['phantom',num2str(dum),pa2]),'xdata',FG_frequency(1:n,1),...
+                'ydata',M,'visible','on');
+            units='g/m^2';            
     end
-else
+    yt=get(handles.(pa3),'ytick');    
+    set(handles.(yt1),'string',[num2str(abs(yt(1)-yt(2))),' ',units],...
+        'tooltipstring',['<html>Y-tick interval<br/>',num2str(abs(yt(1)-yt(2))),' ',units,'<html/>']);
 end%if isempty(dum)==0
-yt=get(handles.primaryaxes1,'ytick');    
-set(handles.ytick1,'string',[num2str(abs(yt(1)-yt(2))),' Hz']);
 function plot_helper(hObject,~,handles)
 %This is the callback function for the plot1 radio dials (associated with
 %the top primary axes plot). This function is used as a callback function
@@ -4056,17 +4077,19 @@ end%if get(hObject,'value')==1
 %% Zoom in/out toolbar button
 function zoom_out_ClickedCallback(hObject, eventdata, handles)
 if strcmp(hObject.State,'on')
-    my_zoom=zoom(handles.primary1);
-    set(my_zoom,'Direction','out','Enable','on' ,'ActionPostCallback',{@update_tick_display,handles});        
-else    
-    zoom off;
+    z=zoom(handles.primary1);
+    set(z,'Direction','out','Enable','on','ActionPostCallback',{@update_tick_display,handles});        
+else
+    z=zoom(handles.primary1);
+    set(z,'Enable','off');
 end
 function zoom_in_ClickedCallback(hObject, eventdata, handles)
 if strcmp(hObject.State,'on')
     my_zoom=zoom(handles.primary1);
     set(my_zoom,'Direction','in','Enable','on' ,'ActionPostCallback',{@update_tick_display,handles});        
 else    
-    zoom off;
+    z=zoom(handles.primary1);
+    z.Enable='off';
 end
 
 %% Raw spectra of selected datapoints toolbar button
@@ -4184,9 +4207,33 @@ function update_tick_display(~,~,handles)
 %This function determines the y-tik values of primaryaxes1 and primaryaxes2
 %and displays it on the GUI (in order to aid interpreting plots)
 yt1=get(handles.primaryaxes1,'ytick');
-yt2=get(handles.primaryaxes2,'ytick');    
-handles.ytick1.String=[num2str(abs(yt1(1)-yt1(2))),' Hz'];
-handles.ytick2.String=[num2str(abs(yt2(1)-yt2(2))),' Hz'];
+yt2=get(handles.primaryaxes2,'ytick');
+choice1=get(handles.plot1_choice,'value');
+choice2=get(handles.plot2_choice,'value');
+if choice1==1
+    units1=[];
+elseif choice1==5
+    units='deg.';
+elseif choice1==6
+    units1=['Pa',char(183),'g/cc'];
+elseif choice1==7
+    units='g/m^2';
+else
+    units1='Hz';
+end
+if choice2==1
+    units2=[];
+elseif choice2==5
+    units2='deg.';
+elseif choice2==6
+    units2=['Pa',char(183),'g/cc'];
+else
+    units2='Hz';
+end
+handles.ytick1.String=[num2str(abs(yt1(1)-yt1(2))),' ',units1];
+handles.ytick1.TooltipString=['<html>Y-tick interval<br/>',[num2str(abs(yt1(1)-yt1(2))),' ',units1],'<html/>'];
+handles.ytick2.String=[num2str(abs(yt2(1)-yt2(2))),' ',units2];
+handles.ytick2.TooltipString=['<html>Y-tick interval<br/>',[num2str(abs(yt2(1)-yt2(2))),' ',units2],'<html/>'];
 function refreshing(handles,harm,flag)
 refresh_name=['refreshing',num2str(harm)];
 
