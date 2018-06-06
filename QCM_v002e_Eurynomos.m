@@ -2322,7 +2322,8 @@ for dum=1:2:11%turn off all active harmonics
     set(handles.(['harm',num2str(dum)]),'value',0);
 end%for dum=1:2:11
 set(handles.(['harm',num2str(harm)]),'value',1);%turn on curent harmonic defined by the figure window
-cla(p);
+cla(p(1));
+cla(p(2));
 set(handles.text2,'userdata',0);
 check_freq_range(handles.din.harmonic, handles.din.freq_range(0.5*(harm+1),1), handles.din.freq_range(0.5*(harm+1),2), handles);
 write_settings(handles,harm);%refresh the settings

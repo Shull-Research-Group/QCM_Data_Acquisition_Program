@@ -1,7 +1,7 @@
 function varargout = QCM_v002f_Fenrir(varargin)
 %
 % Copyright (C) 2016 Joshua Yeh (Shull Research Group, Northwestern Uni.)
-% Con   tributing authors: Shu Funato
+% Contributing authors: Shu Funato
 % 
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -280,17 +280,17 @@ end%if verLessThan('matlab','8.3.0.532')
 set(handles.axes7,'visible','off');
 set(handles.peak_center,'visible','off');
 set(handles.center1,'value',1);
-set(handles.primaryaxes1,'fontsize',8);
-set(handles.primaryaxes2,'fontsize',8);
+set(handles.primaryaxes1,'fontsize',12);
+set(handles.primaryaxes2,'fontsize',12);
 set(handles.maintain_myVNA,'value',1);
 dcm_obj=datacursormode(handles.primary1);
 dcm_obj.Enable='off';
 delete(findall([handles.primaryaxes1 handles.primaryaxes2],'Type','hggroup'));
 set(dcm_obj,'UpdateFcn',@default_dcm);
-xlabel(handles.primaryaxes1,'Time (min)','fontsize',8,'fontweight','bold');
-ylabel(handles.primaryaxes1,'Frequency (Hz)','fontsize',8,'fontweight','bold');
-xlabel(handles.primaryaxes2,'Time (min)','fontsize',8,'fontweight','bold');
-ylabel(handles.primaryaxes2,'Frequency (Hz)','fontsize',8,'fontweight','bold');
+xlabel(handles.primaryaxes1,'Time (min)','fontsize',12,'fontweight','bold');
+ylabel(handles.primaryaxes1,'Frequency (Hz)','fontsize',12,'fontweight','bold');
+xlabel(handles.primaryaxes2,'Time (min)','fontsize',12,'fontweight','bold');
+ylabel(handles.primaryaxes2,'Frequency (Hz)','fontsize',12,'fontweight','bold');
 set(handles.num_datapoints,'userdata',ones(11,1).*handles.din.num_pts);%set the default number of datapoints for each harmonic
 waitbar(0.6,h);
 for dum=1:6%add labels to the conductance axes
@@ -2184,8 +2184,8 @@ harm=get(get(p(1),'parent'),'number');%get the harmonic associated with the figu
 for dum=1:2:11%turn off all active harmonics
     set(handles.(['harm',num2str(dum)]),'value',0);
 end%for dum=1:2:11
-set(handles.(['harm',num2str(harm)]),'value',1);%turn on curent harmonic defined by the figure window
-cla(p);
+set(handles.(['harm',num2str(harm)]),'value',1);%turn on current harmonic defined by the figure window
+cla(p(1)); cla(p(2));
 set(handles.text2,'userdata',0);
 check_freq_range(handles.din.harmonic, handles.din.freq_range(0.5*(harm+1),1), handles.din.freq_range(0.5*(harm+1),2), handles);
 write_settings(handles,harm);%refresh the settings
@@ -3072,7 +3072,7 @@ guidata(hObject,handles);
 
 %% Plotting in primaryaxes1 and primaryaxes2
 function plot_choice_Callback(hObject,~,handles)
-font_size=8;
+font_size=12;
 font_weight='bold';
 if strcmp(hObject.Tag,'plot1_choice')||strcmp(hObject.Tag,'primary1')
     pa1='primaryaxes1';
@@ -3442,8 +3442,8 @@ set(handles.filename_txt,'string','<Output Filename>','tooltipstring','');
 set(handles.axes7,'visible','off');
 set(handles.peak_center,'visible','off');
 set(handles.center1,'value',1);
-set(handles.primaryaxes1,'fontsize',8,'xlimmode','auto','ylimmode','auto');
-set(handles.primaryaxes2,'fontsize',8,'xlimmode','auto','ylimmode','auto');
+set(handles.primaryaxes1,'fontsize',12,'xlimmode','auto','ylimmode','auto');
+set(handles.primaryaxes2,'fontsize',12,'xlimmode','auto','ylimmode','auto');
 set(handles.maintain_myVNA,'value',1);
 set(handles.uipanel8,'visible','on');
 set(handles.uipanel4,'visible','on');
